@@ -4,7 +4,7 @@ const categoryButtonsContainer = document.getElementById('category-buttons');
 const categoryHiddenInput = document.getElementById('category-hidden');
 const takenDishesList = document.getElementById('taken-dishes');
 
-const ENDPOINT_URL = '';
+const ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbw26MJphBh59YmC53lY_LrV0z2q1t_Q_hjwkGAHzynBjIc32B2_Q4vcq4wBMWlfrbE1PQ/exec';
 
 let allEntries = [];
 
