@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunco </title>
+    <title>Bunco Potluck</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Great+Vibes&family=Oswald:wght@700&display=swap" rel="stylesheet">
 </head>
 <body class="min-h-screen flex items-center justify-center px-4 py-8">
@@ -27,7 +28,7 @@
     <div id="splash-screen" class="absolute inset-0 bg-white z-50 flex flex-col items-center justify-top text-center p-8 transition-opacity duration-500 rounded-xl shadow-xl">
         <img src="images/cook-kirby-loading.gif" alt="Loading" class="w-58 h-48 mb-6" />
         <p class="text-lg font-medium text-gray-700 mb-6">
-            Welcome to the potluck!
+            Welcome to the bunco potluck!
             If you would like to help by bringing food, we would greatly appreciate that.
         </p>
         <p class="text-lg font-medium text-gray-700 mb-6">
@@ -45,7 +46,7 @@
         <div class="text-center mb-3">
             <!-- Classic bold movie font -->
             <h1 class="text-2xl font-bold tracking-wide mb-1" style="font-family: 'Oswald', sans-serif;">
-                Nathan and Hannah
+                Brad and Anne
             </h1>
 
             <!-- Fancy small font for "presents" -->
@@ -55,12 +56,12 @@
 
             <!-- IMAGE -->
             <div class="flex justify-center mb-2">
-                <img src="images/crockpot.png" alt="funny ness" class="w-32 h-30 object-fill" />
+                <img src="images/dice.png" alt="funny ness" class="w-32 h-30 object-fill" />
             </div>
 
             <!-- Strong bold title font -->
             <h3 class="text-3xl mb-6 font-extrabold tracking-tight" style="font-family: 'Cinzel', serif;">
-                The Great Wedding Potluck Signup
+                The Great Bunco Potluck Signup
             </h3>
         </div>
 
@@ -68,12 +69,12 @@
         <form id="dish-form" class="space-y-5">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1" for="person">Your Name</label>
-                <input type="text" id="person" name="person" required placeholder="Spongebob Squarepants" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+                <input type="text" id="person" name="person" required placeholder="Mr. Boberson" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-500" />
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1" for="email">Your Email</label>
-                <input type="email" id="email" name="email" required placeholder="patrick.star@gmail.com" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+                <input type="email" id="email" name="email" required placeholder="pippin@bealsbunch.net" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-500" />
             </div>
 
             <div>
@@ -101,12 +102,12 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1" for="dish">Your Dish</label>
-                <input type="text" id="dish" name="dish" required placeholder="eg. Crabby Patty" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+                <input type="text" id="dish" name="dish" required placeholder="eg. Cat Food" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-500" />
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1" for="servings">Servings</label>
-                <input type="number" id="servings" name="servings" min="1" required placeholder="eg. 20" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+                <input type="number" id="servings" name="servings" min="1" required placeholder="eg. 5" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-500" />
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1" for="servings">Only check one if it isn't obvious (eg. an apple is obviously vegan):</label>
