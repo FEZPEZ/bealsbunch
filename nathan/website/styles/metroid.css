@@ -1,0 +1,12 @@
+.metroid-wrapper {
+    display: flex;
+    flex-direction: row; /* side by side */
+    align-items: flex-start;
+    width: 100%;
+    background-image: url("../assets/bg/metroid-landscape.gif");
+    background-size: cover;
+    padding: 2em;
+    gap: 2em;
+    box-sizing: border-box;
+    height: 700px;
+}

@@ -1,0 +1,41 @@
+#scroll-container {
+    position: relative;
+    width: 100%;
+    height: 100%; /* divHeight + top/bottom margin */
+    overflow: hidden;
+    background-image: url("../assets/bg/columbia-gorge.webp");
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    box-sizing: border-box;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#scroll-track {
+    position: relative;
+    height: 100%; /* actual scrollable content will fill this */
+}
+
+.scroll-item {
+    position: absolute;
+    top: 0;
+    height: 300px; /* just content height */
+}
+
+/* Adjust image positioning to align within the scroll-item */
+.scroll-item img {
+    position: relative;
+    height: 100%;
+    width: auto;
+    display: block;
+    top: 0;
+    left: 0;
+}
+.scroll-item .frame {
+    position: absolute;       /* Required for z-index to apply */
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    user-select: none;
+    z-index: 10;
+}

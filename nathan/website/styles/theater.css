@@ -1,0 +1,172 @@
+#theater-marquee-wrapper {
+    background-image: url("../assets/bg/space.png");
+    background-repeat: repeat;
+}
+
+#theater-marquee {
+    position: relative;
+    width: 90vw;
+    margin: 100px auto;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    color: yellow;
+    box-shadow: 0 0 40px red;
+    /* overflow removed to allow bulbs to overflow */
+}
+
+.theater-marquee {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: hidden;
+    background: black;
+    color: white;
+}
+
+
+.marquee-track {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    font-size: 1.2rem;
+    height: 2em;
+}
+
+.marquee-track span {
+    display: inline-block;
+    white-space: nowrap;
+    will-change: transform;
+    animation: scroll-left 20s linear infinite;
+    padding-left: 100%;
+}
+
+
+/* You can vary duration via inline style or CSS variables */
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* NEW WRAPPER TO HOLD VISUAL CONTENT + BORDER */
+.marquee-inner {
+    position: relative;
+    padding: 40px;
+    background: linear-gradient(to bottom, #330000, #000000);
+    border: 10px ridge gold;
+}
+
+
+.theater-marquee-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* LIGHT BORDER */
+.light-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.light-row, .light-col {
+    display: flex;
+    position: absolute;
+    gap: 10px;
+}
+
+.light-row.top {
+    top: -20px;
+    left: 40px;
+    right: 40px;
+    justify-content: space-between;
+}
+
+.light-row.bottom {
+    bottom: -20px;
+    left: 40px;
+    right: 40px;
+    justify-content: space-between;
+}
+
+.light-col.left {
+    flex-direction: column;
+    top: 40px;
+    bottom: 40px;
+    left: -20px;
+    justify-content: space-between;
+}
+
+.light-col.right {
+    flex-direction: column;
+    top: 40px;
+    bottom: 40px;
+    right: -20px;
+    justify-content: space-between;
+}
+
+/* BULBS */
+.bulb {
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    border-radius: 50%;
+    box-shadow: 0 0 5px yellow;
+    animation: chase 1.5s infinite;
+}
+
+.bulb:nth-child(2) {
+    animation-delay: 0.3s;
+}
+.bulb:nth-child(3) {
+    animation-delay: 0.6s;
+}
+.bulb:nth-child(4) {
+    animation-delay: 0.9s;
+}
+.bulb:nth-child(5) {
+    animation-delay: 1.2s;
+}
+.bulb:nth-child(6) {
+    animation-delay: 1.5s;
+}
+.bulb:nth-child(7) {
+    animation-delay: 1.8s;
+}
+.bulb:nth-child(8) {
+    animation-delay: 2.1s;
+}
+.bulb:nth-child(9) {
+    animation-delay: 2.4s;
+}
+.bulb:nth-child(10) {
+    animation-delay: 2.7s;
+}
+.bulb:nth-child(11) {
+    animation-delay: 3s;
+}
+.bulb:nth-child(12) {
+    animation-delay: 3.3s;
+}
+
+@keyframes chase {
+    0%, 100% {
+        background-color: red;
+        box-shadow: 0 0 5px yellow;
+    }
+    33% {
+        background-color: gold;
+        box-shadow: 0 0 10px white;
+    }
+    66% {
+        background-color: darkred;
+        box-shadow: none;
+    }
+}

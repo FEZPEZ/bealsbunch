@@ -1,0 +1,8 @@
+#windows-xp img {
+    image-rendering: pixelated;
+}
+
+#windows-xp {
+    background-image: url("../assets/bg/avatar-wallpaper.png");
+    background-repeat: repeat;
+}

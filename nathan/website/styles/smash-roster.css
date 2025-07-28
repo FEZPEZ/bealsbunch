@@ -1,0 +1,80 @@
+#dream-roster-wrapper {
+    background: #222222;
+    width: 100%;
+}
+
+#dream-smash-roster {
+    background-image: url("../assets/bg/roster-bg.gif");
+    background-size: auto 100%;
+    width: calc(100% - 300px); /* or any fixed-pixel width */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.roster-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+
+.roster-box {
+    width: 7.6923%;
+    aspect-ratio: 5 / 3;
+    position: relative;
+    border: 1px solid #222222;
+    border-bottom: 13px solid #222222;
+    overflow: visible;
+}
+
+.roster-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
+
+.roster-text-inner {
+    display: inline-block;
+    text-align: center;
+}
+
+/* Overlapping text on top of bottom border */
+.roster-text {
+    text-align: center;
+    position: absolute;
+    bottom: -13px;
+    left: 0;
+    width: 100%;
+    padding: 1px 2px;
+    font-family: "PT Sans", sans-serif;
+    font-weight: bold;
+    font-size: 0.95em;
+    line-height: 1.1;
+    white-space: nowrap;
+    color: white;
+    text-shadow:
+            -1px -1px 0 black,
+            1px -1px 0 black,
+            -1px  1px 0 black,
+            1px  1px 0 black;
+    pointer-events: none;
+}
+
+.tunnel-section {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100vh; /* or whatever height this section needs */
+}
+
+.bg-tunnel {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    display: block;
+}
+

@@ -1,0 +1,17 @@
+#movie-wrapper {
+    position: relative;
+    width: 100%;
+    background-image: url("../assets/bg/movie.png");
+    background-size: cover;
+}
+
+#gif-container-movie {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    transform: scale(1.25);
+    transform-origin: top left;
+    overflow: visible;
+}

@@ -1,0 +1,79 @@
+#gif-container-nintendo {
+    position: relative;
+    width: 500px;
+    height: 280px;
+    background: transparent;
+    flex-shrink: 0;
+}
+
+#nintendo-wrapper {
+    display: flex;
+    flex-direction: row; /* side by side */
+    align-items: flex-start;
+    width: 100%;
+    background-image: url("../assets/bg/disco.png");
+    background-repeat: repeat;
+    background-size: auto;
+    padding: 2em;
+    gap: 2em;
+    box-sizing: border-box;
+}
+
+.cd-collection {
+    color: white;
+    text-align: center;
+    max-width: 1000px;
+    max-height: 350px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.cd-collection h2 {
+    margin-bottom: 1em;
+}
+
+.cd-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1em;
+}
+
+.cd-item {
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cd-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 1px solid #ccc;
+}
+
+.cd-caption {
+    margin-top: 0.5em;
+    font-size: 0.9em;
+    color: white;
+}
+
+.amiibo-list {
+    background-color: black;
+    padding: 10px;
+    overflow-y: auto;
+    border: 2px solid #00FF00;
+    box-sizing: border-box;
+    width: 400px;
+    height: 100px;
+}
+
+.amiibo-list-wrapper {
+    position: absolute;
+    top: 280px;
+    left: 20px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: lime;
+}

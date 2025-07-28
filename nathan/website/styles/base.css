@@ -1,0 +1,26 @@
+/* Base styles that apply to the entire site */
+body {
+    margin: 0;
+    overflow-x: hidden;
+}
+
+@font-face {
+    font-family: 'Windows XP Tahoma';
+    src: url('../assets/fonts/windows-xp-tahoma.otf.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Section spacing */
+#pixar-cars-section,
+#windows-xp-section,
+#theater-section,
+#welcome-section,
+#nintendo-section,
+#plant-tags-section,
+#movie-section,
+#metroid-section,
+#space-section {
+    position: relative;
+    width: 100%;
+}
