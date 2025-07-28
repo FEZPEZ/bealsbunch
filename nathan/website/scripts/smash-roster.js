@@ -1,4 +1,4 @@
-const SMASH_ROOT_PATH = "../assets/smash-roster/characters/";
+const SMASH_ROOT_PATH = "./assets/smash-roster/characters/";
 
 const smashGridData = [
     [
