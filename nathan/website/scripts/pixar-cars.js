@@ -1,7 +1,7 @@
 // Pixar Cars Section Module
 const PixarCarsSection = {
     NUM_CARS_IMAGES: 16,
-    IMAGE_PATH: "../assets/pixar-cars/",
+    IMAGE_PATH: "./assets/pixar-cars/",
     
     // Explicitly list which images are GIFs
     gifIndices: new Set([3, 5, 11, 16]), // update based on your actual GIFs

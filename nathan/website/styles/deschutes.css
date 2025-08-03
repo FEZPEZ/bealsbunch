@@ -1,0 +1,20 @@
+@keyframes rainbowColor {
+    0% { color: red; }
+    16% { color: orange; }
+    33% { color: yellow; }
+    50% { color: green; }
+    66% { color: blue; }
+    83% { color: indigo; }
+    100% { color: red; }
+}
+
+.smeagol-rainbow-text {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: 18px;
+    animation: rainbowColor 2.5s infinite linear;
+    font-weight: bold;
+}
+
+#deschutes-img {
+    min-height: 900px;
+}

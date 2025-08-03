@@ -39,7 +39,7 @@ const MovieSection = {
         const container = document.getElementById('gif-container-movie');
         if (!container) return;
 
-        const FILE_ROOT = '../../assets/movie/gifs';
+        const FILE_ROOT = './assets/movie/gifs';
         
         this.gifs.forEach(gif => {
             const img = document.createElement('img');

@@ -1,0 +1,19 @@
+#take-a-break {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+#take-a-break-bg img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+#take-a-break-wii-console {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-100%, -67%) scale(0.7);
+    pointer-events: none; /* optional: so it doesn't interfere with interaction */
+}

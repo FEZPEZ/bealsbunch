@@ -1,0 +1,68 @@
+#xenoblade-scene {
+    margin: 0 auto;
+    min-height: 800px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.xeno-character {
+    position: absolute;
+    height: auto;
+    will-change: transform;
+    pointer-events: none;
+}
+
+/* === READY TO FIGHT BANNER === */
+.ready-to-fight-container {
+    position: relative;
+    width: 100%;
+}
+
+.ready-to-fight-container img {
+    width: 100%;
+    display: block;
+}
+
+.banner-hitbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: auto; /* by default */
+    z-index: 99999;
+}
+
+.hit-path {
+    fill: transparent;
+    pointer-events: all; /* only the path is interactive */
+    cursor: var(--cursor-path), auto;
+}
+
+.base-banner {
+    position: relative;
+    z-index: 1;
+}
+
+.overlay-banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    animation: pulseLight 1.5s infinite ease-in-out;
+    pointer-events: auto;
+}
+
+@keyframes pulseLight {
+    0%, 100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+}

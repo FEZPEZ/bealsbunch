@@ -1,6 +1,6 @@
 // Plant Tag Section Module
 const PlantTagSection = {
-    IMAGE_DIR: "../assets/macore/plant-tags",
+    IMAGE_DIR: "./assets/macore/plant-tags",
     totalImages: 17,
     totalFrames: 7,
     imageSpacing: 10, // px between images

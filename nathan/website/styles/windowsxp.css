@@ -5,4 +5,10 @@
 #windows-xp {
     background-image: url("../assets/bg/avatar-wallpaper.png");
     background-repeat: repeat;
+    cursor: url("../assets/windows/default_arrow.cur"), auto;
+}
+
+/* In your CSS */
+.windows-icon {
+    cursor: url("../assets/windows/harrow.cur"), auto;
 }

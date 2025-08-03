@@ -1,7 +1,7 @@
 // Windows XP Section Module
 const WindowsXPSection = {
-    WINDOWS_ICON_PATH: "../assets/windows/icons/",
-    WINDOWS_IMAGE_PATH: "../assets/windows/images/",
+    WINDOWS_ICON_PATH: "./assets/windows/icons/",
+    WINDOWS_IMAGE_PATH: "./assets/windows/images/",
     imageSize: 58,
     NUM_IMAGES: 132,
     LEFT_ICON_SPACING: 12,
@@ -29,7 +29,7 @@ const WindowsXPSection = {
 
         // Add taskbar elements
         const start = document.createElement("img");
-        start.src = "../assets/windows/windows-taskbar-start.png";
+        start.src = "./assets/windows/windows-taskbar-start.png";
         Object.assign(start.style, {
             position: "absolute",
             bottom: "0",
@@ -39,7 +39,7 @@ const WindowsXPSection = {
         });
 
         const clock = document.createElement("img");
-        clock.src = "../assets/windows/windows-taskbar-clock.png";
+        clock.src = "./assets/windows/windows-taskbar-clock.png";
         Object.assign(clock.style, {
             position: "absolute",
             bottom: "0",
@@ -49,7 +49,7 @@ const WindowsXPSection = {
         });
 
         const taskbar = document.createElement("img");
-        taskbar.src = "../assets/windows/windows-taskbar-main.png";
+        taskbar.src = "./assets/windows/windows-taskbar-main.png";
         Object.assign(taskbar.style, {
             position: "absolute",
             bottom: "0",
@@ -128,7 +128,6 @@ const WindowsXPSection = {
                     height: `${this.imageSize}px`,
                     objectFit: "contain",
                     zIndex: "2",
-                    cursor: "grab",
                     userSelect: "none",
                 });
 
@@ -138,6 +137,7 @@ const WindowsXPSection = {
 
                 img.style.left = `${x}px`;
                 img.style.top = `${y}px`;
+                img.classList.add("windows-icon");
 
                 this.enableDrag(img, container, this.icon5);
                 container.appendChild(img);
@@ -153,7 +153,6 @@ const WindowsXPSection = {
         img.addEventListener("mousedown", (e) => {
             e.preventDefault();
             isDragging = true;
-            img.style.cursor = "grabbing";
             img.style.zIndex = this.frontZIndex.toString();
             this.frontZIndex++;
 
@@ -181,7 +180,6 @@ const WindowsXPSection = {
 
             const onMouseUp = () => {
                 isDragging = false;
-                img.style.cursor = "grab";
                 window.removeEventListener("mousemove", onMouseMove);
                 window.removeEventListener("mouseup", onMouseUp);
 

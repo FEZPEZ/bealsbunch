@@ -122,7 +122,7 @@ const NintendoSection = {
         const container = document.getElementById('gif-container-nintendo');
         if (!container) return;
 
-        const FILE_ROOT = '../../assets/nintendo/gifs';
+        const FILE_ROOT = './assets/nintendo/gifs';
         
         this.gifs.forEach(gif => {
             const img = document.createElement('img');

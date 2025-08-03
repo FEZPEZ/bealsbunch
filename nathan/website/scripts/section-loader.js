@@ -13,6 +13,7 @@ const SectionLoader = {
         { id: 'plant-tags-section', file: 'sections/plant-tags.html' },
         { id: 'movie-section', file: 'sections/movie.html' },
         { id: 'metroid-section', file: 'sections/metroid.html' },
+        { id: 'smash-roster', file: 'sections/smash-roster.html' },
         { id: 'space-section', file: 'sections/space.html' }
     ],
 

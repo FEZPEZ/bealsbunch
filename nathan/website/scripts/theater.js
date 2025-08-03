@@ -1,6 +1,6 @@
 // Theater Section Module
 const TheaterSection = {
-    THEATER_SCRIPT_PATH: "../assets/theater/scripts/",
+    THEATER_SCRIPT_PATH: "./assets/theater/scripts/",
     textFiles: [
         "charlie-brown.txt",
         "earnest.txt",

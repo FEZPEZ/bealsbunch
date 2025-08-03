@@ -1,3 +1,27 @@
+
+<!--
+NOTE: alternate mural <-> content section, generally
+
+HERO SECTION MURAL -> image
+INTRO -> geocities page by young nathan
+==PIXAR'S CARS (title: MY BIRTHDAY LIST)
+==OLD WINDOWS DESKTOP + avatar + kirby plushes + old screensavers
+THEATER -> trying to remember your line (RANDOM QUOTE GENERATOR)
+JOURNAL ENTRY MURAL (my DREAM SMASH BROS ROSTER at end)
+==SMASH BROS dream roster
+==XENOBLADE fighting MURAL
+SONIC SECTION
+==MARIO + collections, amiibo, etc...
+==WII remember to take a break! (outdoor intro)
+==OUTDOOR MURAL (remember to take a break wii thing intro, mindfulness, etc)
+==MACORE + plants
+MOVIES + TV SHOWS -> random quotes, references, etc...
+==METROID MURAL -> single gif
+SPACE -> eventually, all things must go to space (hover over that text -> coon)
+LOVE LIFE ->
+
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +29,7 @@
     <title>Scrolling Images with Frames</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
     <!-- Section-specific stylesheets -->
     <link rel="stylesheet" href="styles/base.css">
     <link rel="stylesheet" href="styles/plant-tag.css">
@@ -17,26 +42,50 @@
     <link rel="stylesheet" href="styles/pixar-cars.css">
     <link rel="stylesheet" href="styles/theater.css">
     <link rel="stylesheet" href="styles/smash-roster.css">
+    <link rel="stylesheet" href="styles/xenoblade-scene.css">
+    <link rel="stylesheet" href="styles/take-a-break.css">
+    <link rel="stylesheet" href="styles/deschutes.css">
 </head>
 
 
 <body>
 
-<div id="dream-roster-wrapper">
-    <div id="dream-smash-roster"></div>
-</div>
-
-
-<!--
     <div id="pixar-cars-section"></div>
 
     <div id="windows-xp-section"></div>
 
-    <div id="theater-section"></div>
+    <!-- <div id="theater-section"></div> -->
+
+    <div id="dream-roster-wrapper">
+        <div id="dream-roster-header">
+            <img src="./assets/smash-roster/smash-header.jpg"/>
+        </div>
+        <div id="dream-smash-roster">
+            <img id="floating-token" src="./assets/smash-roster/token.png"
+                 style="position: absolute; pointer-events: none; display: none; width: 50px; height: 50px; z-index: 9999;" />
+        </div>
+        <div id="dream-roster-spacer"></div>
+    </div>
+
+    <div id="xenoblade-scene"></div>
 
     <div id="welcome-section"></div>
 
     <div id="nintendo-section"></div>
+
+    <div id="take-a-break">
+        <div id="take-a-break-bg">
+            <img src="./assets/take-a-break/wii-take-a-break.png"/>
+        </div>
+        <div id="take-a-break-wii-console">
+            <img src="./assets/take-a-break/wii-console.gif"/>
+        </div>
+    </div>
+    <div id="deschutes-section">
+        <div id="take-a-break-deschutes">
+            <img id="deschutes-img" src="assets/deschutes/deschutes.jpg"/>
+        </div>
+    </div>
 
     <div id="plant-tags-section"></div>
 
@@ -46,7 +95,7 @@
 
     <div id="space-section"></div>
 
-    -->
+
 
     <script src="scripts/section-loader.js"></script>
 
@@ -60,5 +109,7 @@
     <script src="scripts/metroid.js"></script>
     <script src="scripts/space.js"></script>
     <script src="scripts/smash-roster.js"></script>
+    <script src="scripts/xenoblade-scene.js"></script>
+    <script src="scripts/deschutes.js"></script>
 </body>
 </html>
