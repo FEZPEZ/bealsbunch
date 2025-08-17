@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPACE TILES</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        :root {
+            --cpu-red: #dd4747;
+            --cpu-dark: #1a1a1a;
+            --cpu-deep-red: #330000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', monospace;
+            background: #000;
+            background-image:
+                    radial-gradient(white 1px, transparent 1px),
+                    radial-gradient(white 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: 0 0, 25px 25px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #0FF;
+            overflow: hidden;
+        }
+
+        @font-face {
+            font-family: 'Aurebesh';
+            src: url('AurebeshAF-Canon.otf') format('truetype'); /* adjust path */
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .tile.aurebesh {
+            font-family: 'Aurebesh', sans-serif;
+        }
+
+        .game-container {
+            background: #000080;
+            border: 3px solid #FF00FF;
+            padding: 15px;
+            box-shadow: 0 0 20px #FF00FF;
+            width: 95vw;
+            max-width: 1200px;
+            max-height: 700px;
+            height: 95vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 2px dashed #00FF00;
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            font-size: clamp(1.5em, 4vw, 2.5em);
+            font-weight: 900;
+            color: #FFFF00;
+            text-shadow: 3px 3px 0 #FF00FF;
+            letter-spacing: 3px;
+        }
+
+        .main-area {
+            flex: 1;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            min-height: 0;
+        }
+
+        #playerHud {
+            background: #001144;
+            border: 3px solid #00FFFF;
+            padding: 15px;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.3);
+            transition: all 0.5s ease;
+            max-height: calc(100% - 20px);
+            margin-top: 30px;
+        }
+
+        #cpuHud {
+            background: #001144;
+            border: 3px solid #00FFFF;
+            padding: 15px;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.3);
+            transition: all 0.5s ease;
+            max-height: calc(100% - 20px);
+            margin-top: 30px;
+        }
+
+        .hud.dimmed {
+            opacity: 0.3;
+            filter: grayscale(100%);
+        }
+
+        .hud.winner {
+            box-shadow: 0 0 40px #00FF00, inset 0 0 40px rgba(0, 255, 0, 0.5);
+            border-color: #00FF00;
+        }
+
+        .pilot-name {
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        #cpuHud .pilot-name {
+            background: #000000;
+            border: 2px solid var(--cpu-red);
+            color: var(--cpu-red);
+        }
+
+        #playerHud .pilot-name {
+            background: #000066;
+            border: 2px solid #00FF00;
+            color: #00FF00;
+        }
+
+        .score-panel {
+            background: #000033;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        #cpuHud .score-panel {
+            border: 2px solid var(--cpu-red);
+        }
+
+        #playerHud .score-panel {
+            border: 2px solid #FF00FF;
+        }
+
+        .score-panel.active::before {
+            content: '▶';
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #FFFF00;
+            font-size: 1.2em;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0; }
+        }
+
+        #playerHud .score-label {
+            color: #FF00FF;
+        }
+
+        #cpuHud .score-label {
+            color: var(--cpu-red);
+        }
+
+        .score-label {
+            font-size: 0.8em;
+            margin-bottom: 5px;
+        }
+
+        .score-value {
+            color: #FFFF00;
+            font-size: 2em;
+            font-weight: bold;
+            text-shadow: 0 0 10px #FFFF00;
+        }
+
+        .inventory-label {
+            color: #00FFFF;
+            font-size: 0.8em;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        .hand {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 5px 0;
+        }
+
+        .cpu-gif {
+            background: #000033;
+            border: 2px solid #FF00FF;
+            width: 100%;
+            aspect-ratio: 2.5/3.333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF00FF;
+            font-size: 0.7em;
+            text-align: center;
+            margin-top: auto;
+            padding: 10px;
+        }
+
+        .cpu-chat-log {
+            /* Fill available vertical space */
+            flex: 1;
+            min-height: 0;
+
+            /* Appearance */
+            font-family: 'Press Start 2P', cursive;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00FF00;
+            color: #00FF00;
+            font-size: 0.4em;
+            padding: 10px;
+            line-height: 1.8;
+            word-break: break-all;
+
+            /* Scrolling */
+            overflow-y: auto;
+        }
+
+        /* Style for individual messages */
+        .cpu-chat-log p {
+            margin: 0;
+            padding-bottom: 5px;
+        }
+
+        .board-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .board {
+            background: #000033;
+            border: 2px solid #00FFFF;
+            padding: 10px;
+            position: relative;
+        }
+
+        .board-grid {
+            position: relative;
+        }
+
+        .board-cell {
+            position: absolute;
+            border: 1px dotted #00FF00;
+            background: #000066;
+        }
+
+        .game-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #FFFF00;
+            font-size: clamp(0.8em, 3vw, 1.5em);
+            text-align: center;
+            text-shadow: 3px 3px 0 #FF00FF;
+            pointer-events: none;
+            z-index: 100;
+            font-weight: bold;
+        }
+
+        .game-message.hidden {
+            display: none;
+        }
+
+        .tile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: move;
+            position: relative;
+            user-select: none;
+            background: #000;
+            border: 3px solid;
+            line-height: 1;
+            padding-top: 1px;
+            font-weight: bold;
+            transition: filter 0.2s;
+        }
+
+        .tile.dragging {
+            opacity: 0.8;
+            cursor: grabbing;
+            z-index: 1000;
+        }
+
+        .tile.invalid-drag {
+            filter: grayscale(100%);
+        }
+
+        .tile.placed-temp {
+            cursor: move;
+        }
+
+        .tile.placed-locked {
+            cursor: default;
+        }
+
+        /* Space colors */
+        .tile-red { border-color: #FF0000; color: #FF0000; }
+        .tile-blue { border-color: #0000FF; color: #0000FF; }
+        .tile-green { border-color: #00FF00; color: #00FF00; }
+        .tile-yellow { border-color: #FFFF00; color: #FFFF00; }
+        .tile-purple { border-color: #FF00FF; color: #FF00FF; }
+        .tile-cyan { border-color: #00FFFF; color: #00FFFF; }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px 16px;
+            font-family: 'Orbitron', monospace;
+            font-weight: bold;
+            font-size: clamp(0.7em, 2vw, 0.9em);
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 3px 3px 0 #00FFFF;
+            transition: opacity 0.3s;
+        }
+
+        .side-button {
+            background: #FFFF00;
+            color: #000;
+            border: 3px solid #FF00FF;
+        }
+
+        .main-button {
+            background: #FF00FF;
+            color: #000;
+            border: 3px solid #FFFF00;
+        }
+
+        button:active:not(:disabled) {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #00FFFF;
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .flash {
+            animation: flash 0.3s ease 2;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes replace-tile {
+            0% { opacity: 1; }
+            49.9% { opacity: 1; }
+            50% { opacity: 0.1; }
+            100% { opacity: 1; }
+        }
+
+        .score-popup {
+            position: absolute;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #FFFF00;
+            text-shadow: 2px 2px 0 #FF00FF;
+            animation: scoreFloat 1s ease-out forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes scoreFloat {
+            0% {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -80px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <div class="header">
+        <h1>SPACE TILES</h1>
+    </div>
+
+    <div class="main-area">
+        <div class="hud" id="playerHud">
+            <div class="pilot-name" id="playerName">PILOT</div>
+            <div class="score-panel" id="playerScorePanel">
+                <div class="score-label">SCORE</div>
+                <div class="score-value" id="playerScore">0</div>
+            </div>
+            <div class="inventory-label">INVENTORY</div>
+            <div class="hand" id="playerHand"></div>
+        </div>
+
+        <div class="board-wrapper">
+            <div class="board" id="boardContainer">
+                <div class="game-message" id="gameMessage">
+                    PLAYER 1<br>GOES FIRST!
+                </div>
+                <div class="board-grid" id="board"></div>
+            </div>
+        </div>
+
+        <div class="hud" id="cpuHud">
+            <div class="pilot-name" id="cpuName">CPU</div>
+            <div class="score-panel" id="cpuScorePanel">
+                <div class="score-label">SCORE</div>
+                <div class="score-value" id="cpuScore">0</div>
+            </div>
+            <div class="cpu-chat-log" id="cpuChatLog">
+
+                <p>&gt; vadertots has joined #spacetiles</p>
+            </div>
+            <div class="cpu-gif" id="cpuGif">
+                WAITING<br>
+                4×6
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button id="resetMove" class="side-button">RESET MOVE</button>
+        <button id="placeMove" class="main-button">PLACE TILES</button>
+        <button id="skipTurn" class="side-button">SKIP + SWAP</button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    // Game configuration variables
+    const POINTS_TO_WIN = 100;
+    const TILES_IN_HAND = 6;
+    const CPU_DELAY_MIN = 1000;
+    const CPU_DELAY_MAX = 3000;
+    const GRID_SIZE = 11;
+    const MAX_LINE_LENGTH = 6;
+    const MAX_LINE_BONUS = 12;
+    const FIRST_MOVE_POINTS = 1;
+    const CPU_SURPRISED_POINTS = 10;
+    const SCORE_DIFFERENCE_THRESHOLD = 1;
+
+    // CPU GIF durations
+    const GIF_DURATION_SKIP = 2000;
+    const GIF_DURATION_SURPRISED = 2000;
+    const GIF_DURATION_VICTORY = 2500;
+    const GIF_DURATION_DEFEAT = 2000;
+
+    const REFRESH_ANIM_DURATION = 400; // Duration of one tile's animation in ms
+    const REFRESH_ANIM_DELAY = 80;
+
+    // Pilot names
+    const PILOT_NAMES = [
+        'PLAYER 1'
+    ];
+
+    const CPU_PILOT_NAME = "DARTH VADER";
+
+    const IMAGE_ROOT = 'images/';
+
+    // CPU GIF states
+    // CPU image states
+    const CPU_IMAGES = {
+        waiting: ['vader-waiting-1.png', 'vader-waiting-2.png'],
+        thinking: ['vader-thinking-1.png', 'vader-thinking-2.png', 'vader-thinking-3.png', 'vader-thinking-4.png'],
+        skip: ['vader-skip.png'],
+        surprised: ['vader-surprised.png'],
+        victory: ['vader-victory.png'],
+        defeat: ['vader-sad.png']
+    };
+
+    // Tile configuration
+    const SHAPES = ['$', '@', 'B', 'O', 'S', 'F'];
+    //const SHAPES = ['ᚸ', 'ᛃ', 'ᛗ', 'ᚥ', 'ᚩ', 'ᛜ'];
+    const COLORS = ['red', 'blue', 'green', 'yellow', 'purple', 'cyan'];
+
+    // Dynamic sizing
+    let CELL_SIZE = 45;
+    let TILE_FONT_SIZE = 24;
+
+    // Game state
+    let board = {};
+    let playerHand = [];
+    let cpuHand = [];
+    let placedTiles = [];
+    let playerScore = 0;
+    let cpuScore = 0;
+    let draggedTile = null;
+    let isFirstMove = true;
+    let isPlayerTurn = true;
+    let draggedElement = null;
+    let dragOffset = { x: 0, y: 0 };
+    let gameOver = false;
+    let currentHoverCell = null;
+    let cpuState = 'waiting';
+    let cpuStateTimeout = null;
+    let cpuFallingBehind = false;
+    let cpuReallyWinning = false;
+
+    function updateSizing() {
+        const vh = window.innerHeight;
+        const vw = window.innerWidth;
+
+        if (vh < 600 || vw < 800) {
+            CELL_SIZE = 35;
+            TILE_FONT_SIZE = 18;
+        } else if (vh < 800 || vw < 1000) {
+            CELL_SIZE = 40;
+            TILE_FONT_SIZE = 22;
+        } else {
+            CELL_SIZE = 45;
+            TILE_FONT_SIZE = 24;
+        }
+    }
+
+    function createTile() {
+        return {
+            shape: SHAPES[Math.floor(Math.random() * SHAPES.length)],
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            id: Math.random().toString(36).substr(2, 9)
+        };
+    }
+
+    function createUniqueTile(existingHand) {
+        let tile;
+        let attempts = 0;
+        do {
+            tile = createTile();
+            attempts++;
+        } while (
+            existingHand.some(t => t && t.shape === tile.shape && t.color === tile.color) &&
+            attempts < 100 // avoid infinite loop in extreme cases
+            );
+        return tile;
+    }
+
+    function preloadImages() {
+        const allImageArrays = Object.values(CPU_IMAGES);
+
+        for (const imageArray of allImageArrays) {
+            for (const filename of imageArray) {
+                const img = new Image();
+                img.src = `${IMAGE_ROOT}${filename}`;
+            }
+        }
+    }
+
+    function setCpuState(state, duration = null) {
+        if (cpuStateTimeout) {
+            clearTimeout(cpuStateTimeout);
+            cpuStateTimeout = null;
+        }
+
+        cpuState = state;
+
+        const imageArray = CPU_IMAGES[state];
+        if (imageArray && imageArray.length > 0) {
+            const randomIndex = Math.floor(Math.random() * imageArray.length);
+            const selectedImage = imageArray[randomIndex];
+            const imagePath = `images/${selectedImage}`;
+
+            const container = document.getElementById('cpuGif');
+            let imgElement = container.querySelector('img');
+
+            // If no <img> element exists yet, create and configure it.
+            if (!imgElement) {
+                container.innerHTML = ''; // Clear the initial "WAITING" text
+                imgElement = document.createElement('img');
+                imgElement.style.width = '100%';
+                imgElement.style.height = '100%';
+                imgElement.style.objectFit = 'contain';
+                container.appendChild(imgElement);
+            }
+
+            // Now, simply update the 'src' attribute of the existing element.
+            // This is much faster and avoids the flash.
+            imgElement.src = imagePath;
+            imgElement.alt = state;
+        }
+
+        if (duration) {
+            cpuStateTimeout = setTimeout(() => {
+                setCpuState(isPlayerTurn ? 'waiting' : 'thinking');
+            }, duration);
+        }
+    }
+
+    function checkScoreDifferenceFlags() {
+        const difference = cpuScore - playerScore;
+
+        if (difference <= -SCORE_DIFFERENCE_THRESHOLD) {
+            cpuFallingBehind = true;
+            cpuReallyWinning = false;
+        } else if (difference >= SCORE_DIFFERENCE_THRESHOLD) {
+            cpuReallyWinning = true;
+            cpuFallingBehind = false;
+        }
+    }
+
+    function initGame() {
+        preloadImages();
+        updateSizing();
+
+        // Set pilot names
+        document.getElementById('playerName').textContent = PILOT_NAMES[Math.floor(Math.random() * PILOT_NAMES.length)];
+        document.getElementById('cpuName').textContent = CPU_PILOT_NAME;
+
+        for (let i = 0; i < TILES_IN_HAND; i++) {
+            playerHand.push(createUniqueTile(playerHand));
+            cpuHand.push(createUniqueTile(cpuHand));
+        }
+
+        updateTurnIndicator();
+        renderBoard();
+        renderHand();
+        updateScores();
+        setCpuState('waiting');
+    }
+
+    function updateTurnIndicator() {
+        document.getElementById('playerScorePanel').classList.toggle('active', isPlayerTurn);
+        document.getElementById('cpuScorePanel').classList.toggle('active', !isPlayerTurn);
+
+        // Update button states
+        document.getElementById('resetMove').disabled = !isPlayerTurn;
+        document.getElementById('placeMove').disabled = !isPlayerTurn;
+        document.getElementById('skipTurn').disabled = !isPlayerTurn;
+    }
+
+    function renderBoard() {
+        const boardEl = document.getElementById('board');
+        boardEl.innerHTML = '';
+
+        const boardSize = CELL_SIZE * GRID_SIZE;
+        boardEl.style.width = boardSize + 'px';
+        boardEl.style.height = boardSize + 'px';
+
+        // Create all cells
+        for (let x = 0; x < GRID_SIZE; x++) {
+            for (let y = 0; y < GRID_SIZE; y++) {
+                const cell = document.createElement('div');
+                cell.className = 'board-cell';
+                cell.style.left = x * CELL_SIZE + 'px';
+                cell.style.top = y * CELL_SIZE + 'px';
+                cell.style.width = CELL_SIZE + 'px';
+                cell.style.height = CELL_SIZE + 'px';
+                cell.dataset.x = x;
+                cell.dataset.y = y;
+
+                const key = `${x},${y}`;
+                if (board[key]) {
+                    const tile = createTileElement(board[key]);
+                    tile.style.width = CELL_SIZE + 'px';
+                    tile.style.height = CELL_SIZE + 'px';
+                    tile.style.fontSize = TILE_FONT_SIZE + 'px';
+
+                    if (!board[key].locked && placedTiles.some(p => p.x === x && p.y === y)) {
+                        tile.draggable = true;
+                        tile.classList.add('placed-temp');
+                        setupTileDrag(tile, x, y, true);
+                    } else {
+                        tile.draggable = false;
+                        tile.classList.add('placed-locked');
+                    }
+                    cell.appendChild(tile);
+                }
+
+                boardEl.appendChild(cell);
+            }
+        }
+    }
+
+    function createTileElement(tile) {
+        const el = document.createElement('div');
+        el.className = `tile tile-${tile.color} aurebesh`;
+        el.textContent = tile.shape;
+        el.dataset.shape = tile.shape;
+        el.dataset.color = tile.color;
+        el.dataset.id = tile.id;
+        return el;
+    }
+
+    function renderHand() {
+        const handEl = document.getElementById('playerHand');
+        handEl.innerHTML = '';
+
+        playerHand.forEach((tile, index) => {
+            if (tile) {
+                const tileEl = createTileElement(tile);
+                tileEl.style.width = CELL_SIZE + 'px';
+                tileEl.style.height = CELL_SIZE + 'px';
+                tileEl.style.fontSize = TILE_FONT_SIZE + 'px';
+                tileEl.draggable = true;
+                tileEl.dataset.handIndex = index;
+
+                setupTileDrag(tileEl, null, null, false);
+
+                handEl.appendChild(tileEl);
+            }
+        });
+    }
+
+    function setupTileDrag(tileEl, boardX, boardY, fromBoard) {
+        tileEl.addEventListener('mousedown', (e) => {
+            if (!isPlayerTurn || gameOver) return;
+
+            e.preventDefault();
+
+            if (isFirstMove) {
+                document.getElementById('gameMessage').classList.add('hidden');
+            }
+
+            const rect = tileEl.getBoundingClientRect();
+            const tileCenter = CELL_SIZE / 2;
+            dragOffset.x = tileCenter;
+            dragOffset.y = tileCenter;
+
+            draggedElement = tileEl.cloneNode(true);
+            draggedElement.style.position = 'fixed';
+            draggedElement.style.zIndex = '1000';
+            draggedElement.style.pointerEvents = 'none';
+            draggedElement.classList.add('dragging');
+            document.body.appendChild(draggedElement);
+
+            tileEl.style.opacity = '0.3';
+
+            if (fromBoard) {
+                const placedIndex = placedTiles.findIndex(p => p.x === boardX && p.y === boardY);
+                draggedTile = {
+                    tile: board[`${boardX},${boardY}`],
+                    x: boardX,
+                    y: boardY,
+                    placedIndex: placedIndex,
+                    element: tileEl,
+                    fromBoard: true
+                };
+            } else {
+                draggedTile = {
+                    tile: playerHand[tileEl.dataset.handIndex],
+                    index: parseInt(tileEl.dataset.handIndex),
+                    element: tileEl,
+                    fromHand: true
+                };
+            }
+
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+
+            // Initial position
+            handleMouseMove(e);
+        });
+    }
+
+    function handleMouseMove(e) {
+        if (!draggedElement) return;
+
+        draggedElement.style.left = (e.clientX - dragOffset.x) + 'px';
+        draggedElement.style.top = (e.clientY - dragOffset.y) + 'px';
+
+        // Check validity
+        const element = document.elementFromPoint(e.clientX, e.clientY);
+        let shouldGrayscale = false;
+
+        if (element && element.classList.contains('board-cell')) {
+            const x = parseInt(element.dataset.x);
+            const y = parseInt(element.dataset.y);
+            currentHoverCell = `${x},${y}`;
+
+            if (!board[`${x},${y}`]) {
+                // Check if there's an adjacent tile
+                const neighbors = [
+                    [x + 1, y], [x - 1, y],
+                    [x, y + 1], [x, y - 1]
+                ];
+
+                let hasAdjacentTile = false;
+                for (let [nx, ny] of neighbors) {
+                    if (board[`${nx},${ny}`]) {
+                        hasAdjacentTile = true;
+                        break;
+                    }
+                }
+
+                if (hasAdjacentTile || isFirstMove) {
+                    // Check validity only when next to a tile
+                    let isValid = false;
+
+                    if (draggedTile.fromBoard) {
+                        const originalTile = board[`${draggedTile.x},${draggedTile.y}`];
+                        delete board[`${draggedTile.x},${draggedTile.y}`];
+
+                        const tempPlacedTiles = [...placedTiles];
+                        tempPlacedTiles[draggedTile.placedIndex] = { ...tempPlacedTiles[draggedTile.placedIndex], x, y };
+
+                        isValid = checkFullPlacementValidity(x, y, draggedTile.tile, tempPlacedTiles);
+
+                        board[`${draggedTile.x},${draggedTile.y}`] = originalTile;
+                    } else {
+                        const tempPlacedTiles = [...placedTiles, { x, y, tile: draggedTile.tile }];
+                        isValid = checkFullPlacementValidity(x, y, draggedTile.tile, tempPlacedTiles);
+                    }
+
+                    shouldGrayscale = !isValid && hasAdjacentTile;
+                }
+            }
+        } else {
+            currentHoverCell = null;
+        }
+
+        if (shouldGrayscale) {
+            draggedElement.classList.add('invalid-drag');
+        } else {
+            draggedElement.classList.remove('invalid-drag');
+        }
+    }
+
+    function handleMouseUp(e) {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+
+        if (!draggedElement) return;
+
+        const element = document.elementFromPoint(e.clientX, e.clientY);
+        let placed = false;
+
+        if (element && element.classList.contains('board-cell')) {
+            const x = parseInt(element.dataset.x);
+            const y = parseInt(element.dataset.y);
+
+            if (!board[`${x},${y}`]) {
+                let isValid = false;
+
+                if (draggedTile.fromBoard) {
+                    delete board[`${draggedTile.x},${draggedTile.y}`];
+                    placedTiles[draggedTile.placedIndex].x = x;
+                    placedTiles[draggedTile.placedIndex].y = y;
+                    isValid = checkFullPlacementValidity(x, y, draggedTile.tile, placedTiles);
+
+                    if (isValid) {
+                        board[`${x},${y}`] = draggedTile.tile;
+                        placed = true;
+                    } else {
+                        // Restore
+                        board[`${draggedTile.x},${draggedTile.y}`] = draggedTile.tile;
+                        placedTiles[draggedTile.placedIndex].x = draggedTile.x;
+                        placedTiles[draggedTile.placedIndex].y = draggedTile.y;
+                    }
+                } else {
+                    placedTiles.push({
+                        x, y,
+                        tile: draggedTile.tile,
+                        handIndex: draggedTile.index
+                    });
+
+                    isValid = checkFullPlacementValidity(x, y, draggedTile.tile, placedTiles);
+
+                    if (isValid) {
+                        board[`${x},${y}`] = draggedTile.tile;
+                        playerHand[draggedTile.index] = null;
+                        placed = true;
+                    } else {
+                        placedTiles.pop();
+                    }
+                }
+
+                if (placed && isFirstMove) {
+                    isFirstMove = false;
+                }
+            }
+        }
+
+        // Clean up
+        draggedElement.remove();
+        draggedElement = null;
+        if (draggedTile) {
+            draggedTile.element.style.opacity = '1';
+        }
+        draggedTile = null;
+        currentHoverCell = null;
+
+        if (placed) {
+            renderBoard();
+            renderHand();
+        }
+    }
+
+    function checkFullPlacementValidity(x, y, tile, tempPlacedTiles) {
+        // For first move, always valid
+        if (isFirstMove) return true;
+
+        // Check if all placed tiles form a valid line
+        if (tempPlacedTiles.length > 1) {
+            const allSameRow = tempPlacedTiles.every(p => p.y === tempPlacedTiles[0].y);
+            const allSameCol = tempPlacedTiles.every(p => p.x === tempPlacedTiles[0].x);
+
+            if (!allSameRow && !allSameCol) return false;
+
+            // Check connectivity
+            if (allSameRow) {
+                const sortedX = tempPlacedTiles.map(p => p.x).sort((a, b) => a - b);
+                for (let i = sortedX[0]; i <= sortedX[sortedX.length - 1]; i++) {
+                    if (!board[`${i},${y}`] && !tempPlacedTiles.some(p => p.x === i && p.y === y)) {
+                        return false;
+                    }
+                }
+            } else {
+                const sortedY = tempPlacedTiles.map(p => p.y).sort((a, b) => a - b);
+                for (let i = sortedY[0]; i <= sortedY[sortedY.length - 1]; i++) {
+                    if (!board[`${x},${i}`] && !tempPlacedTiles.some(p => p.x === x && p.y === i)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        // Check adjacency
+        const neighbors = [
+            [x + 1, y], [x - 1, y],
+            [x, y + 1], [x, y - 1]
+        ];
+
+        let hasAdjacent = false;
+        for (let [nx, ny] of neighbors) {
+            if (board[`${nx},${ny}`] && !tempPlacedTiles.some(p => p.x === nx && p.y === ny)) {
+                hasAdjacent = true;
+                break;
+            }
+        }
+
+        if (!hasAdjacent && tempPlacedTiles.length === 1) return false;
+
+        // Check line validity
+        board[`${x},${y}`] = tile;
+        const valid = validateLine(x, y);
+        delete board[`${x},${y}`];
+
+        return valid;
+    }
+
+    function validateLine(x, y) {
+        const horizontalLine = getLine(x, y, true);
+        const verticalLine = getLine(x, y, false);
+
+        return isValidGroup(horizontalLine) && isValidGroup(verticalLine);
+    }
+
+    function getLine(x, y, horizontal) {
+        const line = [board[`${x},${y}`]];
+
+        let i = 1;
+        while (true) {
+            const key = horizontal ? `${x + i},${y}` : `${x},${y + i}`;
+            if (board[key]) {
+                line.push(board[key]);
+                i++;
+            } else {
+                break;
+            }
+        }
+
+        i = 1;
+        while (true) {
+            const key = horizontal ? `${x - i},${y}` : `${x},${y - i}`;
+            if (board[key]) {
+                line.unshift(board[key]);
+                i++;
+            } else {
+                break;
+            }
+        }
+
+        return line;
+    }
+
+    function isValidGroup(tiles) {
+        if (tiles.length === 1) return true;
+        if (tiles.length > MAX_LINE_LENGTH) return false;
+
+        const seen = new Set();
+        for (let tile of tiles) {
+            const key = `${tile.shape}-${tile.color}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+        }
+
+        const allSameShape = tiles.every(t => t.shape === tiles[0].shape);
+        const allSameColor = tiles.every(t => t.color === tiles[0].color);
+
+        return (allSameShape && !allSameColor) || (allSameColor && !allSameShape);
+    }
+
+    function resetMove() {
+        if (!isPlayerTurn || gameOver) return;
+
+        placedTiles.forEach(placed => {
+            delete board[`${placed.x},${placed.y}`];
+            playerHand[placed.handIndex] = placed.tile;
+        });
+        placedTiles = [];
+
+        // Check if board is empty after reset (fix for first move)
+        if (Object.keys(board).length === 0) {
+            isFirstMove = true;
+            document.getElementById('gameMessage').classList.remove('hidden');
+        }
+
+        renderBoard();
+        renderHand();
+    }
+
+    function placeMove() {
+        if (!isPlayerTurn || placedTiles.length === 0 || gameOver) return;
+
+        // Final validation
+        const allSameRow = placedTiles.every(p => p.y === placedTiles[0].y);
+        const allSameCol = placedTiles.every(p => p.x === placedTiles[0].x);
+
+        if (!allSameRow && !allSameCol) return;
+
+        let valid = true;
+        placedTiles.forEach(placed => {
+            if (!validateLine(placed.x, placed.y)) {
+                valid = false;
+            }
+        });
+
+        if (!valid) return;
+
+        // Lock tiles
+        placedTiles.forEach(placed => {
+            board[`${placed.x},${placed.y}`].locked = true;
+        });
+
+        // Calculate score
+        let points;
+        if (Object.keys(board).length === placedTiles.length) {
+            // First move
+            points = placedTiles.length * FIRST_MOVE_POINTS;
+            animateFirstMoveScore(placedTiles, points);
+        } else {
+            points = calculateScore(placedTiles.map(p => ({ x: p.x, y: p.y })));
+        }
+
+        playerScore += points;
+
+        // Check for CPU reactions
+        if (points >= CPU_SURPRISED_POINTS) {
+            setCpuState('surprised');
+        } else if (cpuReallyWinning && cpuScore < playerScore) {
+            setCpuState('defeat');
+        } else {
+            setCpuState('thinking');
+        }
+
+        // Update score difference flags
+        checkScoreDifferenceFlags();
+
+        // Refill hand by adding new tiles to the end
+        playerHand = playerHand.filter(tile => tile !== null); // Remove played tiles
+        const playerTilesNeeded = TILES_IN_HAND - playerHand.length;
+        for (let i = 0; i < playerTilesNeeded; i++) {
+            playerHand.push(createUniqueTile(playerHand)); // Add new tiles
+        }
+        placedTiles = [];
+
+        updateScores();
+        renderBoard();
+        renderHand();
+
+        if (playerScore >= POINTS_TO_WIN) {
+            endGame('player');
+            return;
+        }
+
+        isPlayerTurn = false;
+        updateTurnIndicator();
+
+        let delay = Math.random() * (CPU_DELAY_MAX - CPU_DELAY_MIN) + CPU_DELAY_MIN;
+        if (cpuState === 'surprised') {
+            delay += GIF_DURATION_SURPRISED;
+        } else if (cpuState === 'defeat') {
+            delay += GIF_DURATION_DEFEAT;
+        }
+        setTimeout(cpuTurn, delay);
+    }
+
+    function skipTurn() {
+        if (!isPlayerTurn || gameOver) return;
+
+        if (placedTiles.length > 0) {
+            resetMove();
+        }
+
+        // --- Animation Logic ---
+
+        const handEl = document.getElementById('playerHand');
+        const tileElements = Array.from(handEl.children);// Delay between the start of each tile's animation
+
+        if (tileElements.length > 0) {
+            // 1. Set up the staggered animation for each tile. This is "fire and forget".
+            tileElements.forEach((tileEl, index) => {
+                // We need the original hand index before it gets overwritten
+                const handIndex = parseInt(tileEl.dataset.handIndex);
+
+                // Timeout to start the animation
+                setTimeout(() => {
+                    tileEl.style.animation = `replace-tile ${REFRESH_ANIM_DURATION}ms ease-in-out forwards`;
+                }, index * REFRESH_ANIM_DELAY);
+
+                // Timeout for the mid-point swap of data and visuals
+                setTimeout(() => {
+                    const newTile = createUniqueTile(playerHand);
+                    playerHand[handIndex] = newTile; // Update the master data array
+
+                    // Directly update the tile element
+                    tileEl.className = `tile tile-${newTile.color} aurebesh`;
+                    tileEl.textContent = newTile.shape;
+                    tileEl.dataset.shape = newTile.shape;
+                    tileEl.dataset.color = newTile.color;
+                }, (index * REFRESH_ANIM_DELAY) + (REFRESH_ANIM_DURATION / 2));
+            });
+
+            // 2. Set up a final cleanup task to run after the last animation is done.
+            const totalDuration = (tileElements.length - 1) * REFRESH_ANIM_DELAY + REFRESH_ANIM_DURATION;
+            setTimeout(() => {
+                // Re-render the hand to ensure all elements are clean and draggable
+                renderHand();
+            }, totalDuration);
+        }
+
+        // 3. Immediately switch to the CPU's turn. The game no longer waits for the animation.
+        isPlayerTurn = false;
+        updateTurnIndicator();
+        setCpuState('thinking');
+
+        const delay = Math.random() * (CPU_DELAY_MAX - CPU_DELAY_MIN) + CPU_DELAY_MIN;
+        setTimeout(cpuTurn, delay);
+    }
+
+    function animateFirstMoveScore(positions, totalScore) {
+        positions.forEach((pos, index) => {
+            setTimeout(() => {
+                const cell = document.querySelector(`[data-x="${pos.x}"][data-y="${pos.y}"]`);
+                if (cell) {
+                    const tile = cell.querySelector('.tile');
+                    if (tile) {
+                        tile.classList.add('flash');
+                        setTimeout(() => tile.classList.remove('flash'), 600);
+                    }
+                }
+            }, index * 100);
+        });
+
+        setTimeout(() => {
+            // Determine if the line is horizontal or vertical, as player placement order isn't guaranteed
+            const isHorizontal = positions.length > 1 ? positions[0].y === positions[1].y : true;
+
+            // Sort the positions to find the true start and end of the line
+            positions.sort((a, b) => isHorizontal ? a.x - b.x : a.y - b.y);
+
+            const firstPos = positions[0];
+            const lastPos = positions[positions.length - 1];
+
+            let popupX, popupY;
+
+            // Calculate the geometric center of the entire line
+            if (isHorizontal) {
+                popupX = (firstPos.x + lastPos.x + 1) * CELL_SIZE / 2;
+                popupY = firstPos.y * CELL_SIZE + (CELL_SIZE / 2);
+            } else { // The line is vertical
+                popupX = firstPos.x * CELL_SIZE + (CELL_SIZE / 2);
+                popupY = (firstPos.y + lastPos.y + 1) * CELL_SIZE / 2;
+            }
+
+            const boardEl = document.getElementById('board');
+            const popup = document.createElement('div');
+            popup.className = 'score-popup';
+            popup.textContent = `+${totalScore}`;
+            popup.style.left = popupX + 'px';
+            popup.style.top = popupY + 'px';
+            boardEl.appendChild(popup);
+            setTimeout(() => popup.remove(), 1000);
+        }, positions.length * 100);
+    }
+
+    function calculateScore(positions) {
+        let totalScore = 0;
+        const scoredGroups = new Set();
+
+        positions.forEach(pos => {
+            const hLine = getLinePositions(pos.x, pos.y, true);
+            if (hLine.length > 1) {
+                const groupKey = `h-${hLine.map(p => `${p.x},${p.y}`).sort().join('|')}`;
+                if (!scoredGroups.has(groupKey)) {
+                    scoredGroups.add(groupKey);
+                    const score = hLine.length === MAX_LINE_LENGTH ? MAX_LINE_BONUS : hLine.length;
+                    totalScore += score;
+                    animateScore(hLine, score);
+                }
+            }
+
+            const vLine = getLinePositions(pos.x, pos.y, false);
+            if (vLine.length > 1) {
+                const groupKey = `v-${vLine.map(p => `${p.x},${p.y}`).sort().join('|')}`;
+                if (!scoredGroups.has(groupKey)) {
+                    scoredGroups.add(groupKey);
+                    const score = vLine.length === MAX_LINE_LENGTH ? MAX_LINE_BONUS : vLine.length;
+                    totalScore += score;
+                    animateScore(vLine, score);
+                }
+            }
+        });
+
+        return totalScore;
+    }
+
+    function getLinePositions(x, y, horizontal) {
+        const positions = [{ x, y }];
+
+        let i = 1;
+        while (true) {
+            const nx = horizontal ? x + i : x;
+            const ny = horizontal ? y : y + i;
+            if (board[`${nx},${ny}`]) {
+                positions.push({ x: nx, y: ny });
+                i++;
+            } else {
+                break;
+            }
+        }
+
+        i = 1;
+        while (true) {
+            const nx = horizontal ? x - i : x;
+            const ny = horizontal ? y : y - i;
+            if (board[`${nx},${ny}`]) {
+                positions.unshift({ x: nx, y: ny });
+                i++;
+            } else {
+                break;
+            }
+        }
+
+        return positions;
+    }
+
+    function animateScore(positions, score) {
+        positions.forEach((pos, index) => {
+            setTimeout(() => {
+                const cell = document.querySelector(`[data-x="${pos.x}"][data-y="${pos.y}"]`);
+                if (cell) {
+                    const tile = cell.querySelector('.tile');
+                    if (tile) {
+                        tile.classList.add('flash');
+                        setTimeout(() => tile.classList.remove('flash'), 600);
+                    }
+                }
+            }, index * 100);
+        });
+
+        setTimeout(() => {
+            const firstPos = positions[0];
+            const lastPos = positions[positions.length - 1];
+
+            let popupX, popupY;
+
+            // Check if the line is horizontal (all Ys will be the same)
+            if (firstPos.y === lastPos.y) {
+                popupX = (firstPos.x + lastPos.x + 1) * CELL_SIZE / 2;
+                popupY = firstPos.y * CELL_SIZE + (CELL_SIZE / 2);
+            } else { // The line is vertical
+                popupX = firstPos.x * CELL_SIZE + (CELL_SIZE / 2);
+                popupY = (firstPos.y + lastPos.y + 1) * CELL_SIZE / 2;
+            }
+
+            const boardEl = document.getElementById('board');
+            const popup = document.createElement('div');
+            popup.className = 'score-popup';
+            popup.textContent = `+${score}`;
+            popup.style.left = popupX + 'px';
+            popup.style.top = popupY + 'px';
+            boardEl.appendChild(popup);
+            setTimeout(() => popup.remove(), 1000);
+        }, positions.length * 100);
+    }
+
+    function cpuTurn() {
+        const moves = findBestMoves();
+
+        if (moves.length === 0) {
+            // CPU skips
+            setCpuState('skip'); // Set the state without a self-reverting timer.
+
+            // This timeout now has full control over ending the 'skip' state.
+            setTimeout(() => {
+                isPlayerTurn = true;
+                updateTurnIndicator();
+                setCpuState('waiting'); // Unconditionally set state to 'waiting' for the player's turn.
+            }, GIF_DURATION_SKIP);
+            return;
+        }
+
+        const bestMove = moves[0];
+
+        bestMove.positions.forEach((pos, index) => {
+            board[`${pos.x},${pos.y}`] = { ...cpuHand[bestMove.indices[index]], locked: true };
+            cpuHand[bestMove.indices[index]] = null;
+        });
+
+        let points;
+        if (Object.keys(board).length === bestMove.positions.length) {
+            // First move
+            points = bestMove.positions.length * FIRST_MOVE_POINTS;
+            animateFirstMoveScore(bestMove.positions, points);
+        } else {
+            points = calculateScore(bestMove.positions);
+        }
+
+        const oldCpuScore = cpuScore;
+        cpuScore += points;
+
+        // Check for tide turning
+        if (cpuFallingBehind && cpuScore > playerScore) {
+            setCpuState('victory', GIF_DURATION_VICTORY);
+            cpuFallingBehind = false;
+        } else if (cpuReallyWinning && cpuScore < playerScore) {
+            cpuReallyWinning = false;
+        }
+
+        // Update score difference flags
+        checkScoreDifferenceFlags();
+
+        cpuHand = cpuHand.filter(tile => tile !== null); // Remove played tiles
+        const cpuTilesNeeded = TILES_IN_HAND - cpuHand.length;
+        for (let i = 0; i < cpuTilesNeeded; i++) {
+            cpuHand.push(createUniqueTile(cpuHand)); // Add new tiles
+        }
+
+        if (isFirstMove) {
+            isFirstMove = false;
+            document.getElementById('gameMessage').classList.add('hidden');
+        }
+
+        updateScores();
+        renderBoard();
+
+        if (cpuScore >= POINTS_TO_WIN) {
+            endGame('cpu');
+            return;
+        }
+
+        setTimeout(() => {
+            isPlayerTurn = true;
+            updateTurnIndicator();
+            if (cpuState !== 'victory') {
+                setCpuState('waiting');
+            }
+        }, 1000);
+    }
+
+    function findBestMoves() {
+        // --- Special logic for the FIRST move ---
+        if (Object.keys(board).length === 0) {
+            const handAsArray = cpuHand.map((tile, index) => ({ tile, index })).filter(t => t.tile);
+            let bestLine = { indices: [], tiles: [] };
+
+            // 1. Find the longest possible valid line from the hand, starting from the max length downwards.
+            for (let size = Math.min(MAX_LINE_LENGTH, handAsArray.length); size >= 2; size--) {
+                // Get all combinations of tile-indices of the current size
+                const indexCombinations = getCombinations(handAsArray.map(t => t.index), size);
+
+                for (const indexCombo of indexCombinations) {
+                    const tileCombo = indexCombo.map(i => cpuHand[i]);
+                    if (isValidGroup(tileCombo)) {
+                        // Found a valid line. Since we're searching from longest to shortest,
+                        // this is the best one we can make.
+                        bestLine = { indices: indexCombo, tiles: tileCombo };
+                        break; // Exit the inner loop
+                    }
+                }
+                if (bestLine.indices.length > 0) {
+                    break; // Exit the outer loop once the best line is found
+                }
+            }
+
+            // 2. If no line of 2+ tiles was found, the best move is to just play one tile.
+            if (bestLine.indices.length === 0 && handAsArray.length > 0) {
+                bestLine = { indices: [handAsArray[0].index], tiles: [handAsArray[0].tile] };
+            }
+
+            // 3. If the hand is empty (edge case), there are no moves to make.
+            if (bestLine.indices.length === 0) {
+                return [];
+            }
+
+            // 4. Calculate the centered board positions for the chosen line.
+            const lineLength = bestLine.tiles.length;
+            const centerX = Math.floor(GRID_SIZE / 2);
+            const centerY = Math.floor(GRID_SIZE / 2);
+            const startX = centerX - Math.floor(lineLength / 2); // Offset to center the line
+
+            const positions = bestLine.indices.map((_, i) => ({ x: startX + i, y: centerY }));
+
+            // 5. Construct the final move object and return it.
+            const move = {
+                positions: positions,
+                indices: bestLine.indices,
+                score: lineLength * FIRST_MOVE_POINTS
+            };
+            return [move];
+        }
+
+        // --- Logic for all SUBSEQUENT moves ---
+        else {
+            const moves = [];
+            const emptyCells = getEmptyCells();
+            const tileIndices = cpuHand.map((tile, idx) => tile ? idx : null).filter(idx => idx !== null);
+
+            for (let size = 1; size <= Math.min(3, tileIndices.length); size++) {
+                const tileCombos = getCombinations(tileIndices, size);
+
+                for (const combo of tileCombos) {
+                    for (const cell of emptyCells) {
+                        for (const dir of ['horizontal', 'vertical']) {
+                            const positions = [];
+                            for (let i = 0; i < size; i++) {
+                                const x = cell.x + (dir === 'horizontal' ? i : 0);
+                                const y = cell.y + (dir === 'vertical' ? i : 0);
+                                if (board[`${x},${y}`]) {
+                                    positions.length = 0;
+                                    break;
+                                }
+                                if (x < 0 || y < 0 || x >= GRID_SIZE || y >= GRID_SIZE || board[`${x},${y}`]) {
+                                    positions.length = 0;
+                                    break;
+                                }
+                                positions.push({ x, y });
+                            }
+
+                            if (positions.length === size) {
+                                for (let i = 0; i < size; i++) {
+                                    board[`${positions[i].x},${positions[i].y}`] = cpuHand[combo[i]];
+                                }
+                                const allValid = positions.every(pos => validateLine(pos.x, pos.y));
+                                if (allValid) {
+                                    const score = simulateScore(positions);
+                                    moves.push({ positions, indices: combo, score });
+                                }
+                                for (let pos of positions) {
+                                    delete board[`${pos.x},${pos.y}`];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            moves.sort((a, b) => b.score - a.score);
+            return moves.slice(0, 10);
+        }
+    }
+
+    // helper
+    function getCombinations(arr, k) {
+        if (k === 1) return arr.map(v => [v]);
+        const combos = [];
+        arr.forEach((val, idx) => {
+            const rest = getCombinations(arr.slice(idx + 1), k - 1);
+            rest.forEach(c => combos.push([val, ...c]));
+        });
+        return combos;
+    }
+
+
+    function getEmptyCells() {
+        const cells = [];
+        const seen = new Set();
+
+        for (let x = 0; x < GRID_SIZE; x++) {
+            for (let y = 0; y < GRID_SIZE; y++) {
+                if (!board[`${x},${y}`]) {
+                    const neighbors = [
+                        [x + 1, y], [x - 1, y],
+                        [x, y + 1], [x, y - 1]
+                    ];
+
+                    for (let [nx, ny] of neighbors) {
+                        if (board[`${nx},${ny}`]) {
+                            const key = `${x},${y}`;
+                            if (!seen.has(key)) {
+                                cells.push({ x, y });
+                                seen.add(key);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return cells;
+    }
+
+    function simulateScore(positions) {
+        const score = calculateScoreSimple(positions.map(p => ({ x: p.x, y: p.y })));
+        return score;
+    }
+
+    function calculateScoreSimple(positions) {
+        let totalScore = 0;
+
+        positions.forEach(pos => {
+            const hLine = getLinePositions(pos.x, pos.y, true);
+            const vLine = getLinePositions(pos.x, pos.y, false);
+
+            if (hLine.length > 1) {
+                totalScore += hLine.length === MAX_LINE_LENGTH ? MAX_LINE_BONUS : hLine.length;
+            }
+            if (vLine.length > 1) {
+                totalScore += vLine.length === MAX_LINE_LENGTH ? MAX_LINE_BONUS : vLine.length;
+            }
+        });
+
+        return totalScore;
+    }
+
+    function updateScores() {
+        document.getElementById('playerScore').textContent = playerScore;
+        document.getElementById('cpuScore').textContent = cpuScore;
+    }
+
+    function endGame(winner) {
+        gameOver = true;
+
+        if (winner === 'player') {
+            document.getElementById('playerHud').classList.add('winner');
+            document.getElementById('cpuHud').classList.add('dimmed');
+            document.getElementById('gameMessage').innerHTML = `${document.getElementById('playerName').textContent}<br>WINS!`;
+            setCpuState('defeat');
+        } else {
+            document.getElementById('cpuHud').classList.add('winner');
+            document.getElementById('playerHud').classList.add('dimmed');
+            document.getElementById('gameMessage').innerHTML = `${document.getElementById('cpuName').textContent}<br>WINS!`;
+            setCpuState('victory');
+        }
+
+        document.getElementById('gameMessage').classList.remove('hidden');
+
+        // Add reset button
+        setTimeout(() => {
+            const controls = document.querySelector('.controls');
+            controls.innerHTML = ''; // clear old content if needed
+
+            const btn = document.createElement('button');
+            btn.textContent = 'NEW GAME';
+            btn.classList.add('side-button');
+            btn.addEventListener('click', resetGame);
+
+            controls.appendChild(btn);
+        }, 1000);
+    }
+
+    function resetGame() {
+        board = {};
+        playerHand = [];
+        cpuHand = [];
+        placedTiles = [];
+        playerScore = 0;
+        cpuScore = 0;
+        isFirstMove = true;
+        isPlayerTurn = true;
+        gameOver = false;
+        cpuFallingBehind = false;
+        cpuReallyWinning = false;
+
+        document.getElementById('playerHud').classList.remove('winner', 'dimmed');
+        document.getElementById('cpuHud').classList.remove('winner', 'dimmed');
+        document.getElementById('gameMessage').innerHTML = 'MAKE THE<br>FIRST MOVE!';
+        document.getElementById('gameMessage').classList.remove('hidden');
+
+        const controls = document.querySelector('.controls');
+        controls.innerHTML = `
+                <button id="resetMove">RESET MOVE</button>
+                <button id="placeMove">PLACE TILES</button>
+                <button id="skipTurn">SKIP TURN</button>
+            `;
+
+        document.getElementById('resetMove').addEventListener('click', resetMove);
+        document.getElementById('placeMove').addEventListener('click', placeMove);
+        document.getElementById('skipTurn').addEventListener('click', skipTurn);
+
+        initGame();
+    }
+
+    // Event listeners
+    document.getElementById('resetMove').addEventListener('click', resetMove);
+    document.getElementById('placeMove').addEventListener('click', placeMove);
+    document.getElementById('skipTurn').addEventListener('click', skipTurn);
+
+    window.addEventListener('resize', () => {
+        updateSizing();
+        renderBoard();
+        renderHand();
+    });
+
+    // Prevent text selection while dragging
+    document.addEventListener('selectstart', (e) => {
+        if (draggedElement) e.preventDefault();
+    });
+
+    // Start game
+    initGame();
+</script>
+</body>
+</html>
