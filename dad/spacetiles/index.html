@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.png">
     <title>SPACE TILES</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
@@ -474,7 +475,7 @@
     const MAX_LINE_BONUS = 12;
     const FIRST_MOVE_POINTS = 1;
     const CPU_SURPRISED_POINTS = 10;
-    const SCORE_DIFFERENCE_THRESHOLD = 1;
+    const SCORE_DIFFERENCE_THRESHOLD = 7;
 
     // CPU GIF durations
     const GIF_DURATION_SKIP = 2000;
@@ -1325,7 +1326,15 @@
 
         if (moves.length === 0) {
             // CPU skips
-            setCpuState('skip'); // Set the state without a self-reverting timer.
+            setCpuState('skip');
+
+            // BUG FIX: Swap the CPU's tiles when it skips.
+            // This prevents an infinite skip loop if the CPU has an unplayable hand.
+            const newCpuHand = [];
+            for (let i = 0; i < TILES_IN_HAND; i++) {
+                newCpuHand.push(createUniqueTile(newCpuHand));
+            }
+            cpuHand = newCpuHand;
 
             // This timeout now has full control over ending the 'skip' state.
             setTimeout(() => {
