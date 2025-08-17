@@ -468,8 +468,8 @@
     // Game configuration variables
     const POINTS_TO_WIN = 100;
     const TILES_IN_HAND = 6;
-    const CPU_DELAY_MIN = 1000;
-    const CPU_DELAY_MAX = 3000;
+    const CPU_DELAY_MIN = 1200;
+    const CPU_DELAY_MAX = 3200;
     const GRID_SIZE = 11;
     const MAX_LINE_LENGTH = 6;
     const MAX_LINE_BONUS = 12;
@@ -1625,10 +1625,10 @@
 
         const controls = document.querySelector('.controls');
         controls.innerHTML = `
-                <button id="resetMove">RESET MOVE</button>
-                <button id="placeMove">PLACE TILES</button>
-                <button id="skipTurn">SKIP TURN</button>
-            `;
+            <button id="resetMove" class="side-button">RESET MOVE</button>
+            <button id="placeMove" class="main-button">PLACE TILES</button>
+            <button id="skipTurn" class="side-button">SKIP + SWAP</button>
+        `;
 
         document.getElementById('resetMove').addEventListener('click', resetMove);
         document.getElementById('placeMove').addEventListener('click', placeMove);
