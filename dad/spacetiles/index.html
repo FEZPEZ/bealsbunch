@@ -1084,6 +1084,7 @@
             setCpuState('surprised');
         } else if (cpuReallyWinning && cpuScore < playerScore) {
             setCpuState('defeat');
+            cpuReallyWinning = false;
         } else {
             setCpuState('thinking');
         }
