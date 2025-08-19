@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Countdown</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root{
+            --bg1:#fff6fb;
+            --bg2:#ffeef6;
+            --bg3:#fce8ff;
+            --p1:#ffb3c7;
+            --p2:#ffd1e0;
+            --p3:#ffc6ff;
+            --p4:#ffe9b6;
+            --shadow:#00000018;
+            --glow:#ffffffcc;
+            --ink:#222;
+            --muted:#5b5b5b;
+            --btn:#ffffffc7;
+            --btnBorder:#00000014;
+            --btnActive:#ffe2f2;
+            --btnText:#333;
+            --btnTextActive:#111;
+        }
+
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            display: grid;
+            place-items: center;
+            background:
+                    radial-gradient(1200px 800px at 10% 10%, var(--bg3), transparent 70%),
+                    radial-gradient(1000px 700px at 90% 15%, var(--bg2), transparent 70%),
+                    radial-gradient(900px 700px at 20% 80%, var(--bg1), transparent 70%),
+                    linear-gradient(180deg, #fff, #ffeef8 60%, #fff);
+            overflow: hidden;
+            color: var(--ink);
+            font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+        }
+
+        /* Static scattered petals */
+        .petal {
+            position: absolute;
+            width: var(--w);
+            height: calc(var(--w) * 0.55);
+            left: var(--x);
+            top: var(--y);
+            transform: rotate(var(--r));
+            opacity: var(--o, .45);
+            pointer-events: none;
+            z-index: 1;
+            border-radius: 60% 60% 60% 60% / 100% 100% 40% 40%;
+            background:
+                    radial-gradient(120% 140% at 50% 5%, var(--c1), var(--c2) 60%),
+                    radial-gradient(100% 100% at 60% 70%, #ffffff99, transparent 60%);
+            box-shadow: 0 8px 18px var(--shadow);
+            filter: blur(0.2px) saturate(1.02);
+        }
+
+        .vignette {
+            position: fixed;
+            inset: -10vmax;
+            pointer-events: none;
+            background: radial-gradient(1000px 700px at 50% 50%, transparent 60%, #0000000e 100%);
+            z-index: 1;
+        }
+
+        .stack {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            gap: 1.25rem;
+            place-items: center;
+            text-align: center;
+            padding: 2rem 1rem 3rem;
+        }
+
+        .line {
+            font-size: clamp(16px, 2.4vw, 28px);
+            font-weight: 600;
+            letter-spacing: .01em;
+            color: var(--muted);
+            text-shadow: 0 0 20px var(--glow);
+            user-select: none;
+        }
+
+        .number {
+            font-weight: 800;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+            font-size: clamp(44px, 14vw, 22rem);
+            color: var(--ink);
+            text-shadow: 0 0 20px var(--glow), 0 0 40px var(--glow);
+            user-select: none;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: .6rem;
+            margin-top: .5rem;
+        }
+        .controls button {
+            appearance: none;
+            border: 1px solid var(--btnBorder);
+            background: var(--btn);
+            padding: .65rem .9rem;
+            border-radius: 999px;
+            font-weight: 650;
+            letter-spacing: .01em;
+            color: var(--btnText);
+            cursor: pointer;
+            transition: transform .05s ease;
+            user-select: none;
+            backdrop-filter: blur(2px);
+        }
+        .controls button:hover { transform: translateY(-1px); }
+        .controls button[aria-pressed="true"] {
+            background: var(--btnActive);
+            color: var(--btnTextActive);
+            border-color: #00000022;
+            box-shadow: 0 6px 16px #00000018, inset 0 1px 0 #ffffffaa;
+        }
+    </style>
+</head>
+<body>
+<!-- Static petals -->
+<div class="petal" style="--w:22vmin; --x:6%;  --y:10%; --r:-22deg; --c1:var(--p1); --c2:var(--p2); --o:.35;"></div>
+<div class="petal" style="--w:18vmin; --x:16%; --y:22%; --r:35deg;  --c1:var(--p3); --c2:var(--p2); --o:.40;"></div>
+<div class="petal" style="--w:14vmin; --x:28%; --y:8%;  --r:12deg;  --c1:var(--p4); --c2:var(--p1); --o:.42;"></div>
+<div class="petal" style="--w:20vmin; --x:78%; --y:12%; --r:-8deg;  --c1:var(--p2); --c2:var(--p3); --o:.34;"></div>
+<div class="petal" style="--w:12vmin; --x:88%; --y:28%; --r:44deg;  --c1:var(--p1); --c2:var(--p4); --o:.38;"></div>
+<div class="petal" style="--w:16vmin; --x:70%; --y:34%; --r:-30deg; --c1:var(--p3); --c2:var(--p1); --o:.36;"></div>
+<div class="petal" style="--w:24vmin; --x:5%;  --y:72%; --r:18deg;  --c1:var(--p4); --c2:var(--p2); --o:.33;"></div>
+<div class="petal" style="--w:14vmin; --x:18%; --y:78%; --r:-14deg; --c1:var(--p2); --c2:var(--p3); --o:.37;"></div>
+<div class="petal" style="--w:18vmin; --x:30%; --y:82%; --r:26deg;  --c1:var(--p1); --c2:var(--p4); --o:.35;"></div>
+<div class="petal" style="--w:12vmin; --x:40%; --y:74%; --r:-6deg;  --c1:var(--p3); --c2:var(--p2); --o:.40;"></div>
+<div class="petal" style="--w:22vmin; --x:82%; --y:70%; --r:-24deg; --c1:var(--p2); --c2:var(--p1); --o:.32;"></div>
+<div class="petal" style="--w:15vmin; --x:64%; --y:84%; --r:10deg;  --c1:var(--p4); --c2:var(--p3); --o:.34;"></div>
+<div class="petal" style="--w:13vmin; --x:52%; --y:18%; --r:-18deg; --c1:var(--p1); --c2:var(--p2); --o:.38;"></div>
+<div class="petal" style="--w:16vmin; --x:58%; --y:10%; --r:20deg;  --c1:var(--p3); --c2:var(--p4); --o:.36;"></div>
+<div class="petal" style="--w:10vmin; --x:6%;  --y:45%; --r:32deg;  --c1:var(--p2); --c2:var(--p1); --o:.40;"></div>
+<div class="petal" style="--w:11vmin; --x:90%; --y:50%; --r:-32deg; --c1:var(--p4); --c2:var(--p2); --o:.40;"></div>
+<div class="petal" style="--w:12vmin; --x:46%; --y:6%;  --r:-10deg; --c1:var(--p2); --c2:var(--p3); --o:.38;"></div>
+<div class="petal" style="--w:14vmin; --x:74%; --y:58%; --r:8deg;   --c1:var(--p1); --c2:var(--p4); --o:.36;"></div>
+
+<div class="vignette" aria-hidden="true"></div>
+
+<div class="stack" role="group" aria-label="Wedding countdown">
+    <div id="topText" class="line" aria-hidden="true">only</div>
+    <div id="value" class="number" role="status" aria-live="polite">0</div>
+    <div id="bottomText" class="line" aria-hidden="true">seconds until you're married</div>
+
+    <div class="controls" role="toolbar" aria-label="Units">
+        <button type="button" data-mode="seconds" aria-pressed="true">Seconds</button>
+        <button type="button" data-mode="venus">Venus days</button>
+        <button type="button" data-mode="cars">Cars across Golden Gate</button>
+        <button type="button" data-mode="weddings">Other weddings</button>
+        <button type="button" data-mode="emoji">Emoji movies</button>
+    </div>
+</div>
+
+<script>
+    // Target: Oct 4, 2025, 5:00 PM America/Los_Angeles (PDT at that date)
+    const target = new Date('2025-10-04T17:00:00-07:00').getTime();
+
+    // Rates / conversions
+    const SEC_PER_DAY = 86400;
+    const VENUS_SOLAR_DAY_SECONDS = 116.75 * SEC_PER_DAY; // one Venus solar day ≈ 116.75 Earth days
+    const CARS_PER_SEC = 112000 / SEC_PER_DAY;           // 112,000 cars/day
+    const WEDDINGS_PER_SEC = 6000 / SEC_PER_DAY;         // 6,000 weddings/day
+    const EMOJI_MOVIE_SECONDS = 86 * 60;                 // 86 minutes per viewing
+
+    // UI
+    const valueEl = document.getElementById('value');
+    const topEl = document.getElementById('topText');
+    const bottomEl = document.getElementById('bottomText');
+    const buttons = Array.from(document.querySelectorAll('.controls button'));
+
+    // Modes
+    const MODES = {
+        seconds: {
+            top: 'in about',
+            bottom: "seconds, you'll be married",
+            format: n => n.toLocaleString('en-US'),
+            compute: msLeft => Math.floor(msLeft / 1000),
+        },
+        venus: {
+            top: 'there are only',
+            bottom: "Venus days until you're married",
+            format: n => n.toLocaleString('en-US', { minimumFractionDigits: 5, maximumFractionDigits: 5 }),
+            compute: msLeft => Math.max(0, (msLeft / 1000) / VENUS_SOLAR_DAY_SECONDS),
+        },
+        cars: {
+            top: 'a car will drive across the Golden Gate Bridge',
+            bottom: "more times, and then you'll be married",
+            format: n => n.toLocaleString('en-US'),
+            compute: msLeft => Math.floor((msLeft / 1000) * CARS_PER_SEC),
+        },
+        weddings: {
+            top: 'other people will get married',
+            bottom: "times before you are",
+            format: n => n.toLocaleString('en-US'),
+            compute: msLeft => Math.floor((msLeft / 1000) * WEDDINGS_PER_SEC),
+        },
+        emoji: {
+            top: 'watch The Emoji Movie',
+            bottom: "times and you'll be married",
+            format: n => n.toLocaleString('en-US'),
+            compute: msLeft => Math.floor((msLeft / 1000) / EMOJI_MOVIE_SECONDS),
+        }
+    };
+
+    let mode = 'seconds';
+    let lastRendered = '';
+
+    function setMode(next) {
+        mode = next in MODES ? next : 'seconds';
+        buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+        // Update captions immediately for the chosen mode
+        topEl.textContent = MODES[mode].top;
+        bottomEl.textContent = MODES[mode].bottom;
+        tick(true);
+    }
+
+    function msRemaining() {
+        const now = Date.now();
+        return Math.max(0, target - now);
+    }
+
+    function tick(force = false) {
+        const msLeft = msRemaining();
+        const m = MODES[mode];
+        const raw = m.compute(msLeft);
+        const display =
+            mode === 'venus'
+                ? m.format(Math.max(0, raw))
+                : m.format(Math.max(0, Math.trunc(raw))); // integers for non-Venus modes
+
+        if (force || display !== lastRendered) {
+            valueEl.textContent = display;
+            lastRendered = display;
+        }
+    }
+
+    // Event wiring
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => setMode(btn.dataset.mode));
+    });
+
+    // Initialize
+    setMode('seconds');
+
+    // Update loop:
+    // - 20ms so "Venus days" shows smooth fractional updates
+    // - Other modes only repaint when their integer value actually changes
+    const interval = setInterval(() => {
+        tick(false);
+        if (msRemaining() <= 0) {
+            // Ensure final zeros across modes
+            tick(true);
+            clearInterval(interval);
+        }
+    }, 20);
+</script>
+</body>
+</html>
