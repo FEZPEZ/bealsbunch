@@ -5,12 +5,12 @@
         imageWidth: 200,
         imageHeight: 120,
         initialSpeed: 1,
-        initGravityStrength: 0.04,
-        maxGravityStrength: 0.07,
+        initGravityStrength: 0.01,
+        maxGravityStrength: 0.05,
         frictionAir: 0,
         SPEED_THRESHOLD: 25, // percentage of speed of light
         UNIT_TO_MPS: 3_000_000,
-        MAX_BG_SCROLL_SPEED: 7, // pixels per frame (adjust to taste)
+        MAX_BG_SCROLL_SPEED: 7,
         C: 299792458,
         numStars: 200,
         starMinSize: 1,
@@ -38,6 +38,15 @@
     let egsExploded = false;
 
     let egsBgOffset = { x: 0, y: 0 };
+
+    // =============================
+    // AUDIO
+    // =============================
+    const egsAudio = new Audio(COON_IMAGE_DIR + "moon-theme.mp3");
+    egsAudio.loop = true;
+    let egsAudioPlaying = false;
+
+    const egsExplosionAudio = new Audio(COON_IMAGE_DIR + "explosion-meme.mp3");
 
     // =============================
     // CREATE RACCOON
@@ -132,7 +141,14 @@
     // SNAP WRAP AROUND EDGES + DOM SYNC
     // =============================
     Events.on(egsEngine, "afterUpdate", () => {
-        if (egsExploded) return;
+        if (egsExploded) {
+            if (egsAudioPlaying) {
+                egsAudio.pause();
+                egsAudio.currentTime = 0;
+                egsAudioPlaying = false;
+            }
+            return;
+        }
 
         const w = egsWrapper.clientWidth;
         const h = egsWrapper.clientHeight;
@@ -158,15 +174,32 @@
                 const speedMps = speedUnits * EGS_CONFIG.UNIT_TO_MPS;
                 const fracC = speedMps / EGS_CONFIG.C;
 
+                // start audio if not already
+                if (!egsAudioPlaying) {
+                    egsAudio.play().catch(() => {});
+                    egsAudioPlaying = true;
+                }
+
                 if (fracC >= 0.9991) {
                     egsGauge.textContent = "Speed: ∞ c";
                     Body.setVelocity(egsRaccoonBody, { x: 0, y: 0 });
                     egsRaccoonContainer.style.display = "none";
                     egsExplosion.style.display = "block";
                     egsExploded = true;
+
+                    // stop moon-theme if it’s playing
+                    if (egsAudioPlaying) {
+                        egsAudio.pause();
+                        egsAudio.currentTime = 0;
+                        egsAudioPlaying = false;
+                    }
+
+                    // play explosion sound once
+                    egsExplosionAudio.currentTime = 0;
+                    egsExplosionAudio.play().catch(() => {});
                 } else {
                     const displayVal = fracC.toFixed(3);
-                    egsGauge.style.display = "block";
+                    egsGauge.style.display = "block";   // THIS was missing
                     egsGauge.textContent = `Speed: ${displayVal} c`;
 
                     egsRaccoonFast.style.opacity = fracC >= 0.5
@@ -174,6 +207,12 @@
                         : 0;
                 }
             } else {
+                // stop audio if playing
+                if (egsAudioPlaying) {
+                    egsAudio.pause();
+                    egsAudio.currentTime = 0;
+                    egsAudioPlaying = false;
+                }
                 egsGauge.style.display = "none";
                 egsRaccoonFast.style.opacity = 0;
             }
