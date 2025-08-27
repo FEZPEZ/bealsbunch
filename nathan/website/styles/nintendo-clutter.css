@@ -1,0 +1,102 @@
+/* Scope everything to your injected section */
+#geocities-clutter-section {
+    border: 10px groove lime;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-size: 16px; /* Tailwind resets to 1rem system font */
+    line-height: 1.4;
+    color: black;
+    background: white;
+}
+
+/* Header */
+#geocities-clutter-section .geocities-clutter-header {
+    text-align: center;
+    text-shadow: 2px 2px 0 red, 4px 4px 0 blue;
+    font-size: 2.5em;
+    margin: 0;
+    padding: 10px;
+    background: repeating-linear-gradient(
+            45deg,
+            #ff00ff,
+            #ff00ff 10px,
+            #00ffff 10px,
+            #00ffff 20px
+    );
+}
+
+/* Column layout */
+#geocities-clutter-section .geocities-clutter-columns {
+    display: flex;
+    flex-wrap: nowrap;   /* force horizontal */
+    overflow-x: auto;
+    height: 100vh;
+}
+
+#geocities-clutter-section .geocities-clutter-column {
+    flex: 0 0 300px;
+    border: 5px dotted red;
+    margin: 2px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Each section inside a column */
+#geocities-clutter-section .geocities-clutter-section {
+    border: 3px solid black;
+    margin: 5px;
+    padding: 10px;
+    background: linear-gradient(135deg, yellow, pink);
+    overflow-y: auto; /* make each scrollable */
+}
+
+/* Flexible height helpers */
+#geocities-clutter-section .half       { flex: 0 0 50%; }
+#geocities-clutter-section .third      { flex: 0 0 33.333%; }
+#geocities-clutter-section .two-thirds { flex: 0 0 66.666%; }
+
+/* Themed looks */
+#geocities-clutter-section .geocities-space-theme        { background: black; color: lime; }
+#geocities-clutter-section .geocities-tractor-theme      { background: darkgreen; color: yellow; }
+#geocities-clutter-section .geocities-romance-theme      { background: pink; color: red; font-style: italic; }
+#geocities-clutter-section .geocities-construction-theme { background: orange; color: black; border: 4px dashed yellow; }
+#geocities-clutter-section .geocities-videogame-theme    { background: purple; color: white; font-family: monospace; }
+#geocities-clutter-section .geocities-car-theme          { background: silver; color: blue; }
+#geocities-clutter-section .geocities-fishing-theme      { background: skyblue; color: navy; }
+#geocities-clutter-section .geocities-realestate-theme   { background: beige; color: maroon; }
+
+/* Restore Tailwind-preflighted elements */
+#geocities-clutter-section ul,
+#geocities-clutter-section ol {
+    list-style: initial;
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+#geocities-clutter-section table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 5px;
+}
+
+#geocities-clutter-section table,
+#geocities-clutter-section td,
+#geocities-clutter-section th {
+    border: 2px solid black;
+    padding: 2px;
+}
+
+#geocities-clutter-section img {
+    max-width: 100%;
+    display: block;
+    margin: auto;
+}
+
+#geocities-clutter-section marquee {
+    display: block;
+    background: #ff0;
+    color: #f00;
+    font-weight: bold;
+    padding: 2px 0;
+}

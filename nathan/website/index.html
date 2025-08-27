@@ -18,7 +18,7 @@ SONIC SECTION
 MOVIES + TV SHOWS -> random quotes, references, etc...
 ==METROID MURAL -> single gif
 SPACE -> eventually, all things must go to space (hover over that text -> coon)
-LOVE LIFE ->
+LOVE LIFE ->=
 
 -->
 
@@ -28,6 +28,7 @@ LOVE LIFE ->
     <meta charset="UTF-8" />
     <title>Scrolling Images with Frames</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <!-- Section-specific stylesheets -->
@@ -40,24 +41,44 @@ LOVE LIFE ->
     <link rel="stylesheet" href="styles/welcome.css">
     <link rel="stylesheet" href="styles/windowsxp.css">
     <link rel="stylesheet" href="styles/pixar-cars.css">
-    <link rel="stylesheet" href="styles/theater.css">
     <link rel="stylesheet" href="styles/smash-roster.css">
     <link rel="stylesheet" href="styles/xenoblade-scene.css">
     <link rel="stylesheet" href="styles/take-a-break.css">
     <link rel="stylesheet" href="styles/deschutes.css">
+    <link rel="stylesheet" href="styles/blog-intro.css">
+    <link rel="stylesheet" href="styles/sonic-speed.css">
+    <link rel="stylesheet" href="styles/book-report.css">
+    <link rel="stylesheet" href="styles/nintendo-clutter.css">
+    <link rel="stylesheet" href="styles/website-intro-stats.css">
 </head>
 
 
 <body>
 
 
+<div id="intro-overlay">
+    <div id="blog-intro" class="blogIntroBox"></div>
+</div>
+
+    <div id="website-intro-stats-section"></div>
 
     <div id="pixar-cars-section"></div>
 
+    <div id="windows-tabletop">
+        <img src="./assets/windows/dell-monitor-top.png"/>
+    </div>
     <div id="windows-xp-section"></div>
+    <div id="windows-tabletop">
+        <img src="./assets/windows/dell-monitor-bottom.png"/>
+    </div>
 
+    <div id="sonic-speed"></div>
 
+    <div id="book-report"></div>
 
+    <div id="dream-roster-tv">
+        <img src="./assets/smash-roster/tv-frame.png"/>
+    </div>
     <div id="dream-roster-wrapper">
         <div id="dream-roster-header">
             <img src="./assets/smash-roster/smash-header.jpg"/>
@@ -73,6 +94,7 @@ LOVE LIFE ->
 
     <div id="welcome-section"></div>
 
+    <div id="nintendo-clutter-section"></div>
     <div id="nintendo-section"></div>
 
     <div id="take-a-break">
@@ -83,6 +105,7 @@ LOVE LIFE ->
             <img src="./assets/take-a-break/wii-console.gif"/>
         </div>
     </div>
+
     <div id="deschutes-section">
         <div id="take-a-break-deschutes">
             <img id="deschutes-img" src="assets/deschutes/deschutes.jpg"/>
@@ -95,15 +118,20 @@ LOVE LIFE ->
 
     <div id="metroid-section"></div>
 
-    <div id="space-section"></div>
-
-
+    <div id="space-section">
+        <div id="egs-host">
+            <div id="egs-wrapper"></div>
+            <div id="egs-gauge">Speed: 0.000 c</div>
+            <div id="egs-explosion">
+                <img src="./assets/space/explosion.gif" alt="Explosion">
+                <div>this is what happens when coons go too fast</div>
+            </div>
+        </div>
+    </div>
 
     <script src="scripts/section-loader.js"></script>
-
     <script src="scripts/pixar-cars.js"></script>
     <script src="scripts/windowsxp.js"></script>
-    <script src="scripts/theater.js"></script>
     <script src="scripts/welcome.js"></script>
     <script src="scripts/nintendo.js"></script>
     <script src="scripts/plant-tag.js"></script>
@@ -113,5 +141,7 @@ LOVE LIFE ->
     <script src="scripts/smash-roster.js"></script>
     <script src="scripts/xenoblade-scene.js"></script>
     <script src="scripts/deschutes.js"></script>
+    <script src="scripts/blog-intro.js"></script>
+    <script src="scripts/sonic-speed.js"></script>
 </body>
 </html>

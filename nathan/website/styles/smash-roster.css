@@ -59,6 +59,10 @@
 #dream-roster-wrapper {
     background: var(--roster-bg-dark);
     width: 100%;
+}
+
+#dream-roster-wrapper,
+#dream-roster-wrapper * {
     cursor: var(--cursor-path), auto;
 }
 

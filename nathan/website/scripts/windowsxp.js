@@ -1,16 +1,23 @@
 // Windows XP Section Module
+
+const WINDOWS_SECRET_MESSAGE = "Fatal error: C:\\ABOVE.TABLE.EXE is not a table.";
+
 const WindowsXPSection = {
     WINDOWS_ICON_PATH: "./assets/windows/icons/",
     WINDOWS_IMAGE_PATH: "./assets/windows/images/",
     imageSize: 58,
     NUM_IMAGES: 132,
     LEFT_ICON_SPACING: 12,
-    ICON_SAFE_ZONE: 0.05, // The percentage of safe space where images won't load
+    ICON_SAFE_ZONE: 0.05,
     frontZIndex: 1000,
     icon5: null,
+    deletedFiles: new Set(),
+
+    // which images we care about deleting
+    specialTargets: new Set(["image107.png", "image116.png", "image5.png"]),//, "image116.png", "image5.png"]),
 
     init() {
-        document.addEventListener('sectionsLoaded', () => {
+        document.addEventListener("sectionsLoaded", () => {
             this.createWindowsXPDesktop();
         });
     },
@@ -19,15 +26,14 @@ const WindowsXPSection = {
         const container = document.getElementById("windows-xp");
         if (!container) return;
 
-        // Ensure container has position and sizing
         container.style.position = "relative";
         container.style.width = "100vw";
-        container.style.height = `${(9 / 16) * 100}vw`; // 16:9 aspect ratio
+        container.style.height = `${(9 / 16) * 100}vw`;
         container.style.maxHeight = "100vh";
         container.style.overflow = "hidden";
         container.style.backgroundColor = "#008080";
 
-        // Add taskbar elements
+        // Taskbar
         const start = document.createElement("img");
         start.src = "./assets/windows/windows-taskbar-start.png";
         Object.assign(start.style, {
@@ -62,7 +68,7 @@ const WindowsXPSection = {
 
         container.append(taskbar, start, clock);
 
-        // Add live clock text overlay
+        // Live clock text
         const clockText = document.createElement("div");
         Object.assign(clockText.style, {
             position: "absolute",
@@ -75,8 +81,8 @@ const WindowsXPSection = {
             color: "white",
             textAlign: "right",
             paddingRight: "20px",
-            zIndex: "11", // Above the clock image
-            pointerEvents: "none", // Let mouse go through
+            zIndex: "11",
+            pointerEvents: "none",
         });
 
         const updateClock = () => {
@@ -86,17 +92,15 @@ const WindowsXPSection = {
             const isPM = hours >= 12;
             if (hours === 0) hours = 12;
             else if (hours > 12) hours -= 12;
-
-            const formatted = `${hours}:${minutes.toString().padStart(2, "0")} ${isPM ? "PM" : "AM"}`;
-            clockText.textContent = formatted;
-        }
-
-        updateClock(); // Initial
-        setInterval(updateClock, 60 * 1000); // Update every minute
-
+            clockText.textContent = `${hours}:${minutes
+                .toString()
+                .padStart(2, "0")} ${isPM ? "PM" : "AM"}`;
+        };
+        updateClock();
+        setInterval(updateClock, 60 * 1000);
         container.appendChild(clockText);
 
-        // Add 7 icons along the left side
+        // Left icons
         for (let i = 1; i <= 7; i++) {
             const icon = document.createElement("img");
             icon.src = `${this.WINDOWS_ICON_PATH}icon${i}.png`;
@@ -113,15 +117,16 @@ const WindowsXPSection = {
             if (i === 5) this.icon5 = icon;
         }
 
-        // Defer image placement until layout is calculated
+        // Random icons
         requestAnimationFrame(() => {
             const rect = container.getBoundingClientRect();
             const maxX = rect.width - this.imageSize;
-            const maxY = rect.height - this.imageSize - 40; // reserve for taskbar
+            const maxY = rect.height - this.imageSize - 40;
 
             for (let i = 1; i <= this.NUM_IMAGES; i++) {
                 const img = document.createElement("img");
-                img.src = `${this.WINDOWS_IMAGE_PATH}image${i}.png`;
+                const fileName = `image${i}.png`;
+                img.src = `${this.WINDOWS_IMAGE_PATH}${fileName}`;
                 Object.assign(img.style, {
                     position: "absolute",
                     width: `${this.imageSize}px`,
@@ -138,6 +143,7 @@ const WindowsXPSection = {
                 img.style.left = `${x}px`;
                 img.style.top = `${y}px`;
                 img.classList.add("windows-icon");
+                img.dataset.filename = fileName;
 
                 this.enableDrag(img, container, this.icon5);
                 container.appendChild(img);
@@ -147,8 +153,10 @@ const WindowsXPSection = {
 
     enableDrag(img, container, icon5) {
         let isDragging = false;
-        let startX = 0, startY = 0;
-        let initialLeft = 0, initialTop = 0;
+        let startX = 0,
+            startY = 0;
+        let initialLeft = 0,
+            initialTop = 0;
 
         img.addEventListener("mousedown", (e) => {
             e.preventDefault();
@@ -163,27 +171,25 @@ const WindowsXPSection = {
 
             const onMouseMove = (eMove) => {
                 if (!isDragging) return;
-
                 const dx = eMove.clientX - startX;
                 const dy = eMove.clientY - startY;
 
                 const containerRect = container.getBoundingClientRect();
                 const maxX = containerRect.width - img.offsetWidth;
-                const maxY = containerRect.height - img.offsetHeight - 40; // avoid taskbar
+                const maxY = containerRect.height - img.offsetHeight - 40;
 
                 let newLeft = Math.max(0, Math.min(maxX, initialLeft + dx));
                 let newTop = Math.max(0, Math.min(maxY, initialTop + dy));
 
                 img.style.left = `${newLeft}px`;
                 img.style.top = `${newTop}px`;
-            }
+            };
 
             const onMouseUp = () => {
                 isDragging = false;
                 window.removeEventListener("mousemove", onMouseMove);
                 window.removeEventListener("mouseup", onMouseUp);
 
-                // Check if image center is inside icon5's bounds
                 const imgRect = img.getBoundingClientRect();
                 const imgCenterX = imgRect.left + imgRect.width / 2;
                 const imgCenterY = imgRect.top + imgRect.height / 2;
@@ -196,15 +202,109 @@ const WindowsXPSection = {
                     imgCenterY <= icon5Rect.bottom;
 
                 if (inBounds) {
-                    img.remove(); // Unload the image
+                    const fname = img.dataset.filename;
+                    img.remove();
+                    if (this.specialTargets.has(fname)) {
+                        this.deletedFiles.add(fname);
+                        if (this.deletedFiles.size === this.specialTargets.size) {
+                            this.showOverlay(container);
+                        }
+                    }
                 }
-            }
+            };
 
             window.addEventListener("mousemove", onMouseMove);
             window.addEventListener("mouseup", onMouseUp);
         });
+    },
+
+    showOverlay(container) {
+        // Base overlay wrapper
+        const overlay = document.createElement("div");
+        Object.assign(overlay.style, {
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",  // centers it
+            zIndex: "9999",
+            textAlign: "center",
+        });
+
+        // Relative box that tracks the HUD image size
+        const hudWrapper = document.createElement("div");
+        Object.assign(hudWrapper.style, {
+            position: "relative",
+            display: "inline-block",
+            width: "25vw",       // <--- scale everything here
+            maxWidth: "400px",   // optional hard cap in px
+        });
+
+        // HUD background image
+        const bg = document.createElement("img");
+        bg.src = "./assets/windows/error-message/windows-error-hud.png";
+        Object.assign(bg.style, {
+            display: "block",
+            width: "100%",       // makes wrapper size = image size
+            height: "auto",
+        });
+
+        // Text overlay
+        const text = document.createElement("div");
+        text.textContent = WINDOWS_SECRET_MESSAGE;
+        Object.assign(text.style, {
+            position: "absolute",
+            top: "37%",
+            left: "60%",
+            transform: "translateX(-50%)",
+            fontFamily: "'Windows XP Tahoma', monospace",
+            fontSize: "1.3vw",     // scales with wrapper width
+            lineHeight: "1.0",
+            color: "#131313",
+            fontWeight: "bold",
+            textAlign: "center",
+            width: "62%",
+            maxWidth: "62%",
+            whiteSpace: "normal",
+            wordWrap: "break-word",
+        });
+
+        // X button
+        const xBtn = document.createElement("img");
+        xBtn.src = "./assets/windows/error-message/windows-error-x.png";
+        Object.assign(xBtn.style, {
+            position: "absolute",
+            top: "6%",
+            right: "3%",
+            width: "10%",   // scales with HUD
+            height: "auto",
+        });
+        xBtn.addEventListener("mouseenter", () => (xBtn.style.filter = "brightness(85%)"));
+        xBtn.addEventListener("mouseleave", () => (xBtn.style.filter = "brightness(100%)"));
+
+        // OK button
+        const okBtn = document.createElement("img");
+        okBtn.src = "./assets/windows/error-message/windows-error-ok.png";
+        Object.assign(okBtn.style, {
+            position: "absolute",
+            bottom: "10%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "35%",   // scales with HUD
+            height: "auto",
+        });
+        okBtn.addEventListener("mouseenter", () => (okBtn.style.filter = "brightness(85%)"));
+        okBtn.addEventListener("mouseleave", () => (okBtn.style.filter = "brightness(100%)"));
+
+        const dismiss = () => overlay.remove();
+        xBtn.addEventListener("click", dismiss);
+        okBtn.addEventListener("click", dismiss);
+
+        hudWrapper.append(bg, text, xBtn, okBtn);
+        overlay.appendChild(hudWrapper);
+        container.appendChild(overlay);
     }
+
+
 };
 
-// Initialize Windows XP section
 WindowsXPSection.init();

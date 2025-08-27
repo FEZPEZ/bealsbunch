@@ -1,0 +1,127 @@
+/* Namespaced styling for book-report-section only */
+#book-report-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background-color: #e0cda9; /* pale wood tone */
+    background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png");
+    background-repeat: repeat;
+    min-height: 100vh;
+}
+
+/* White "paper" */
+#book-report-section .report-container {
+    position: relative;
+    background: #fff;
+    padding: 40px 60px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    font-family: "Georgia", serif;
+    color: #222;
+
+    /* Force paper aspect ratio (width : height = 8.5 : 11) */
+    aspect-ratio: 8.5 / 10.5;
+
+    /* Control scaling */
+    width: min(90vw, 700px); /* scale down on small screens, cap at 700px */
+}
+
+/* Fake rulers */
+#book-report-section .ruler {
+    position: absolute;
+    background: repeating-linear-gradient(
+            to right,
+            #ccc,
+            #ccc 1px,
+            transparent 1px,
+            transparent 20px
+    );
+}
+
+#book-report-section .top-ruler {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+}
+
+#book-report-section .left-ruler {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 20px;
+    background: repeating-linear-gradient(
+            to bottom,
+            #ccc,
+            #ccc 1px,
+            transparent 1px,
+            transparent 20px
+    );
+}
+
+/* Inner content */
+#book-report-section .report-content {
+    margin-left: 30px; /* space away from left ruler */
+    margin-top: 30px;  /* space away from top ruler */
+}
+
+
+#book-report-section .misspelled {
+    position: relative;
+    text-decoration: none; /* disable default underlines */
+    background-image: linear-gradient(
+            to right,
+            red 0,
+            red 50%,
+            transparent 50%,
+            transparent 100%
+    );
+    background-size: 6px 2px; /* squiggle size */
+    background-repeat: repeat-x;
+    background-position: 0 100%; /* push to bottom */
+}
+
+#book-report-section h1,
+#book-report-section h2 {
+    color: #333;
+    margin-bottom: 0.5em;
+}
+
+#book-report-section h1 {
+    font-size: 1.8em;
+}
+
+#book-report-section h2 {
+    font-size: 1.2em;
+    color: #666;
+}
+
+#book-report-section p {
+    margin-bottom: 1em;
+    font-size: 1em;
+    line-height: 1.6;
+}
+
+#book-report-section .highlight {
+    color: #0066cc;
+    font-weight: bold;
+}
+
+#book-report-section .small-note {
+    font-size: 0.9em;
+    color: #555;
+    font-style: italic;
+}
+
+#book-report-section .cursor::after {
+    content: "|";
+    display: inline;   /* inline avoids extra box spacing */
+    margin-left: -3px;
+    animation: blink 1s infinite steps(2, start);
+    color: #000;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    50.01%, 100% { opacity: 0; }
+}

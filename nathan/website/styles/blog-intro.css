@@ -1,0 +1,182 @@
+:root.progress-0 {
+    --overlay-bg: #00ffcc url('https://www.transparenttextures.com/patterns/zig-zag.png') repeat;
+    --box-bg: #ffffcc;
+    --box-border: hotpink;
+    --box-fg: #0000aa;
+    --header-bg: yellow;
+    --header-fg: red;
+    --highlight-bg: pink;
+    --highlight-fg: black;
+    --button-fg: #0000aa;
+    --secret-fg: darkred;
+}
+
+:root.progress-1 {
+    --overlay-bg: #ffe6cc url('https://www.transparenttextures.com/patterns/food.png') repeat;
+    --box-bg: #fff9e6;       /* light cream, like flour or parchment */
+    --box-border: #ff9933;   /* warm orange, like baked crust */
+    --box-fg: #663300;       /* deep brown, like coffee/chocolate */
+    --header-bg: #ff6666;    /* tomato red */
+    --header-fg: #ffffff;    /* white, for good contrast */
+    --highlight-bg: #ffff99; /* bright yellow, like cheese or egg yolk */
+    --highlight-fg: #333333; /* dark text over highlight */
+    --button-fg: #228b22;    /* herb green */
+    --secret-fg: #cc0066;    /* berry/pomegranate accent */
+}
+
+:root.progress-2 {
+    --overlay-bg: #ccccff url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+    --box-bg: #f0f0ff;
+    --box-border: navy;
+    --box-fg: #000033;
+    --header-bg: lavender;
+    --header-fg: navy;
+    --highlight-bg: lightblue;
+    --highlight-fg: black;
+    --button-fg: navy;
+    --secret-fg: purple;
+}
+
+:root.progress-3 {
+    --overlay-bg: #ffccff url('https://www.transparenttextures.com/patterns/argyle.png') repeat;
+    /* bright pink base with playful argyle, like toy wrapping paper */
+    --box-bg: #fffbea;        /* soft cream, like playroom walls */
+    --box-border: #ff3300;    /* bold red, like building blocks */
+    --box-fg: #003366;        /* strong blue text */
+    --header-bg: #33cc33;     /* bright green, toy plastic */
+    --header-fg: #ffffff;     /* white text for contrast */
+    --highlight-bg: #ffff66;  /* bright yellow highlight */
+    --highlight-fg: #000000;  /* readable over yellow */
+    --button-fg: #ff00cc;     /* magenta button text, toy-like pop */
+    --secret-fg: #cc6600;     /* orange, like toy gears */
+}
+
+:root.progress-4 {
+    --overlay-bg: #0066cc url('https://www.transparenttextures.com/patterns/hexellence.png') repeat;
+    /* Sonic blue with a techy, fast-moving vibe */
+    --box-bg: #e6f7ff;        /* pale blue, sky-like backdrop */
+    --box-border: #ff0000;    /* bold red, Sonic’s shoes */
+    --box-fg: #003366;        /* deep blue text */
+    --header-bg: #ffcc00;     /* gold, Sonic’s rings */
+    --header-fg: #000000;     /* strong contrast for readability */
+    --highlight-bg: #00cc66;  /* emerald green (Chaos Emeralds / zones) */
+    --highlight-fg: #ffffff;  /* white text on green */
+    --button-fg: #000000;     /* glove white */
+    --secret-fg: #ff3300;     /* fiery red, “secret power” vibe */
+}
+
+
+:root.progress-5 {
+    --overlay-bg: #333366 url('https://www.transparenttextures.com/patterns/asfalt-light.png') repeat;
+    --box-bg: #b3b3cc;
+    --box-border: #111122;
+    --box-fg: #f0f0f0;
+    --header-bg: #666699;
+    --header-fg: #ffcccc;
+    --highlight-bg: #4d4d80;
+    --highlight-fg: #fff;
+    --button-fg: #ddddff;
+    --secret-fg: firebrick;
+}
+
+:root.progress-6 {
+    --overlay-bg: #111122 url('https://www.transparenttextures.com/patterns/noisy-grid.png') repeat;
+    --box-bg: #808099;
+    --box-border: black;
+    --box-fg: #f5f5f5;
+    --header-bg: #333366;
+    --header-fg: #ff9999;
+    --highlight-bg: #2a2a55;
+    --highlight-fg: white;
+    --button-fg: #cccccc;
+    --secret-fg: darkred;
+}
+
+:root.progress-7, :root.progress-8 {
+    --overlay-bg: #000000 url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+    /* deep space black with stardust texture */
+    --box-bg: #0d0d1a;        /* very dark navy, cosmic panel */
+    --box-border: #ff00ff;    /* magenta border, neon pop */
+    --box-fg: #ffffff;        /* white text for contrast */
+    --header-bg: linear-gradient(90deg, red, orange, #9c9c00, green, blue, indigo, violet);
+    --header-fg: #ffffff;     /* stands out over rainbow header */
+    --highlight-bg: #ff00ff;
+    --highlight-fg: #000000;  /* black text for visibility on bright rainbow */
+    --button-fg: #00ffff;     /* neon cyan button text */
+    --secret-fg: #ffffff;     /* golden highlight (like a star or trophy) */
+}
+
+/* --- Base styles using variables --- */
+
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+#intro-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--overlay-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+}
+
+#blog-intro.blogIntroBox {
+    max-width: 600px;
+    padding: 20px;
+    border: 5px ridge var(--box-border);
+    background: var(--box-bg);
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-size: 20px;
+    line-height: 1.6;
+    color: var(--box-fg);
+    text-align: center;
+    user-select: none;
+}
+
+.blogIntroHeader {
+    font-weight: bold;
+    background: var(--header-bg);
+    color: var(--header-fg);
+    display: block;
+    margin-bottom: 10px;
+}
+
+.blogIntroChar {
+    cursor: pointer;
+}
+
+.blogIntroChar.blogIntroPendingDelete {
+    visibility: hidden;
+}
+
+.blogIntroHighlight {
+    background: var(--highlight-bg);
+    color: var(--highlight-fg);
+}
+
+.blogIntroControls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 16px;
+}
+
+.blogIntroButton {
+    color: var(--button-fg);
+    cursor: pointer;
+}
+
+.blogIntroButton:hover {
+    text-decoration: underline;
+}
+
+.blogIntroSecret {
+    margin-top: 10px;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--secret-fg);
+}

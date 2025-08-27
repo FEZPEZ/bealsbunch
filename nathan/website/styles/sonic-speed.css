@@ -1,0 +1,16 @@
+/* CSS */
+#sonic-speed {
+    position: relative;
+    width: 100vw;          /* full viewport width */
+    height: 100vh;         /* full viewport height */
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+#sonic-speed img {
+    position: absolute;
+    cursor: pointer;
+    max-width: 150px;      /* scale Sonic sprite */
+    user-select: none;
+}

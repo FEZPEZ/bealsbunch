@@ -1,13 +1,85 @@
-.space-wrapper {
-    display: flex;
-    flex-direction: row; /* side by side */
-    align-items: flex-start;
+/* Container */
+/* Host container prevents margin/scroll issues */
+#egs-host {
+    position: relative;
     width: 100%;
-    background-image: url("../assets/bg/space.png");
-    background-size: auto;
-    background-repeat: repeat;
-    padding: 2em;
-    gap: 2em;
-    box-sizing: border-box;
-    height: 700px;
+    height: 100vh;   /* fill viewport */
+    margin: 0;       /* kill margin */
+    overflow: hidden; /* kill scrollbars */
+    background: black; /* fallback background */
+}
+
+/* Your original wrapper just fills host */
+#egs-wrapper {
+    position: absolute;
+    inset: 0; /* fill #egs-host */
+    background: black;
+    overflow: hidden;
+}
+
+/* Shared object style */
+.egs-object {
+    position: absolute;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Raccoon container */
+.egs-raccoon-container {
+    position: absolute;
+    width: 180px;
+    height: 140px;
+}
+
+.egs-star {
+    z-index: 0;   /* lowest */
+}
+
+.egs-object,
+.egs-raccoon-container {
+    z-index: 10;  /* above stars */
+}
+
+.egs-raccoon-normal,
+.egs-raccoon-fast {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.egs-raccoon-fast {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Gauge */
+#egs-gauge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #0f0;
+    font-family: monospace;
+    background: rgba(0,0,0,0.7);
+    padding: 5px 10px;
+    border: 1px solid #0f0;
+    display: none;
+}
+
+/* Explosion overlay */
+#egs-explosion {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    font-family: monospace;
+    font-size: 20px;
+    display: none;
+}
+
+#egs-explosion img {
+    display: block;
+    margin: 0 auto 10px auto;
 }

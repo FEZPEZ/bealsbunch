@@ -6,6 +6,30 @@
 const SMASH_ROOT_PATH = "./assets/smash-roster/characters/";
 const DEFAULT_IMG_ALT = "j";
 
+
+// Track last 3 selected characters
+let lastThreeSelections = [];
+// Define the winning sequence (use the label text)
+const secretSequence = ["STEVE", "JUNKBOT", "CLYDE"];
+
+
+const SMASH_MESSAGE_STAGGER = 70; // in ms
+// replacement names — must match total number of roster boxes
+const SMASH_SECRET_MESSAGE = [
+    "WHEN", "YOU", "LOOKED", "UNDER", "THE", "TABLE",
+    "DID", "YOU", "LOOK", "UNDER", "THE", "TABLE",
+    "BY", "YOU", "BEING", "UNDER", "THE", "TABLE",
+
+    "AND", "THEN", "LOOKING", "OR", "DID", "YOU",
+    "ACTUALLY", "LOOK", "UNDER", "THE", "TABLE",
+    "AS", "IN", "YOU", "LOOKED", "NORMALLY", "BUT",
+
+    "THEN", "THE", "UNDER", "THE", "TABLE", "WAS",
+    "WHAT", "WAS", "BEING", "THE", "LOOKING", "AT",
+    "LIKE", "BEING", "UNDER", "THE", "TABLE"
+];
+
+
 // DOM element IDs and class names
 const CONTAINER_ID = 'dream-smash-roster';
 const WRAPPER_ID = 'dream-roster-wrapper';
@@ -147,6 +171,18 @@ smashGridData.forEach(row => {
     container.appendChild(rowDiv);
 });
 
+
+function revealSecretNames(namesArray, delay = 200) {
+    const allLabels = document.querySelectorAll(`.${TEXT_INNER_CLASS}`);
+
+    allLabels.forEach((label, index) => {
+        setTimeout(() => {
+            label.textContent = namesArray[index] || label.textContent;
+        }, index * delay);
+    });
+}
+
+
 // ==========================================
 // UTILITY FUNCTIONS
 // ==========================================
@@ -173,7 +209,9 @@ function applyScaleX(labelInner, containerWidth) {
 // ==========================================
 
 let token = document.getElementById(TOKEN_ID);
-let tokenActive = true; // true: following cursor
+let tokenActive = false;
+let tokenSpawned = false;
+token.style.display = 'none';
 let placedToken = null;
 let currentHoverBox = null;
 
@@ -184,8 +222,14 @@ let lastMouseY = 0;
 
 // Track and move the floating token
 wrapper.addEventListener('mousemove', e => {
-    if (!tokenActive) return;
-
+    if (!tokenSpawned) {
+        tokenActive = true;
+        tokenSpawned = true;
+        token.style.display = 'block';
+    }
+    if (!tokenActive) {
+        return;
+    }
     lastMouseX = e.pageX;
     lastMouseY = e.pageY;
 
@@ -224,6 +268,20 @@ document.querySelectorAll(`.${BOX_CLASS}`).forEach(box => {
 
         // Mark the clicked box as selected
         box.classList.add(SELECTED_CLASS);
+
+        // --- Track last 3 selections ---
+        const labelText = box.querySelector(`.${TEXT_INNER_CLASS}`).textContent.trim();
+        lastThreeSelections.push(labelText);
+
+        if (lastThreeSelections.length > 3) {
+            lastThreeSelections.shift(); // keep only last 3
+        }
+
+        // Check for secret sequence
+        // Check for secret sequence
+        if (lastThreeSelections.join(",") === secretSequence.join(",")) {
+            revealSecretNames(SMASH_SECRET_MESSAGE, SMASH_MESSAGE_STAGGER); // 150ms stagger
+        }
 
         const clickX = e.pageX;
         const clickY = e.pageY;
@@ -286,23 +344,26 @@ function updateTokenHoverEffects() {
             centerY >= rect.top &&
             centerY <= rect.bottom;
 
-        box.classList.remove(HOVERED_CLASS);
-
         if (isInside) {
             newHoverBox = box;
         }
     });
 
-    if (newHoverBox) {
-        newHoverBox.classList.add(HOVERED_CLASS);
+    // Only update if the hovered box has changed
+    if (newHoverBox !== currentHoverBox) {
+        // Clear old hover
+        if (currentHoverBox) {
+            currentHoverBox.classList.remove(HOVERED_CLASS);
+        }
 
-        // Trigger pop every time the token ENTERS a new box
-        if (newHoverBox !== currentHoverBox) {
+        // Set new hover
+        if (newHoverBox) {
+            newHoverBox.classList.add(HOVERED_CLASS);
             newHoverBox.classList.add(POP_ANIMATION_CLASS);
         }
-    }
 
-    currentHoverBox = newHoverBox;
+        currentHoverBox = newHoverBox;
+    }
 }
 
 document.querySelectorAll(`.${BOX_CLASS}`).forEach(box => {

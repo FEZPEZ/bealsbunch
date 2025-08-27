@@ -3,18 +3,31 @@
  * Dynamically loads HTML sections into the main page
  */
 
+// Prevent spacebar from scrolling the page globally
+document.addEventListener("keydown", (e) => {
+    if (
+        (e.key === " " || e.code === "Space" || e.key === "Spacebar") &&
+        e.target.tagName !== "INPUT" &&
+        e.target.tagName !== "TEXTAREA" &&
+        !e.target.isContentEditable
+    ) {
+        e.preventDefault();
+    }
+});
+
 const SectionLoader = {
     sections: [
         { id: 'pixar-cars-section', file: 'sections/pixar-cars.html' },
         { id: 'windows-xp-section', file: 'sections/windows-xp.html' },
-        { id: 'theater-section', file: 'sections/theater.html' },
         { id: 'welcome-section', file: 'sections/welcome.html' },
         { id: 'nintendo-section', file: 'sections/nintendo.html' },
         { id: 'plant-tags-section', file: 'sections/plant-tags.html' },
         { id: 'movie-section', file: 'sections/movie.html' },
         { id: 'metroid-section', file: 'sections/metroid.html' },
         { id: 'smash-roster', file: 'sections/smash-roster.html' },
-        { id: 'space-section', file: 'sections/space.html' }
+        { id: 'book-report', file: 'sections/book-report.html' },
+        { id: 'nintendo-clutter-section', file: 'sections/nintendo-clutter.html' },
+        { id: 'website-intro-stats-section', file: 'sections/website-intro-stats.html' },
     ],
 
     async loadSection(sectionConfig) {

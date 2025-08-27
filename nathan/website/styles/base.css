@@ -1,7 +1,13 @@
 /* Base styles that apply to the entire site */
 body {
+    visibility: hidden;
     margin: 0;
     overflow-x: hidden;
+    background-color: black;
+}
+
+body.ready {
+    visibility: visible;
 }
 
 @font-face {
