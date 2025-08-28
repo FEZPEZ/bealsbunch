@@ -6,7 +6,7 @@
         imageHeight: 120,
         initialSpeed: 1,
         initGravityStrength: 0.01,
-        maxGravityStrength: 0.05,
+        maxGravityStrength: 0.04,
         frictionAir: 0,
         SPEED_THRESHOLD: 25, // percentage of speed of light
         UNIT_TO_MPS: 3_000_000,
