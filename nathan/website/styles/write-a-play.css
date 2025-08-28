@@ -1,0 +1,157 @@
+/* Scope EVERYTHING under #mvx-root to avoid collisions */
+#mvx-root {
+    --mvx-ground-offset: -20px;
+    --mvx-hud-h: 92px;
+    --mvx-fg: #e5e7eb;
+    --mvx-accent: #38bdf8;
+    position: relative;
+    width: 100%;
+    height: 92vh;       /* override in your page if needed */
+    min-height: 520px;
+    display: grid;
+    grid-template-rows: var(--mvx-hud-h) 1fr;
+    color: var(--mvx-fg);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* HUD */
+#mvx-root .mvx-hud {
+    z-index: 100;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr auto auto;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 12px;
+    background: #111827;
+    border-bottom: 1px solid #0f172a;
+}
+#mvx-root .mvx-field { display: flex; flex-direction: column; }
+#mvx-root .mvx-field > label { font-size: 12px; opacity: .9; margin-bottom: 4px; }
+#mvx-root select, #mvx-root button {
+    height: 38px; border-radius: 10px; border: 1px solid #1f2937; background: #0f172a; color: var(--mvx-fg); padding: 0 12px; outline: none;
+}
+#mvx-root select:focus, #mvx-root button:focus { border-color: var(--mvx-accent); box-shadow: 0 0 0 2px #38bdf833; }
+#mvx-root button { font-weight: 600; letter-spacing: .2px; cursor: pointer; }
+#mvx-root #mvx-actionBtn { background: linear-gradient(180deg, #075985, #0ea5e9); border-color: #0ea5e9; }
+#mvx-root #mvx-resetBtn  { background: #1f2937; }
+
+/* Stage area with background image */
+#mvx-root .mvx-stageWrap {
+    background-position: center calc(100% - var(--mvx-ground-offset));
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url('../assets/write-a-play/theater-bg.jpg');
+    background-color: #030712;
+}
+#mvx-root .mvx-stage { position: absolute; inset: 0; z-index: 1; }
+
+/* Full overlay PNG (replaces individual curtains) */
+#mvx-root .mvx-overlay {
+    position: absolute; inset: 0; z-index: 90; pointer-events: none; /* above scene, below HUD */
+}
+#mvx-root .mvx-overlay img {
+    width: 100%;
+    height: 100%;
+    /* add this: */
+    object-fit: cover;
+    object-position: center calc(100% - var(--mvx-ground-offset));
+}
+
+/* Sprites (DOM mirrors for physics bodies) */
+#mvx-root .mvx-sprite {
+    position: absolute; transform: translate(-50%, -50%) rotate(0deg);
+    will-change: transform; user-select: none; pointer-events: none; z-index: 10;
+}
+#mvx-root .mvx-sprite.mvx-rock img { object-fit: fill; }
+
+#mvx-root .mvx-sprite img, #mvx-root .mvx-sprite .mvx-fallback {
+    display: block; width: 100%; height: 100%; object-fit: contain;
+}
+#mvx-root .mvx-fallback {
+    background: #1f2937; border: 2px dashed #374151; color: var(--mvx-fg);
+    font-weight: 700; display: grid; place-items: center; padding: 4px; text-align: center;
+}
+
+/* DOM-based sign */
+/* Optional: put this <link> in your <head> to get a real cursive font
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+*/
+
+#mvx-root .mvx-sign {
+    display: grid; place-items: center;
+
+    white-space: nowrap;         /* no wrapping */
+    width: max-content !important;
+    height: max-content !important;
+    overflow: visible;
+
+    /* neon blue look */
+    background: #06121f;                 /* dark to make glow pop */
+    border: 4px solid #38bdf8;           /* cyan-blue frame */
+    border-radius: 16px;
+    color: #b9f3ff;
+
+    /* cursive type */
+    font-family: "Pacifico", "Brush Script MT", cursive;
+    font-weight: 400;
+    font-size: 30px;
+    letter-spacing: 0.2px;               /* cursive needs little tracking */
+
+    /* glow */
+    text-shadow:
+            0 0 2px  #38bdf8,
+            0 0 6px  #38bdf8,
+            0 0 14px #0ea5e9,
+            0 0 28px #0ea5e9,
+            0 0 56px #0ea5e9;
+    box-shadow:
+            inset 0 0 12px #021421,
+            0 0 10px #38bdf8,
+            0 0 24px #0ea5e9;
+
+    /* flicker */
+    animation: mvx-neon-flicker 3.6s infinite;
+    will-change: opacity, filter;
+}
+
+@keyframes mvx-neon-flicker {
+    0%, 100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 2px #38bdf8) drop-shadow(0 0 12px #0ea5e9);
+    }
+    7%   { opacity: 1;  }
+    8%   { opacity: .95; }
+    9%   { opacity: .95; }
+    22%  { opacity: .85; }
+    23%  { opacity: 1;   }
+    60%  { opacity: .95;  }
+    61%  { opacity: 1;   }
+    72%  { opacity: .76;  }
+    73%  { opacity: .96; }
+}
+
+/* Center banner (below overlay by design) */
+#mvx-root .mvx-banner {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    pointer-events: none; font-size: clamp(24px, 4vw, 56px); font-weight: 900; text-transform: uppercase; color: #fff;
+    text-shadow: 0 2px 8px #000, 0 0 40px #16a34a; opacity: 0; transition: opacity .25s ease;
+    z-index: 40;
+}
+#mvx-root .mvx-banner.mvx-show { opacity: 1; }
+
+/* Bubbles attach to entities */
+#mvx-root .mvx-bubble {
+    position: absolute; background: #111827; color: #e5e7eb; border: 1px solid #334155;
+    padding: 4px 8px; border-radius: 8px; font-size: 13px; white-space: nowrap; pointer-events: none;
+    transform: translate(-50%, -120%); z-index: 50;
+}
+
+/* Explosion FX */
+#mvx-root .mvx-explosion {
+    position: absolute; width: 160px; height: 160px; transform: translate(-50%,-50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, #f59e0b, #ef4444 60%, transparent 66%);
+    filter: blur(1px) drop-shadow(0 0 24px #ef4444); opacity: .9; animation: mvx-boom .4s ease-out forwards;
+    pointer-events: none; z-index: 30;
+}
+@keyframes mvx-boom { from { transform: translate(-50%,-50%) scale(0.4); opacity:.98; } to { transform: translate(-50%,-50%) scale(1.5); opacity:0; } }

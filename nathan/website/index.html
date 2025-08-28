@@ -50,6 +50,8 @@ LOVE LIFE ->=
     <link rel="stylesheet" href="styles/book-report.css">
     <link rel="stylesheet" href="styles/nintendo-clutter.css">
     <link rel="stylesheet" href="styles/website-intro-stats.css">
+    <link rel="stylesheet" href="styles/write-a-play.css">
+    <link rel="stylesheet" href="styles/please-exit-left.css">
 </head>
 
 
@@ -115,6 +117,58 @@ LOVE LIFE ->=
     <div id="plant-tags-section"></div>
 
     <div id="movie-section"></div>
+    <div id="mvx-root" aria-label="Movie Scene Widget">
+    <div class="mvx-hud">
+        <div class="mvx-field">
+            <label for="mvx-characterSel">Character</label>
+            <select id="mvx-characterSel">
+                <option value="">— choose —</option>
+                <option>Marlin</option><option>Spiderman</option><option>The Iron Giant</option>
+                <option>Sebastian</option><option>Sonic</option><option>Toothless</option><option>Woody</option>
+            </select>
+        </div>
+        <div class="mvx-field">
+            <label for="mvx-actionSel">Action</label>
+            <select id="mvx-actionSel">
+                <option value="">— choose —</option>
+                <option>swims through</option><option>jumps over</option><option>attacks</option>
+                <option>thinks about</option><option>runs into</option><option>flies above</option><option>falls onto</option>
+            </select>
+        </div>
+        <div class="mvx-field">
+            <label for="mvx-objectSel">Object</label>
+            <select id="mvx-objectSel">
+                <option value="">— choose —</option>
+                <option>the trench</option><option>the building</option><option>a nuclear bomb</option>
+                <option>his music</option><option>a car</option><option>perilous rocks</option><option>the ground</option>
+            </select>
+        </div>
+        <div class="mvx-field">
+            <label for="mvx-goalSel">Goal</label>
+            <select id="mvx-goalSel">
+                <option value="">— choose —</option>
+                <option>and finds a jellyfish</option><option>to deliver pizza</option><option>to save the world</option>
+                <option>and opens a jazz club</option><option>to beat Eggman</option><option>to prove a point</option><option>to avoid Andy</option>
+            </select>
+        </div>
+        <button id="mvx-actionBtn">ACTION</button>
+        <button id="mvx-resetBtn">Reset</button>
+    </div>
+
+    <div class="mvx-stageWrap">
+        <div class="mvx-stage" id="mvx-stage"></div>
+        <div class="mvx-banner" id="mvx-banner"></div>
+
+        <!-- Single full overlay PNG (above elements, below HUD) -->
+        <div class="mvx-overlay" aria-hidden="true">
+            <img src="./assets/write-a-play/theater-fg.png" alt="Stage overlay" />
+        </div>
+    </div>
+</div>
+    <div class="half-viewport-centered-image-container">
+        <!-- Inline height keeps the image proportional inside the container -->
+        <img src="./assets/please-exit-left/please-exit-left.png" alt="Centered" style="height: 130px;">
+    </div>
 
     <div id="metroid-section"></div>
 
@@ -143,5 +197,6 @@ LOVE LIFE ->=
     <script src="scripts/deschutes.js"></script>
     <script src="scripts/blog-intro.js"></script>
     <script src="scripts/sonic-speed.js"></script>
+    <script src="scripts/write-a-play.js"></script>
 </body>
 </html>

@@ -28,6 +28,7 @@ const SectionLoader = {
         { id: 'book-report', file: 'sections/book-report.html' },
         { id: 'nintendo-clutter-section', file: 'sections/nintendo-clutter.html' },
         { id: 'website-intro-stats-section', file: 'sections/website-intro-stats.html' },
+        { id: 'write-a-play-section', file: 'sections/write-a-play.html' },
     ],
 
     async loadSection(sectionConfig) {
