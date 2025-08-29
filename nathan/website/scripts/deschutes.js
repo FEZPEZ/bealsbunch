@@ -26,7 +26,7 @@ const SMEAGOL_TRIGGERS = [
     { triggers: ["you poke him on", "you pokemon", "you poke em on", "you poke im on"], message: "What's the square root of 144?" },
     { triggers: ["twelve"], message: "When was Bubsy 3D released?" },
     { triggers: ["November 25 1996", "11-25-1996", "11/25/1996", "November 25, 1996"], message: "What is the average rainfall of the Amazon Basin?" },
-    { triggers: ["6 feet", "10 feet", "1.8 meters", "3 meters"], message: "Where am I?" },
+    { triggers: ["6 feet", "10 feet", "1.8 meters", "3 meters", "ten feet", "six feet"], message: "Where am I?" },
     { triggers: ["deschutes"], message: "Now, if you all would kindly look under your chairs…" },
 ];
 

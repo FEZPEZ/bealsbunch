@@ -16,7 +16,7 @@
         character: 'woody',
         action:    'flies above',
         object:    'the building',
-        message:   'SECRET MISSION COMPLETE'
+        message:   'HAVE YOU LOOKED UNDER THE TABLE?'
     };
     function isSecretCombo(){
         return norm(SEL.character.value) === SECRET.character &&
@@ -314,7 +314,7 @@
 
     function fxExplosion(x, y, white=false){
         const fx = document.createElement('div');
-        fx.className = white ? 'mvx-explosion mvx-explosion-white' : 'mvx-explosion';
+        fx.className = white ? 'mvx-explosion mvx-explosion-white' : 'mvx-explosion mvx-explosion-red';
         fx.style.left = x + 'px';
         fx.style.top  = y + 'px';
         STAGE.appendChild(fx);

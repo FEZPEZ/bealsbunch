@@ -5,6 +5,7 @@ const PlantTagSection = {
     totalFrames: 7,
     imageSpacing: 10, // px between images
     divHeight: 300, // px container height
+    topMargin: 40,
     targetFPS: 30,
     scrollSpeed: 2, // px per frame
     lastImage: [1, 1, 1],
@@ -79,7 +80,7 @@ const PlantTagSection = {
 
         // Initially place item just offscreen to the right
         item.style.left = `${this.viewportWidth}px`;
-        item.style.top = '0px';
+        item.style.top = this.topMargin + 'px';
         item.style.height = this.divHeight + 'px';
 
         // Wait for image to load to get width for spacing calculations

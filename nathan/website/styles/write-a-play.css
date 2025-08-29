@@ -9,6 +9,7 @@
     height: 92vh;       /* override in your page if needed */
     min-height: 520px;
     display: grid;
+    overflow: hidden;
     grid-template-rows: var(--mvx-hud-h) 1fr;
     color: var(--mvx-fg);
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif;

@@ -7,23 +7,24 @@
     const blogIntroCodes = [
         "us too",
         "two pots",
-        "pro sports",
-        "tux turt",
-        "spouty spur",
         "worst rows",
         "spot rots",
-        "soupy soup"
+        "pro sports",
+        "soupy soup",
+        "tux turt",
+        "spouty spur"
+
     ];
 
     const blogIntroMessages = [
-        "Secret message for pro sports!",
-        "Secret message for spot rots!",
-        "Secret message for two pots!",
-        "Secret message for tux turts!",
-        "Secret message for soupy soup!",
-        "Secret message for rusty spur!",
-        "Secret message for worst yurt!",
-        "OK, yeah that's it"
+        "you unlock mcqueen by clicking on his number lots of times",
+        "i have the bomb guys from kirby so i deleted them already",
+        "of course you got beat by a plant, you picked a trash character, but I'll play as the grandpa next time",
+        "i can't figure out what kirby is looking at",
+        "i don't think the hobbit likes his name to be said out loud",
+        "i bet woody could have flown out the window, would've saved a lot of time",
+        "i still think racoons can time travel",
+        "i think it was under the table the whole time"
     ];
 
     let blogIntroParagraph, blogIntroResetTxt, blogIntroTimeMachine, blogIntroSecretMsg;

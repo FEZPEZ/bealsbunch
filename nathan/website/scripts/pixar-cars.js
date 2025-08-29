@@ -18,7 +18,7 @@ const PixarCarsSection = {
         if (!container) return;
 
         const header = document.createElement("h1");
-        header.textContent = "my birthday list";
+        header.textContent = "my christmas list";
 
         // obnoxious GeoCities car-themed CSS
         Object.assign(header.style, {

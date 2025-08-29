@@ -3,6 +3,7 @@
     width: 100%;
     background-image: url("../assets/bg/movie.png");
     background-size: cover;
+    overflow: hidden;
 }
 
 #gif-container-movie {

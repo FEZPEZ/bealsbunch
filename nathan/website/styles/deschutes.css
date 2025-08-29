@@ -18,3 +18,7 @@
 #deschutes-img {
     min-height: 900px;
 }
+
+#deschutes-section {
+    overflow: hidden;
+}

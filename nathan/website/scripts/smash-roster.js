@@ -26,7 +26,7 @@ const SMASH_SECRET_MESSAGE = [
 
     "THEN", "THE", "UNDER", "THE", "TABLE", "WAS",
     "WHAT", "WAS", "BEING", "THE", "LOOKING", "AT",
-    "LIKE", "BEING", "UNDER", "THE", "TABLE"
+    "UNDER", "THE", "LEGS", "AND", "STUFF"
 ];
 
 
