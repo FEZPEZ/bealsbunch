@@ -134,7 +134,7 @@
 #mvx-root .mvx-banner {
     position: absolute; inset: 0; display: grid; place-items: center;
     pointer-events: none; font-size: clamp(24px, 4vw, 56px); font-weight: 900; text-transform: uppercase; color: #fff;
-    text-shadow: 0 2px 8px #000, 0 0 40px #16a34a; opacity: 0; transition: opacity .25s ease;
+    text-shadow: 0 2px 8px #000, 0 0 40px #2effff; opacity: 0; transition: opacity .25s ease;
     z-index: 40;
 }
 #mvx-root .mvx-banner.mvx-show { opacity: 1; }
@@ -150,8 +150,17 @@
 #mvx-root .mvx-explosion {
     position: absolute; width: 160px; height: 160px; transform: translate(-50%,-50%);
     border-radius: 50%;
-    background: radial-gradient(circle, #f59e0b, #ef4444 60%, transparent 66%);
-    filter: blur(1px) drop-shadow(0 0 24px #ef4444); opacity: .9; animation: mvx-boom .4s ease-out forwards;
     pointer-events: none; z-index: 30;
 }
+
+#mvx-root .mvx-explosion-red {
+    background: radial-gradient(circle, #f59e0b, #ef4444 60%, transparent 66%);
+    filter: blur(1px) drop-shadow(0 0 24px #ef4444); opacity: .9; animation: mvx-boom .4s ease-out forwards;
+}
+
+#mvx-root .mvx-explosion-white {
+    background: radial-gradient(circle, #ffffff, #a0f3ff 60%, transparent 66%);
+    filter: blur(1px) drop-shadow(0 0 24px #aaffff); opacity: .9; animation: mvx-boom .4s ease-out forwards;
+}
+
 @keyframes mvx-boom { from { transform: translate(-50%,-50%) scale(0.4); opacity:.98; } to { transform: translate(-50%,-50%) scale(1.5); opacity:0; } }
