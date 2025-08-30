@@ -141,18 +141,12 @@ body {
 }
 
 @media (max-width: 768px) {
-    #intro-overlay {
-        display: block;       /* stop flexbox centering */
-        text-align: center;   /* center text horizontally */
-        padding: 20px;
-    }
-
-    #blog-intro.blogIntroBox {
+    #intro-overlay #blog-intro.blogIntroBox {
         display: none !important;
     }
 
     #blog-intro-text {
-        display: block;
+        display: block !important;
         font-size: 20px;
         font-family: "Comic Sans MS", cursive, sans-serif;
         color: hotpink;
