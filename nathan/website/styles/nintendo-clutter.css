@@ -114,7 +114,7 @@
 }
 
 .geocities-scroll-outer {
-    width: 150px;
+    width: 171px;
     height: 100px;
     overflow: auto;              /* still scrollable */
     scrollbar-width: none;       /* Firefox */

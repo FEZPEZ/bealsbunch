@@ -16,7 +16,7 @@
         character: 'woody',
         action:    'flies above',
         object:    'the building',
-        message:   'HAVE YOU LOOKED UNDER THE TABLE?'
+        message:   'Really look under the table'
     };
     function isSecretCombo(){
         return norm(SEL.character.value) === SECRET.character &&

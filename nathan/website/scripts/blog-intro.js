@@ -13,18 +13,17 @@
         "soupy soup",
         "tux turt",
         "spouty spur"
-
     ];
 
     const blogIntroMessages = [
-        "you unlock mcqueen by clicking on his number lots of times",
-        "i have the bomb guys from kirby so i deleted them already",
-        "of course you got beat by a plant, you picked a trash character, but I'll play as the grandpa next time",
-        "i can't figure out what kirby is looking at",
-        "i don't think the hobbit likes his name to be said out loud",
-        "i bet woody could have flown out the window, would've saved a lot of time",
-        "i still think racoons can time travel",
-        "i think it was under the table the whole time"
+        "@user724: \"i unlocked mcqueen by clicking on his number lots of times\"",
+        "@kaChowFan94: \"i had the bomb guys from kirby already so i deleted them\"",
+        "@dudePCpro3000: \"of course you got beat by a plant, you picked a trash character, but I'll play as the grandpa next time\"",
+        "@brawlyGuy99: \"i can't figure out what kirby is looking at ¯\\_(ツ)_/¯\"",
+        "@kirboforgor7: \"Well, I just don't think the hobbit likes his name to be said out loud...\"",
+        "@the1ring4life: \"i bet woody could have flown out the window, would've saved a lot of time\"",
+        "@theScudBuster: \"No, it IS true that racoons can time travel!!\"",
+        "@FluffyGangsta44: \"i think it was under the table the whole time lol\""
     ];
 
     let blogIntroParagraph, blogIntroResetTxt, blogIntroTimeMachine, blogIntroSecretMsg;
