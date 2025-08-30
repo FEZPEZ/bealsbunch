@@ -141,6 +141,14 @@ body {
 }
 
 @media (max-width: 768px) {
+    #intro-overlay {
+        display: flex;               /* keep flex */
+        align-items: center;         /* vertical centering */
+        justify-content: center;     /* horizontal centering */
+        text-align: center;          /* center text inside */
+        padding: 20px;
+    }
+
     #intro-overlay #blog-intro.blogIntroBox {
         display: none !important;
     }
@@ -148,9 +156,8 @@ body {
     #blog-intro-text {
         display: block !important;
         font-size: 20px;
-        font-family: "Comic Sans MS", cursive, sans-serif;
+        font-family: "Comic Sans MS", cursive, sans-serif !important;
         color: hotpink;
-        text-align: center;
     }
 }
 
