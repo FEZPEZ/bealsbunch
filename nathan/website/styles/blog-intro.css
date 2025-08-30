@@ -136,6 +136,22 @@ body {
     user-select: none;
 }
 
+#blog-intro-text {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    #blog-intro.blogIntroBox {
+        display: none;
+    }
+    #blog-intro-text {
+        display: flex;
+        font-size: 20px;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        color: hotpink;
+    }
+}
+
 .blogIntroHeader {
     font-weight: bold;
     background: var(--header-bg);
