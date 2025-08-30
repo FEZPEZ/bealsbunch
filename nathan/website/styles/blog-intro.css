@@ -140,15 +140,16 @@ body {
     display: none;
 }
 
-@media (max-width: 768px) {
+@media (hover: none) and (pointer: coarse) {
     #blog-intro.blogIntroBox {
-        display: none;
+        display: none; /* hide the box */
     }
     #blog-intro-text {
-        display: flex;
+        display: block; /* show the plain text */
         font-size: 20px;
         font-family: "Comic Sans MS", cursive, sans-serif;
         color: hotpink;
+        text-align: center;
     }
 }
 
