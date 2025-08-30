@@ -140,9 +140,9 @@ body {
     display: none;
 }
 
-@media (hover: none) and (pointer: coarse) {
+@media (hover: none) and (pointer: coarse) or (max-width: 768px) {
     #blog-intro.blogIntroBox {
-        display: none; /* hide the box */
+        display: none; !important;/* hide the box */
     }
     #blog-intro-text {
         display: block; /* show the plain text */
