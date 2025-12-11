@@ -174,7 +174,7 @@
 
         .card-btn.pressing .progress {
             width: 100%;
-            transition: width 2s linear;
+            transition: width 0.8s linear;
         }
 
         .event-btn {
@@ -777,7 +777,7 @@
             nextTurnTimeout = setTimeout(() => {
                 nextTurnBtn.classList.remove('pressing');
                 handleNextTurn();
-            }, 2000);
+            }, 800);
         };
 
         const endNextTurn = () => {
