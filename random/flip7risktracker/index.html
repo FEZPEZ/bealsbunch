@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Card Game Risk Analyzer</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background: #1a1a2e;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #eee;
+        }
+
+        /* Menu Styles */
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .player-entry {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .player-entry input {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            background: #16213e;
+            color: #fff;
+        }
+
+        .player-entry input::placeholder {
+            color: #666;
+        }
+
+        .remove-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 8px;
+            background: #e74c3c;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .add-player-btn, .start-btn {
+            padding: 18px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .add-player-btn {
+            background: #3498db;
+            color: #fff;
+        }
+
+        .start-btn {
+            background: #2ecc71;
+            color: #fff;
+            margin-top: 20px;
+        }
+
+        /* Game Styles */
+        .game-container {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .player-name {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 10px;
+            background: #16213e;
+            border-radius: 8px;
+        }
+
+        .risk-display {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .risk-safe { background: #27ae60; }
+        .risk-low { background: #2ecc71; }
+        .risk-medium { background: #f39c12; }
+        .risk-high { background: #e67e22; }
+        .risk-danger { background: #e74c3c; }
+        .risk-immune { background: #9b59b6; }
+
+        .player-cards {
+            text-align: center;
+            padding: 10px;
+            background: #16213e;
+            border-radius: 8px;
+            font-size: 1rem;
+            min-height: 50px;
+        }
+
+        .card-pad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .card-btn {
+            padding: 20px 10px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #34495e;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.1s;
+        }
+
+        .card-btn:active {
+            transform: scale(0.95);
+        }
+
+        .card-btn.pressing {
+            background: #5d6d7e;
+        }
+
+        .card-btn.disabled {
+            opacity: 0.3;
+        }
+
+        .card-btn .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: #3498db;
+            width: 0;
+            transition: width 0.1s linear;
+        }
+
+        .card-btn.pressing .progress {
+            width: 100%;
+            transition: width 2s linear;
+        }
+
+        .event-btn {
+            background: #8e44ad;
+        }
+
+        .special-btn {
+            background: #f39c12;
+        }
+
+        .stay-btn {
+            grid-column: span 2;
+            background: #3498db;
+        }
+
+        .undo-btn {
+            background: #95a5a6;
+        }
+
+        .next-turn-btn {
+            grid-column: span 4;
+            background: #27ae60;
+            padding: 25px;
+            width: 100%;
+        }
+
+        .next-turn-btn.disabled {
+            background: #1a5032;
+            opacity: 0.5;
+        }
+
+        .reshuffle-btn {
+            grid-column: span 4;
+            background: #e74c3c;
+            padding: 20px;
+        }
+
+        /* Popup Styles */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .popup-overlay.active {
+            display: flex;
+        }
+
+        .popup {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 350px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .popup h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .popup-players {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .popup-player-btn {
+            padding: 20px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            background: #34495e;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .popup-player-btn.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .popup-player-btn:active {
+            background: #5d6d7e;
+        }
+
+        .popup-close {
+            margin-top: 15px;
+            padding: 15px;
+            width: 100%;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            background: #e74c3c;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .popup-confirm {
+            margin-top: 15px;
+            padding: 15px;
+            width: 100%;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            background: #27ae60;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .draw3-counter {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 15px 0;
+            padding: 10px;
+            background: #1a1a2e;
+            border-radius: 8px;
+        }
+
+        .deck-info {
+            text-align: center;
+            padding: 8px;
+            background: #16213e;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* Icons */
+        .icon {
+            font-size: 1.5rem;
+        }
+
+        .pending-actions {
+            background: #2c3e50;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            min-height: 60px;
+        }
+
+        .pending-actions h4 {
+            margin: 0 0 5px 0;
+            color: #f39c12;
+        }
+
+        .pending-actions .empty {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Main Menu -->
+    <div id="menu" class="menu-container">
+        <h1>🎴 Risk Analyzer</h1>
+        <div id="playerList"></div>
+        <button class="add-player-btn" id="addPlayerBtn">+ Add Player</button>
+        <button class="start-btn" id="startBtn">START GAME</button>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game" class="game-container">
+        <div class="player-name" id="currentPlayerName">Player 1</div>
+        <div class="risk-display risk-safe" id="riskDisplay">0%</div>
+        <div class="player-cards" id="playerCards">Cards: None</div>
+        <div class="deck-info" id="deckInfo">Deck: 91 | Discard: 0</div>
+
+        <div class="pending-actions" id="pendingActions">
+            <h4>⏳ Pending Actions:</h4>
+            <div id="pendingList"><span class="empty">None</span></div>
+        </div>
+
+        <div class="card-pad">
+            <!-- NEXT TURN button -->
+            <button class="card-btn next-turn-btn disabled" id="nextTurnBtn">
+                NEXT TURN
+                <div class="progress"></div>
+            </button>
+
+            <!-- UNDO / STAY / SPECIAL row -->
+            <button class="card-btn undo-btn" id="undoBtn">↩️</button>
+            <button class="card-btn stay-btn" data-card="stay">STAY</button>
+            <button class="card-btn special-btn" data-card="special">⭐</button>
+
+            <!-- Number pad with events on right -->
+            <button class="card-btn" data-card="12">12</button>
+            <button class="card-btn" data-card="11">11</button>
+            <button class="card-btn" data-card="10">10</button>
+            <button class="card-btn event-btn" data-card="freeze">❄️</button>
+
+            <button class="card-btn" data-card="9">9</button>
+            <button class="card-btn" data-card="8">8</button>
+            <button class="card-btn" data-card="7">7</button>
+            <button class="card-btn event-btn" data-card="draw3">🃏</button>
+
+            <button class="card-btn" data-card="6">6</button>
+            <button class="card-btn" data-card="5">5</button>
+            <button class="card-btn" data-card="4">4</button>
+            <button class="card-btn event-btn" data-card="extralife">❤️</button>
+
+            <button class="card-btn" data-card="3">3</button>
+            <button class="card-btn" data-card="2">2</button>
+            <button class="card-btn" data-card="1">1</button>
+            <button class="card-btn" data-card="0">0</button>
+
+            <!-- RESHUFFLE button -->
+            <button class="card-btn reshuffle-btn" id="reshuffleBtn">🔄 RESHUFFLE</button>
+        </div>
+    </div>
+</div>
+
+<!-- Player Selection Popup -->
+<div class="popup-overlay" id="playerSelectPopup">
+    <div class="popup">
+        <h2 id="popupTitle">Select Starting Player</h2>
+        <div class="popup-players" id="popupPlayerList"></div>
+    </div>
+</div>
+
+<!-- Draw 3 Popup -->
+<div class="popup-overlay" id="draw3Popup">
+    <div class="popup">
+        <h2>Draw 3 Cards</h2>
+        <div class="draw3-counter" id="draw3Counter">Cards: 0/3</div>
+        <div class="player-cards" id="draw3Cards">Drawn: None</div>
+        <div class="card-pad" id="draw3Pad"></div>
+        <button class="popup-close" id="draw3Cancel">Cancel</button>
+    </div>
+</div>
+
+<!-- Alert Popup -->
+<div class="popup-overlay" id="alertPopup">
+    <div class="popup">
+        <h2 id="alertTitle">Alert</h2>
+        <p id="alertMessage"></p>
+        <button class="popup-confirm" id="alertConfirm">OK</button>
+    </div>
+</div>
+
+<!-- Confirm Popup -->
+<div class="popup-overlay" id="confirmPopup">
+    <div class="popup">
+        <h2>Return to Menu?</h2>
+        <p>This will reset the game. Player names will be saved.</p>
+        <button class="popup-confirm" id="confirmYes">Yes, Reset</button>
+        <button class="popup-close" id="confirmNo">Cancel</button>
+    </div>
+</div>
+
+<!-- Reset Round Popup -->
+<div class="popup-overlay" id="resetRoundPopup">
+    <div class="popup">
+        <h2>Reset Round?</h2>
+        <p>Do you want to change the starting player and reset this round?</p>
+        <button class="popup-confirm" id="resetRoundYes">Yes, Reset Round</button>
+        <button class="popup-close" id="resetRoundNo">Cancel</button>
+    </div>
+</div>
+
+<script>
+    // Game State
+    let gameState = {
+        players: [],
+        currentPlayerIndex: 0,
+        deck: {},
+        discard: {},
+        pendingDeck: {},
+        roundActive: false,
+        turnActions: [],
+        menuSequence: [],
+        menuSequenceTimeout: null,
+        playerHasDrawn: false,
+        roundStartingIndex: 0,
+        isFirstTurn: true
+    };
+
+    // Card counts in a full deck
+    const FULL_DECK = {
+        0: 1, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, 11: 11, 12: 12,
+        freeze: 3, draw3: 3, extralife: 3, special: 6
+    };
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        loadState();
+        if (gameState.roundActive) {
+            showGame();
+        } else {
+            showMenu();
+        }
+        setupButtonHolds();
+        setupMenuSequence();
+    });
+
+    // Save/Load State
+    function saveState() {
+        localStorage.setItem('cardGameState', JSON.stringify(gameState));
+    }
+
+    function loadState() {
+        const saved = localStorage.getItem('cardGameState');
+        if (saved) {
+            gameState = JSON.parse(saved);
+        } else {
+            gameState.players = [{ name: 'Player 1', cards: [], stayed: false, busted: false, extraLife: false }];
+            initializeDeck();
+        }
+    }
+
+    function initializeDeck() {
+        gameState.deck = JSON.parse(JSON.stringify(FULL_DECK));
+        gameState.discard = {};
+        gameState.pendingDeck = {};
+        Object.keys(FULL_DECK).forEach(k => {
+            gameState.discard[k] = 0;
+            gameState.pendingDeck[k] = 0;
+        });
+    }
+
+    // Menu Functions
+    function showMenu() {
+        document.getElementById('menu').style.display = 'flex';
+        document.getElementById('game').style.display = 'none';
+        renderPlayerList();
+    }
+
+    function renderPlayerList() {
+        const list = document.getElementById('playerList');
+        list.innerHTML = '';
+        gameState.players.forEach((player, index) => {
+            const div = document.createElement('div');
+            div.className = 'player-entry';
+            div.innerHTML = `
+                    <input type="text" value="${player.name}" placeholder="Player ${index + 1}"
+                           onchange="updatePlayerName(${index}, this.value)">
+                    ${gameState.players.length > 1 ?
+                `<button class="remove-btn" onclick="removePlayer(${index})">−</button>` : ''}
+                `;
+            list.appendChild(div);
+        });
+
+        document.getElementById('addPlayerBtn').style.display =
+            gameState.players.length >= 10 ? 'none' : 'block';
+    }
+
+    function updatePlayerName(index, name) {
+        gameState.players[index].name = name || `Player ${index + 1}`;
+        saveState();
+    }
+
+    function removePlayer(index) {
+        gameState.players.splice(index, 1);
+        renderPlayerList();
+        saveState();
+    }
+
+    document.getElementById('addPlayerBtn').addEventListener('click', () => {
+        if (gameState.players.length < 10) {
+            gameState.players.push({
+                name: `Player ${gameState.players.length + 1}`,
+                cards: [], stayed: false, busted: false, extraLife: false
+            });
+            renderPlayerList();
+            saveState();
+        }
+    });
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+        gameState.players.forEach(p => {
+            p.cards = [];
+            p.stayed = false;
+            p.busted = false;
+            p.extraLife = false;
+        });
+        initializeDeck();
+        gameState.roundActive = true;
+        gameState.turnActions = [];
+        gameState.playerHasDrawn = false;
+        gameState.isFirstTurn = true;
+        saveState();
+        showGame();
+        showPlayerSelectPopup('Select Starting Player', selectStartingPlayer);
+    });
+
+    // Game Functions
+    function showGame() {
+        document.getElementById('menu').style.display = 'none';
+        document.getElementById('game').style.display = 'flex';
+        updateDisplay();
+    }
+
+    function showPlayerSelectPopup(title, callback, filterFn = null) {
+        document.getElementById('popupTitle').textContent = title;
+        const list = document.getElementById('popupPlayerList');
+        list.innerHTML = '';
+
+        gameState.players.forEach((player, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'popup-player-btn';
+            btn.textContent = player.name;
+
+            const isDisabled = filterFn && !filterFn(player, index);
+            if (isDisabled) {
+                btn.classList.add('disabled');
+            } else {
+                btn.addEventListener('click', () => {
+                    document.getElementById('playerSelectPopup').classList.remove('active');
+                    callback(index);
+                });
+            }
+            list.appendChild(btn);
+        });
+
+        document.getElementById('playerSelectPopup').classList.add('active');
+    }
+
+    function selectStartingPlayer(index) {
+        gameState.currentPlayerIndex = index;
+        gameState.roundStartingIndex = index;
+        gameState.isFirstTurn = true;
+        saveState();
+        updateDisplay();
+    }
+
+    function updateDisplay() {
+        const player = gameState.players[gameState.currentPlayerIndex];
+        document.getElementById('currentPlayerName').textContent = player.name;
+
+        // Calculate and display risk
+        const risk = calculateRisk(gameState.currentPlayerIndex);
+        const riskDisplay = document.getElementById('riskDisplay');
+
+        if (player.extraLife) {
+            riskDisplay.textContent = '0% (Protected)';
+            riskDisplay.className = 'risk-display risk-immune';
+        } else if (player.stayed) {
+            riskDisplay.textContent = 'STAYED';
+            riskDisplay.className = 'risk-display risk-safe';
+        } else if (player.busted) {
+            riskDisplay.textContent = 'BUSTED';
+            riskDisplay.className = 'risk-display risk-danger';
+        } else {
+            riskDisplay.textContent = `${risk.toFixed(1)}%`;
+            if (risk === 0) riskDisplay.className = 'risk-display risk-safe';
+            else if (risk < 20) riskDisplay.className = 'risk-display risk-low';
+            else if (risk < 40) riskDisplay.className = 'risk-display risk-medium';
+            else if (risk < 60) riskDisplay.className = 'risk-display risk-high';
+            else riskDisplay.className = 'risk-display risk-danger';
+        }
+
+        // Display cards
+        const numberCards = player.cards.filter(c => !isNaN(c));
+        const eventCards = player.cards.filter(c => isNaN(c));
+        let cardText = 'Cards: ';
+        if (numberCards.length === 0 && eventCards.length === 0) {
+            cardText += 'None';
+        } else {
+            if (numberCards.length > 0) cardText += numberCards.sort((a,b) => a-b).join(', ');
+            if (eventCards.length > 0) {
+                if (numberCards.length > 0) cardText += ' | ';
+                cardText += eventCards.map(c => getCardIcon(c)).join(' ');
+            }
+        }
+        if (player.extraLife) cardText += ' ❤️';
+        document.getElementById('playerCards').textContent = cardText;
+
+        // Deck info
+        const deckCount = Object.values(gameState.deck).reduce((a, b) => a + b, 0);
+        const discardCount = Object.values(gameState.discard).reduce((a, b) => a + b, 0);
+        const pendingCount = Object.values(gameState.pendingDeck).reduce((a, b) => a + b, 0);
+        document.getElementById('deckInfo').textContent =
+            `Deck: ${deckCount} | Discard: ${discardCount}${pendingCount > 0 ? ` | Pending: ${pendingCount}` : ''}`;
+
+        // Update button states
+        updateButtonStates();
+
+        // Pending actions display (always visible)
+        const pendingList = document.getElementById('pendingList');
+        if (gameState.turnActions.length > 0) {
+            pendingList.innerHTML = gameState.turnActions.map(a => {
+                if (a.type === 'card') return `Drew: ${getCardDisplay(a.card)}`;
+                if (a.type === 'stay') return 'Stayed';
+                if (a.type === 'bust') return 'Busted!';
+                if (a.type === 'extralife_used') return 'Extra Life used!';
+                return '';
+            }).join(' → ');
+        } else {
+            pendingList.innerHTML = '<span class="empty">None</span>';
+        }
+
+        // Next turn button
+        const nextBtn = document.getElementById('nextTurnBtn');
+        if (gameState.turnActions.length > 0) {
+            nextBtn.classList.remove('disabled');
+        } else {
+            nextBtn.classList.add('disabled');
+        }
+    }
+
+    function getCardIcon(card) {
+        switch(card) {
+            case 'freeze': return '❄️';
+            case 'draw3': return '🃏';
+            case 'extralife': return '❤️';
+            case 'special': return '⭐';
+            default: return card;
+        }
+    }
+
+    function getCardDisplay(card) {
+        if (!isNaN(card)) return card;
+        return getCardIcon(card);
+    }
+
+    function calculateRisk(playerIndex) {
+        const player = gameState.players[playerIndex];
+        if (player.stayed || player.busted || player.extraLife) return 0;
+
+        const numberCards = player.cards.filter(c => !isNaN(c));
+        if (numberCards.length === 0) return 0;
+
+        // Count dangerous cards in deck
+        let dangerousCards = 0;
+        let totalCards = 0;
+
+        numberCards.forEach(num => {
+            dangerousCards += gameState.deck[num] || 0;
+        });
+
+        Object.values(gameState.deck).forEach(count => {
+            totalCards += count;
+        });
+
+        if (totalCards === 0) return 0;
+        return (dangerousCards / totalCards) * 100;
+    }
+
+    function updateButtonStates() {
+        const player = gameState.players[gameState.currentPlayerIndex];
+        const isActive = !player.stayed && !player.busted;
+        const hasActedThisTurn = gameState.playerHasDrawn || gameState.turnActions.length > 0;
+
+        document.querySelectorAll('.card-btn[data-card]').forEach(btn => {
+            const card = btn.dataset.card;
+            if (card === 'stay') {
+                // Can only stay if haven't drawn yet this turn
+                btn.classList.toggle('disabled', !isActive || hasActedThisTurn);
+            } else if (!isNaN(parseInt(card))) {
+                const count = gameState.deck[card] || 0;
+                // Can only draw one card per turn
+                btn.classList.toggle('disabled', count === 0 || !isActive || hasActedThisTurn);
+            } else {
+                // Event cards and special
+                const count = gameState.deck[card] || 0;
+                btn.classList.toggle('disabled', count === 0 || !isActive || hasActedThisTurn);
+            }
+        });
+    }
+
+    // Button Hold Logic
+    function setupButtonHolds() {
+        // Regular card buttons - instant click
+        document.querySelectorAll('.card-btn[data-card]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!btn.classList.contains('disabled')) {
+                    handleCardInput(btn.dataset.card);
+                }
+                // Always handle menu sequence for 1, 4, 7, 10
+                const card = btn.dataset.card;
+                if (['1', '4', '7', '10'].includes(card)) {
+                    handleMenuSequence(card);
+                }
+            });
+        });
+
+        // Undo button (instant)
+        document.getElementById('undoBtn').addEventListener('click', handleUndo);
+
+        // Next turn button with 2-second hold
+        const nextTurnBtn = document.getElementById('nextTurnBtn');
+        let nextTurnTimeout = null;
+
+        const startNextTurn = (e) => {
+            if (nextTurnBtn.classList.contains('disabled')) return;
+            e.preventDefault();
+            nextTurnBtn.classList.add('pressing');
+            nextTurnTimeout = setTimeout(() => {
+                nextTurnBtn.classList.remove('pressing');
+                handleNextTurn();
+            }, 2000);
+        };
+
+        const endNextTurn = () => {
+            nextTurnBtn.classList.remove('pressing');
+            if (nextTurnTimeout) {
+                clearTimeout(nextTurnTimeout);
+                nextTurnTimeout = null;
+            }
+        };
+
+        nextTurnBtn.addEventListener('mousedown', startNextTurn);
+        nextTurnBtn.addEventListener('mouseup', endNextTurn);
+        nextTurnBtn.addEventListener('mouseleave', endNextTurn);
+        nextTurnBtn.addEventListener('touchstart', startNextTurn, { passive: false });
+        nextTurnBtn.addEventListener('touchend', endNextTurn);
+        nextTurnBtn.addEventListener('touchcancel', endNextTurn);
+
+        // Reshuffle button - instant click with hold for reset round
+        const reshuffleBtn = document.getElementById('reshuffleBtn');
+        let reshuffleHoldTimeout = null;
+        let reshuffleHeld = false;
+
+        const startReshuffleHold = (e) => {
+            e.preventDefault();
+            reshuffleHeld = false;
+            reshuffleBtn.classList.add('pressing');
+            reshuffleHoldTimeout = setTimeout(() => {
+                reshuffleHeld = true;
+                reshuffleBtn.classList.remove('pressing');
+                // Show reset round popup
+                document.getElementById('resetRoundPopup').classList.add('active');
+            }, 2000);
+        };
+
+        const endReshuffleHold = (e) => {
+            reshuffleBtn.classList.remove('pressing');
+            if (reshuffleHoldTimeout) {
+                clearTimeout(reshuffleHoldTimeout);
+                reshuffleHoldTimeout = null;
+            }
+            // If not held for 2 seconds, do instant reshuffle
+            if (!reshuffleHeld) {
+                handleReshuffle();
+            }
+            reshuffleHeld = false;
+        };
+
+        reshuffleBtn.addEventListener('mousedown', startReshuffleHold);
+        reshuffleBtn.addEventListener('mouseup', endReshuffleHold);
+        reshuffleBtn.addEventListener('mouseleave', () => {
+            reshuffleBtn.classList.remove('pressing');
+            if (reshuffleHoldTimeout) {
+                clearTimeout(reshuffleHoldTimeout);
+                reshuffleHoldTimeout = null;
+            }
+            reshuffleHeld = false;
+        });
+        reshuffleBtn.addEventListener('touchstart', startReshuffleHold, { passive: false });
+        reshuffleBtn.addEventListener('touchend', endReshuffleHold);
+        reshuffleBtn.addEventListener('touchcancel', () => {
+            reshuffleBtn.classList.remove('pressing');
+            if (reshuffleHoldTimeout) {
+                clearTimeout(reshuffleHoldTimeout);
+                reshuffleHoldTimeout = null;
+            }
+            reshuffleHeld = false;
+        });
+    }
+
+    // Reset round handlers
+    document.getElementById('resetRoundYes').addEventListener('click', () => {
+        document.getElementById('resetRoundPopup').classList.remove('active');
+        resetCurrentRound();
+    });
+
+    document.getElementById('resetRoundNo').addEventListener('click', () => {
+        document.getElementById('resetRoun dPopup').classList.remove('active');
+    });
+
+    function resetCurrentRound() {
+        // Return all cards from this round to deck
+        gameState.players.forEach(player => {
+            player.cards.forEach(card => {
+                gameState.deck[card] = (gameState.deck[card] || 0) + 1;
+            });
+            player.cards = [];
+            player.stayed = false;
+            player.busted = false;
+            player.extraLife = false;
+        });
+
+        gameState.turnActions = [];
+        gameState.playerHasDrawn = false;
+        gameState.isFirstTurn = true;
+
+        saveState();
+
+        showPlayerSelectPopup('Select New Starting Player', (index) => {
+            gameState.currentPlayerIndex = index;
+            gameState.roundStartingIndex = index;
+            saveState();
+            updateDisplay();
+        });
+    }
+
+    function handleCardInput(card) {
+        const player = gameState.players[gameState.currentPlayerIndex];
+
+        if (card === 'stay') {
+            if (gameState.playerHasDrawn || gameState.turnActions.length > 0) return;
+            gameState.turnActions.push({ type: 'stay', playerIndex: gameState.currentPlayerIndex });
+            player.stayed = true;
+            updateDisplay();
+            return;
+        }
+
+        // Can only take one card per turn
+        if (gameState.playerHasDrawn || gameState.turnActions.length > 0) return;
+
+        // Mark that player has drawn
+        gameState.playerHasDrawn = true;
+
+        if (card === 'freeze') {
+            showPlayerSelectPopup('Freeze which player?', (targetIndex) => {
+                gameState.turnActions.push({
+                    type: 'card',
+                    card: 'freeze',
+                    playerIndex: gameState.currentPlayerIndex,
+                    targetIndex: targetIndex
+                });
+                gameState.deck.freeze--;
+                gameState.players[targetIndex].stayed = true;
+                updateDisplay();
+            }, (p, i) => !p.stayed && !p.busted);
+            return;
+        }
+
+        if (card === 'draw3') {
+            showPlayerSelectPopup('Draw 3 for which player?', (targetIndex) => {
+                startDraw3(targetIndex);
+            }, (p, i) => !p.stayed && !p.busted);
+            return;
+        }
+
+        if (card === 'extralife') {
+            gameState.turnActions.push({
+                type: 'card',
+                card: 'extralife',
+                playerIndex: gameState.currentPlayerIndex
+            });
+            gameState.deck.extralife--;
+            player.extraLife = true;
+            updateDisplay();
+            return;
+        }
+
+        if (card === 'special') {
+            gameState.turnActions.push({
+                type: 'card',
+                card: 'special',
+                playerIndex: gameState.currentPlayerIndex
+            });
+            gameState.deck.special--;
+            player.cards.push('special');
+            updateDisplay();
+            return;
+        }
+
+        // Number card
+        const num = parseInt(card);
+        const hasCard = player.cards.includes(num);
+
+        if (hasCard && !player.extraLife) {
+            // Bust!
+            gameState.turnActions.push({
+                type: 'bust',
+                card: num,
+                playerIndex: gameState.currentPlayerIndex
+            });
+            gameState.deck[num]--;
+            player.busted = true;
+            player.cards.push(num);
+        } else if (hasCard && player.extraLife) {
+            // Extra life saves!
+            gameState.turnActions.push({
+                type: 'extralife_used',
+                card: num,
+                playerIndex: gameState.currentPlayerIndex
+            });
+            gameState.deck[num]--;
+            gameState.discard[num] = (gameState.discard[num] || 0) + 1;
+            gameState.discard.extralife = (gameState.discard.extralife || 0) + 1;
+            player.extraLife = false;
+        } else {
+            gameState.turnActions.push({
+                type: 'card',
+                card: num,
+                playerIndex: gameState.currentPlayerIndex
+            });
+            gameState.deck[num]--;
+            player.cards.push(num);
+        }
+
+        updateDisplay();
+    }
+
+    // Draw 3 Logic
+    let draw3State = {
+        targetIndex: -1,
+        cardsDrawn: [],
+        originalDeck: null,
+        originalPlayers: null
+    };
+
+    function startDraw3(targetIndex) {
+        draw3State = {
+            targetIndex: targetIndex,
+            cardsDrawn: [],
+            originalDeck: JSON.parse(JSON.stringify(gameState.deck)),
+            originalPlayers: JSON.parse(JSON.stringify(gameState.players))
+        };
+
+        gameState.turnActions.push({
+            type: 'card',
+            card: 'draw3',
+            playerIndex: gameState.currentPlayerIndex,
+            targetIndex: targetIndex,
+            subActions: []
+        });
+        gameState.deck.draw3--;
+
+        showDraw3Popup();
+    }
+
+    function showDraw3Popup() {
+        const target = gameState.players[draw3State.targetIndex];
+        document.getElementById('draw3Counter').textContent =
+            `${target.name}: ${draw3State.cardsDrawn.length}/3 cards`;
+        document.getElementById('draw3Cards').textContent =
+            'Drawn: ' + (draw3State.cardsDrawn.length > 0 ?
+                draw3State.cardsDrawn.map(c => getCardDisplay(c)).join(', ') : 'None');
+
+        // Build pad with new layout
+        const pad = document.getElementById('draw3Pad');
+        pad.innerHTML = '';
+
+        const cards = [
+            [12, 11, 10, 'special'],
+            [9, 8, 7, 'freeze'],
+            [6, 5, 4, 'draw3'],
+            [3, 2, 1, 'extralife'],
+            [0]
+        ];
+
+        cards.forEach(row => {
+            row.forEach(card => {
+                const btn = document.createElement('button');
+                btn.className = 'card-btn';
+                if (card === 'freeze' || card === 'draw3' || card === 'extralife') {
+                    btn.className += ' event-btn';
+                }
+                if (card === 'special') {
+                    btn.className += ' special-btn';
+                }
+
+                btn.innerHTML = `${getCardDisplay(card)}`;
+
+                const count = gameState.deck[card] || 0;
+                if (count === 0) {
+                    btn.classList.add('disabled');
+                }
+
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (!btn.classList.contains('disabled')) {
+                        handleDraw3Card(card);
+                    }
+                });
+
+                pad.appendChild(btn);
+            });
+        });
+
+        document.getElementById('draw3Popup').classList.add('active');
+    }
+
+    function handleDraw3Card(card) {
+        const target = gameState.players[draw3State.targetIndex];
+        draw3State.cardsDrawn.push(card);
+
+        // Get current draw3 action
+        const draw3Action = gameState.turnActions[gameState.turnActions.length - 1];
+
+        if (card === 'freeze') {
+            document.getElementById('draw3Popup').classList.remove('active');
+            showPlayerSelectPopup('Freeze which player?', (freezeTarget) => {
+                draw3Action.subActions.push({ type: 'freeze', target: freezeTarget });
+                gameState.deck.freeze--;
+                gameState.players[freezeTarget].stayed = true;
+                continueDraw3();
+            }, (p, i) => !p.stayed && !p.busted);
+            return;
+        }
+
+        if (card === 'draw3') {
+            // Nested draw 3
+            document.getElementById('draw3Popup').classList.remove('active');
+            showPlayerSelectPopup('Nested Draw 3 - Select player', (nestedTarget) => {
+                // Save current state
+                const savedState = { ...draw3State };
+                draw3Action.subActions.push({ type: 'draw3', target: nestedTarget, subActions: [] });
+                gameState.deck.draw3--;
+
+                draw3State = {
+                    targetIndex: nestedTarget,
+                    cardsDrawn: [],
+                    nestedFrom: savedState
+                };
+                showDraw3Popup();
+            }, (p, i) => !p.stayed && !p.busted);
+            return;
+        }
+
+        if (card === 'extralife') {
+            draw3Action.subActions.push({ type: 'extralife', target: draw3State.targetIndex });
+            gameState.deck.extralife--;
+            target.extraLife = true;
+            continueDraw3();
+            return;
+        }
+
+        if (card === 'special') {
+            draw3Action.subActions.push({ type: 'special', target: draw3State.targetIndex });
+            gameState.deck.special--;
+            target.cards.push('special');
+            continueDraw3();
+            return;
+        }
+
+        // Number card
+        const num = parseInt(card);
+        const hasCard = target.cards.includes(num);
+
+        if (hasCard && !target.extraLife) {
+            draw3Action.subActions.push({ type: 'bust', card: num, target: draw3State.targetIndex });
+            gameState.deck[num]--;
+            target.busted = true;
+            target.cards.push(num);
+            // End draw 3 on bust
+            finishDraw3();
+            return;
+        } else if (hasCard && target.extraLife) {
+            draw3Action.subActions.push({ type: 'extralife_used', card: num, target: draw3State.targetIndex });
+            gameState.deck[num]--;
+            gameState.discard[num] = (gameState.discard[num] || 0) + 1;
+            gameState.discard.extralife = (gameState.discard.extralife || 0) + 1;
+            target.extraLife = false;
+        } else {
+            draw3Action.subActions.push({ type: 'card', card: num, target: draw3State.targetIndex });
+            gameState.deck[num]--;
+            target.cards.push(num);
+        }
+
+        continueDraw3();
+    }
+
+    function continueDraw3() {
+        if (draw3State.cardsDrawn.length >= 3 ||
+            gameState.players[draw3State.targetIndex].busted ||
+            gameState.players[draw3State.targetIndex].stayed) {
+            finishDraw3();
+        } else {
+            showDraw3Popup();
+        }
+    }
+
+    function finishDraw3() {
+        document.getElementById('draw3Popup').classList.remove('active');
+
+        // Check if this was nested
+        if (draw3State.nestedFrom) {
+            draw3State = draw3State.nestedFrom;
+            continueDraw3();
+        } else {
+            updateDisplay();
+        }
+    }
+
+    document.getElementById('draw3Cancel').addEventListener('click', () => {
+        // Restore state
+        gameState.deck = draw3State.originalDeck;
+        gameState.players = draw3State.originalPlayers;
+        gameState.turnActions.pop();
+        gameState.playerHasDrawn = false;
+        document.getElementById('draw3Popup').classList.remove('active');
+        updateDisplay();
+    });
+
+    function handleUndo() {
+        if (gameState.turnActions.length === 0) return;
+
+        // Reverse all actions
+        gameState.turnActions.reverse().forEach(action => {
+            undoAction(action);
+        });
+
+        gameState.turnActions = [];
+        gameState.playerHasDrawn = false;
+        saveState();
+        updateDisplay();
+    }
+
+    function undoAction(action) {
+        if (action.type === 'card') {
+            const card = action.card;
+            gameState.deck[card] = (gameState.deck[card] || 0) + 1;
+
+            const player = gameState.players[action.playerIndex];
+            const idx = player.cards.lastIndexOf(card);
+            if (idx !== -1) player.cards.splice(idx, 1);
+
+            if (card === 'extralife') {
+                player.extraLife = false;
+            }
+
+            if (card === 'freeze' && action.targetIndex !== undefined) {
+                gameState.players[action.targetIndex].stayed = false;
+            }
+
+            if (action.subActions) {
+                action.subActions.reverse().forEach(sub => undoSubAction(sub));
+            }
+        } else if (action.type === 'stay') {
+            gameState.players[action.playerIndex].stayed = false;
+        } else if (action.type === 'bust') {
+            gameState.deck[action.card] = (gameState.deck[action.card] || 0) + 1;
+            const player = gameState.players[action.playerIndex];
+            player.busted = false;
+            const idx = player.cards.lastIndexOf(action.card);
+            if (idx !== -1) player.cards.splice(idx, 1);
+        } else if (action.type === 'extralife_used') {
+            gameState.deck[action.card] = (gameState.deck[action.card] || 0) + 1;
+            gameState.discard[action.card]--;
+            gameState.discard.extralife--;
+            gameState.players[action.playerIndex].extraLife = true;
+        }
+    }
+
+    function undoSubAction(sub) {
+        const target = gameState.players[sub.target];
+
+        if (sub.type === 'card') {
+            gameState.deck[sub.card] = (gameState.deck[sub.card] || 0) + 1;
+            const idx = target.cards.lastIndexOf(sub.card);
+            if (idx !== -1) target.cards.splice(idx, 1);
+        } else if (sub.type === 'freeze') {
+            gameState.deck.freeze++;
+            target.stayed = false;
+        } else if (sub.type === 'extralife') {
+            gameState.deck.extralife++;
+            target.extraLife = false;
+        } else if (sub.type === 'special') {
+            gameState.deck.special++;
+            const idx = target.cards.lastIndexOf('special');
+            if (idx !== -1) target.cards.splice(idx, 1);
+        } else if (sub.type === 'bust') {
+            gameState.deck[sub.card] = (gameState.deck[sub.card] || 0) + 1;
+            target.busted = false;
+            const idx = target.cards.lastIndexOf(sub.card);
+            if (idx !== -1) target.cards.splice(idx, 1);
+        } else if (sub.type === 'extralife_used') {
+            gameState.deck[sub.card] = (gameState.deck[sub.card] || 0) + 1;
+            gameState.discard[sub.card]--;
+            gameState.discard.extralife--;
+            target.extraLife = true;
+        } else if (sub.type === 'draw3' && sub.subActions) {
+            gameState.deck.draw3++;
+            sub.subActions.reverse().forEach(s => undoSubAction(s));
+        }
+    }
+
+    function handleNextTurn() {
+        if (gameState.turnActions.length === 0) return;
+
+        gameState.turnActions = [];
+        gameState.playerHasDrawn = false;
+        gameState.isFirstTurn = false;
+
+        // Check for 7 cards win
+        const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+        const numberCount = currentPlayer.cards.filter(c => !isNaN(c)).length;
+        if (numberCount >= 7 && !currentPlayer.busted) {
+            endRound(`${currentPlayer.name} has collected 7 number cards!`);
+            return;
+        }
+
+        // Find next active player
+        let nextIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
+        let attempts = 0;
+        while (attempts < gameState.players.length) {
+            const nextPlayer = gameState.players[nextIndex];
+            if (!nextPlayer.stayed && !nextPlayer.busted) {
+                break;
+            }
+            nextIndex = (nextIndex + 1) % gameState.players.length;
+            attempts++;
+        }
+
+        gameState.currentPlayerIndex = nextIndex;
+        saveState();
+        updateDisplay();
+
+        // Check round end after turn is committed
+        checkRoundEnd();
+    }
+
+    function checkRoundEnd() {
+        const activePlayers = gameState.players.filter(p => !p.stayed && !p.busted);
+        const sevenCardPlayer = gameState.players.find(p =>
+            p.cards.filter(c => !isNaN(c)).length >= 7 && !p.busted
+        );
+
+        if (activePlayers.length === 0) {
+            const bustedCount = gameState.players.filter(p => p.busted).length;
+            const stayedCount = gameState.players.filter(p => p.stayed).length;
+            let reason = 'All players have finished their turns.';
+            if (bustedCount > 0 && stayedCount > 0) {
+                reason = `Round ended: ${bustedCount} player(s) busted and ${stayedCount} player(s) stayed.`;
+            } else if (bustedCount === gameState.players.length) {
+                reason = `Round ended: All ${bustedCount} player(s) busted!`;
+            } else if (stayedCount === gameState.players.length) {
+                reason = `Round ended: All ${stayedCount} player(s) decided to stay.`;
+            }
+            endRound(reason);
+        } else if (sevenCardPlayer) {
+            endRound(`${sevenCardPlayer.name} has collected 7 number cards!`);
+        }
+    }
+
+    function endRound(reason) {
+        // Move all player cards to discard
+        gameState.players.forEach(player => {
+            player.cards.forEach(card => {
+                gameState.discard[card] = (gameState.discard[card] || 0) + 1;
+            });
+            player.cards = [];
+            player.stayed = false;
+            player.busted = false;
+            player.extraLife = false;
+        });
+
+        gameState.isFirstTurn = true;
+        saveState();
+
+        showAlert('Round Over!', reason, () => {
+            showPlayerSelectPopup('Select Starting Player for Next Round', (index) => {
+                gameState.currentPlayerIndex = index;
+                gameState.roundStartingIndex = index;
+                gameState.turnActions = [];
+                gameState.playerHasDrawn = false;
+                saveState();
+                updateDisplay();
+            });
+        });
+    }
+
+    function handleReshuffle() {
+        // Move discard to pending deck
+        Object.keys(gameState.discard).forEach(card => {
+            gameState.pendingDeck[card] = (gameState.pendingDeck[card] || 0) + gameState.discard[card];
+            gameState.discard[card] = 0;
+        });
+
+        // Check if current deck is empty, if so, use pending
+        const deckTotal = Object.values(gameState.deck).reduce((a, b) => a + b, 0);
+        if (deckTotal === 0) {
+            Object.keys(gameState.pendingDeck).forEach(card => {
+                gameState.deck[card] = (gameState.deck[card] || 0) + gameState.pendingDeck[card];
+                gameState.pendingDeck[card] = 0;
+            });
+            showAlert('Deck Refreshed!', 'The pending cards are now in the active deck.');
+        } else {
+            showAlert('Cards Queued', 'Discarded cards will enter the deck when current deck is exhausted.');
+        }
+
+        saveState();
+        updateDisplay();
+    }
+
+    // Menu sequence (1, 4, 7, 10)
+    function setupMenuSequence() {
+        // Already handled in main click handlers
+    }
+
+    function handleMenuSequence(num) {
+        const expected = ['1', '4', '7', '10'];
+
+        if (gameState.menuSequenceTimeout) {
+            clearTimeout(gameState.menuSequenceTimeout);
+        }
+
+        gameState.menuSequence.push(num);
+
+        // Check if sequence is correct so far
+        for (let i = 0; i < gameState.menuSequence.length; i++) {
+            if (gameState.menuSequence[i] !== expected[i]) {
+                gameState.menuSequence = [];
+                return;
+            }
+        }
+
+        // Check if complete
+        if (gameState.menuSequence.length === 4) {
+            gameState.menuSequence = [];
+            document.getElementById('confirmPopup').classList.add('active');
+            return;
+        }
+
+        // Set timeout to reset sequence
+        gameState.menuSequenceTimeout = setTimeout(() => {
+            gameState.menuSequence = [];
+        }, 2000);
+    }
+
+    document.getElementById('confirmYes').addEventListener('click', () => {
+        document.getElementById('confirmPopup').classList.remove('active');
+        // Save player names
+        const names = gameState.players.map(p => p.name);
+        gameState = {
+            players: names.map((name, i) => ({
+                name: name,
+                cards: [],
+                stayed: false,
+                busted: false,
+                extraLife: false
+            })),
+            currentPlayerIndex: 0,
+            deck: {},
+            discard: {},
+            pendingDeck: {},
+            roundActive: false,
+            turnActions: [],
+            menuSequence: [],
+            menuSequenceTimeout: null,
+            playerHasDrawn: false,
+            roundStartingIndex: 0,
+            isFirstTurn: true
+        };
+        initializeDeck();
+        saveState();
+        showMenu();
+    });
+
+    document.getElementById('confirmNo').addEventListener('click', () => {
+        document.getElementById('confirmPopup').classList.remove('active');
+    });
+
+    // Alert popup
+    let alertCallback = null;
+
+    function showAlert(title, message, callback = null) {
+        document.getElementById('alertTitle').textContent = title;
+        document.getElementById('alertMessage').textContent = message;
+        alertCallback = callback;
+        document.getElementById('alertPopup').classList.add('active');
+    }
+
+    document.getElementById('alertConfirm').addEventListener('click', () => {
+        document.getElementById('alertPopup').classList.remove('active');
+        if (alertCallback) {
+            alertCallback();
+            alertCallback = null;
+        }
+    });
+</script>
+</body>
+</html>
