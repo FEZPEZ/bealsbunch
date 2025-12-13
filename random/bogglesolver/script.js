@@ -106,6 +106,24 @@ async function loadDictionary() {
     }
 }
 
+function setupMobileButtonFix(buttonElement) {
+    // Prevent the default browser handling of a touch tap (which often involves a brief :hover)
+    buttonElement.addEventListener('touchstart', (e) => {
+        // Only prevent default if we're not inside a text input or link
+        if (e.target.closest('input, a') === null) {
+            // Add a class that replicates the :active effect
+            buttonElement.classList.add('touch-active');
+        }
+    }, { passive: true }); // Use passive: true for better scroll performance
+
+    const handleTouchEnd = () => {
+        buttonElement.classList.remove('touch-active');
+    };
+
+    buttonElement.addEventListener('touchend', handleTouchEnd);
+    buttonElement.addEventListener('touchcancel', handleTouchEnd);
+}
+
 // Setup event listeners
 function setupEventListeners() {
     generateBtn.addEventListener('click', showGeneratePopup);
@@ -145,6 +163,10 @@ function setupEventListeners() {
         if (e.target === boardEl) {
             clearWordHighlight();
         }
+    });
+
+    document.querySelectorAll('.btn').forEach(btn => {
+        setupMobileButtonFix(btn);
     });
 }
 
@@ -358,13 +380,24 @@ function showEnterPopup() {
         previewDie.id = `preview-${i}`;
         if (i === 0) previewDie.classList.add('current');
         enterPreview.appendChild(previewDie);
+
+        // NEW: Add click listener to select the die and focus the input
+        previewDie.addEventListener('click', () => handlePreviewDieClick(i));
     }
 
     updateEnterDisplay();
     enterPopupOverlay.classList.add('active');
 
-    // Focus the hidden input
-    setTimeout(() => letterInput.focus(), 100);
+    // NOTE: Removed the unreliable auto-focus with setTimeout.
+    // The user must now click a preview die to begin typing and trigger the keyboard.
+}
+
+// Handle click on a preview die to select it and focus the input
+function handlePreviewDieClick(index) {
+    currentEnterIndex = index;
+    updateEnterDisplay();
+    // Force focus on the hidden input to bring up the keyboard
+    letterInput.focus();
 }
 
 // Update the enter popup display
@@ -428,7 +461,7 @@ function handleLetterInput(e) {
         clearWords();
     } else {
         updateEnterDisplay();
-        // Keep focus on hidden input
+        // Keep focus on hidden input for smooth progress
         letterInput.focus();
     }
 }
