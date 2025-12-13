@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Boggle Solver</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-container">
+    <h1>BOGGLE</h1>
+
+    <div class="board-container">
+        <div class="board" id="board">
+            <!-- 16 dice will be generated here -->
+        </div>
+        <!-- SVG overlay for word paths -->
+        <svg class="path-overlay" id="pathOverlay">
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#d94527"/>
+                </marker>
+            </defs>
+        </svg>
+    </div>
+
+    <div class="buttons-container">
+        <button class="btn btn-generate" id="generateBtn">
+            <span class="btn-face">GENERATE</span>
+            <span class="btn-shadow"></span>
+        </button>
+        <button class="btn btn-solve" id="solveBtn" disabled>
+            <span class="btn-face">SOLVE</span>
+            <span class="btn-shadow"></span>
+        </button>
+    </div>
+
+    <div class="words-container" id="wordsContainer">
+        <div class="words-header" id="wordsHeader">
+            <span>WORDS: <span id="wordCount">0</span></span>
+            <span>POINTS: <span id="totalPoints">0</span></span>
+            <button class="sort-btn" id="sortBtn">A-Z</button>
+        </div>
+        <div class="words-list" id="wordsList">
+            <!-- Words will appear here -->
+        </div>
+    </div>
+</div>
+
+<!-- Generate Popup -->
+<div class="popup-overlay" id="popupOverlay">
+    <div class="popup">
+        <h2>GENERATE BOARD</h2>
+        <button class="btn btn-random" id="randomBtn">
+            <span class="btn-face">RANDOM</span>
+            <span class="btn-shadow"></span>
+        </button>
+        <button class="btn btn-enter" id="enterBtn">
+            <span class="btn-face">ENTER</span>
+            <span class="btn-shadow"></span>
+        </button>
+        <button class="btn btn-cancel" id="cancelBtn">
+            <span class="btn-face">CANCEL</span>
+            <span class="btn-shadow"></span>
+        </button>
+    </div>
+</div>
+
+<!-- Enter Letters Popup -->
+<div class="popup-overlay" id="enterPopupOverlay">
+    <div class="popup enter-popup">
+        <h2>ENTER LETTERS</h2>
+        <p class="enter-instruction">DIE: <span id="currentDieNum">1</span>/16</p>
+        <div class="enter-preview" id="enterPreview">
+            <!-- Mini board preview -->
+        </div>
+        <p class="enter-hint">TYPE A LETTER (Q → Qu)</p>
+        <!-- Hidden input for capturing keystrokes -->
+        <input type="text" id="letterInput" maxlength="2" autocomplete="off" autocapitalize="characters" class="hidden-input">
+        <button class="btn btn-cancel" id="enterCancelBtn">
+            <span class="btn-face">CANCEL</span>
+            <span class="btn-shadow"></span>
+        </button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
