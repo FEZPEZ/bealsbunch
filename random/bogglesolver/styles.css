@@ -287,14 +287,14 @@ h1 {
 }
 
 .die-face .letter-q {
-    display: inline-block;
-    transform: translateX(5px);
+    font-size: 1em;
+    margin-right: -0.05em; /* pulls u closer */
 }
 
 .die-face .letter-u {
-    display: inline-block;
-    transform: scale(0.65) translateX(5px);
-    transform-origin: left bottom;
+    font-size: 0.65em;
+    margin-left: -0.1em;
+    vertical-align: baseline;
     text-transform: lowercase;
 }
 
@@ -308,7 +308,10 @@ h1 {
 }
 
 .die-letter {
-    transform: translate(1px, 4px); /* adjust freely */
+    margin-top: 0.3em;
+    margin-left: 0.04em;
+    display: inline-flex;
+    align-items: baseline;
 }
 
 .btn, .words-header, .word-item, .die-face, .preview-die {
