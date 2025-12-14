@@ -80,6 +80,16 @@ body {
     }
 }
 
+.btn, .words-header, .word-item .die-face, .preview-die {
+    /* Prevent text selection on click/hold, especially on mobile */
+    -webkit-user-select: none; /* Safari/Chrome */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* IE/Edge */
+    user-select: none;         /* Standard */
+}
+
+
+
 .app-container {
     position: relative;
     z-index: 1;
@@ -381,7 +391,7 @@ h1 {
     transform: translateX(-50%);
     width: calc(100% - 30px);
     max-width: calc(var(--app-width) - 30px);
-    height: calc(100vh - 30px);
+    height: calc(100dvh - 30px);
     z-index: 100;
 }
 
