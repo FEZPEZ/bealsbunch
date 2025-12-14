@@ -106,42 +106,6 @@ async function loadDictionary() {
     }
 }
 
-function setupIntentButton(btn) {
-    /* ---------- INTENT (desktop only) ---------- */
-    btn.addEventListener('mouseenter', () => {
-        btn.classList.add('intent');
-    });
-
-    btn.addEventListener('mouseleave', () => {
-        btn.classList.remove('intent');
-    });
-
-    /* ---------- ACTIVATE (press, not release) ---------- */
-    const activate = () => {
-        btn.classList.remove('intent'); // intent never survives activation
-        btn.classList.add('activated');
-
-        btn.classList.add('activated');
-
-        setTimeout(() => {
-            btn.classList.remove('activated');
-        }, 220); // match your CSS transition time
-    };
-
-    // Desktop press
-    btn.addEventListener('mousedown', activate);
-
-    // Mobile press
-    btn.addEventListener('touchstart', (e) => {
-        e.preventDefault();      // critical
-        activate();
-    });
-
-}
-
-
-
-
 // Setup event listeners
 function setupEventListeners() {
     generateBtn.addEventListener('click', showGeneratePopup);
@@ -181,10 +145,6 @@ function setupEventListeners() {
         if (e.target === boardEl) {
             clearWordHighlight();
         }
-    });
-
-    document.querySelectorAll('.btn').forEach(btn => {
-        setupIntentButton(btn);
     });
 }
 

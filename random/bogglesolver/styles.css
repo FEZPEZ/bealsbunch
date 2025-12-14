@@ -245,20 +245,20 @@ h1 {
 .die-letter {
     transform: translate(1px, 4px); /* adjust freely */
 }
+
+
+.btn, .words-header, .word-item .die-face, .preview-die {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
 .buttons-container {
     display: flex;
     gap: 15px;
     padding: 15px 0;
-}
-
-@media (hover: none) {
-    .btn:hover {
-        all: unset;
-    }
-}
-
-.btn-shadow {
-    pointer-events: none;
 }
 
 /* Button with animated shadow */
@@ -270,8 +270,6 @@ h1 {
     cursor: pointer;
     padding: 0;
     font-family: 'Bauhaus', sans-serif;
-    touch-action: manipulation; /* allows immediate press without blocking scroll */
-    -webkit-tap-highlight-color: transparent; /* removes gray flash on mobile */
 }
 
 .btn-face {
@@ -285,77 +283,36 @@ h1 {
     position: relative;
     z-index: 2;
     transition: transform 0.15s ease;
-    box-sizing: border-box; /* ensures padding does not affect width/height unexpectedly */
-
-    box-shadow: var(--btn-shadow-offset) var(--btn-shadow-offset) 0 0 var(--bauhaus-dark);
 }
 
-/* Optional: Use a media query to disable :hover on devices that support touch */
-@media (hover: none) and (pointer: coarse) {
-    .btn:hover .btn-face,
-    .btn:hover .btn-shadow {
-        transform: none !important;
-    }
+.btn-shadow {
+    position: absolute;
+    top: var(--btn-shadow-offset);
+    left: var(--btn-shadow-offset);
+    width: 100%;
+    height: 100%;
+    background: var(--bauhaus-dark);
+    z-index: 1;
+    transition: transform 0.15s ease;
 }
 
-.btn, .words-header, .word-item .die-face, .preview-die {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-/* Original (Problematic) */
-/*
-.btn.intent .btn-face {
-    transform: translate(calc(var(--btn-shadow-offset) / -2), calc(var(--btn-shadow-offset) / -2));
+/* Hover: button and shadow move apart */
+.btn:hover .btn-face {
+    transform: translate(calc(var(--btn-hover-offset) * -1), calc(var(--btn-hover-offset) * -1));
 }
 
-.btn.intent .btn-shadow {
+.btn:hover .btn-shadow {
+    transform: translate(var(--btn-hover-offset), var(--btn-hover-offset));
+}
+
+/* Active/Click: button and shadow come together */
+.btn:active .btn-face {
     transform: translate(calc(var(--btn-shadow-offset) / 2), calc(var(--btn-shadow-offset) / 2));
 }
 
-.btn.activated .btn-face {
-    transform: translate(calc(var(--btn-shadow-offset) / 2), calc(var(--btn-shadow-offset) / 2));
-}
-
-.btn.activated .btn-shadow {
+.btn:active .btn-shadow {
     transform: translate(calc(var(--btn-shadow-offset) / -2), calc(var(--btn-shadow-offset) / -2));
 }
-*/
-
-/* --- NEW BOX-SHADOW APPROACH --- */
-/* Hover/Intent: Face moves up-left slightly, shadow stays the same size */
-.btn.intent .btn-face {
-    transform: translate(calc(var(--btn-shadow-offset) / -2), calc(var(--btn-shadow-offset) / -2));
-}
-
-/* Activate: Face moves down-right to cover the original shadow entirely */
-.btn.activated .btn-face {
-    transform: translate(var(--btn-shadow-offset), var(--btn-shadow-offset));
-    /* Also remove the shadow on activation */
-    box-shadow: 0 0 0 0 var(--bauhaus-dark);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-/* Ensure the normal state has the necessary transition for box-shadow */
-.btn-face {
-    /* ... existing properties ... */
-    box-shadow: var(--btn-shadow-offset) var(--btn-shadow-offset) 0 0 var(--bauhaus-dark);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-/* Re-apply the shadow transition to the default state */
-.btn:not(.activated) .btn-face {
-    box-shadow: var(--btn-shadow-offset) var(--btn-shadow-offset) 0 0 var(--bauhaus-dark);
-}
-
-/* Fix for disabled button in new model (if needed, but likely fine) */
-.btn-solve:disabled .btn-face {
-    background: var(--bauhaus-purple);
-    box-shadow: var(--btn-shadow-offset) var(--btn-shadow-offset) 0 0 var(--bauhaus-dark);
-}
-
-/* Remove or simplify all CSS rules targeting `.btn-shadow` */
 
 .btn-generate .btn-face {
     background: var(--bauhaus-red);
@@ -401,6 +358,7 @@ h1 {
     color: var(--bauhaus-dark);
     border: 2px solid var(--bauhaus-dark);
 }
+
 
 .words-container {
     flex: 1;
