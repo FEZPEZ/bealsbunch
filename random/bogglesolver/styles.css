@@ -26,7 +26,7 @@
 
     /* ===== ADJUSTABLE DICE VARIABLES ===== */
     --dice-scale: 0.85;           /* Scale factor for dice size (0.5 - 1.0) */
-    --dice-letter-size: 30px;   /* Font size for letters on dice */
+    --dice-letter-size: 4.5dvh;   /* Font size for letters on dice */
     --dice-edge-size: 3px;        /* Size of the 3D edge effect */
     --z-fix: -0.5px;
 
@@ -570,7 +570,7 @@ h1 {
 .floating-word {
     position: absolute;
     font-family: 'Bauhaus', 'Futura', 'Century Gothic', sans-serif;
-    font-size: 40px;
+    font-size: 5.8dvh;
     font-weight: bold;
     letter-spacing: 2px;
     text-transform: uppercase;
