@@ -263,14 +263,20 @@ function addUserWord(word, path) {
     // Update display
     displayUserWords();
 }
-
 // Show floating word animation at centroid of path
 function showFloatingWord(word, path) {
-    // Calculate centroid of the path
     const boardRect = boardContainer.getBoundingClientRect();
 
     let totalX = 0;
     let totalY = 0;
+
+    // Use the first die to derive size (all dice are same size)
+    const firstPos = path[0];
+    const firstDieIndex = firstPos.row * 4 + firstPos.col;
+    const firstFace = document.getElementById(`face-${firstDieIndex}`);
+    const dieRect = firstFace.getBoundingClientRect();
+
+    const floatingFontSize = dieRect.width * 0.9; // <-- THIS IS THE KEY
 
     path.forEach((pos) => {
         const dieIndex = pos.row * 4 + pos.col;
@@ -284,36 +290,36 @@ function showFloatingWord(word, path) {
     const centroidX = totalX / path.length;
     const centroidY = totalY / path.length;
 
-    // Create floating word element
     const floatingWord = document.createElement('div');
     floatingWord.className = 'floating-word';
     floatingWord.textContent = word;
+
     floatingWord.style.left = `${centroidX}px`;
     floatingWord.style.top = `${centroidY}px`;
 
-    // Set initial color
+    // 🔑 bind font size to die size
+    floatingWord.style.fontSize = `${floatingFontSize}px`;
+
     let colorIndex = 0;
     floatingWord.style.color = BAUHAUS_COLORS[colorIndex];
 
     boardContainer.appendChild(floatingWord);
 
-    // Color cycling interval
     const colorInterval = setInterval(() => {
         colorIndex = (colorIndex + 1) % BAUHAUS_COLORS.length;
         floatingWord.style.color = BAUHAUS_COLORS[colorIndex];
     }, 300);
 
-    // Trigger animation
     requestAnimationFrame(() => {
         floatingWord.classList.add('animate');
     });
 
-    // Clean up after animation
     setTimeout(() => {
         clearInterval(colorInterval);
         floatingWord.remove();
     }, 1500);
 }
+
 
 // Calculate total possible words and points for the board
 function calculateTotals() {

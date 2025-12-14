@@ -582,16 +582,15 @@ h1 {
 .floating-word {
     position: absolute;
     font-family: 'Bauhaus', 'Futura', 'Century Gothic', sans-serif;
-    font-size: 50px;
     font-weight: bold;
-    letter-spacing: 2px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     pointer-events: none;
     z-index: 20;
     transform: translate(-50%, -50%);
     opacity: 1;
-
 }
+
 
 .floating-word.animate {
     animation: float-up 1s ease-out forwards, fade-out 0.5s ease-out 1s forwards;
