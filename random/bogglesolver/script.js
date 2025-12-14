@@ -78,8 +78,7 @@ solvePopupOverlay.className = 'popup-overlay';
 solvePopupOverlay.id = 'solvePopupOverlay';
 solvePopupOverlay.innerHTML = `
     <div class="popup">
-        <h2>REVEAL WORDS?</h2>
-        <p class="enter-instruction">THIS WILL SHOW ALL REMAINING WORDS</p>
+        <h2>SHOW ALL WORDS?</h2>
         <button class="btn btn-solve-confirm" id="solveConfirmBtn">
             <span class="btn-face">REVEAL</span>
             <span class="btn-shadow"></span>

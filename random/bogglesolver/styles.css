@@ -26,7 +26,7 @@ html, body {
     --app-width: 400px;
     --board-padding: 20px;
     --die-gap: 12px;
-    --die-size: 10;
+    --die-size: 1;
 
     /* ===== ADJUSTABLE DICE VARIABLES ===== */
     --dice-scale: 0.85;           /* Scale factor for dice size (0.5 - 1.0) */
@@ -136,6 +136,7 @@ h1 {
     gap: var(--die-gap);
     transform-style: preserve-3d;
     perspective: 800px;
+    font-size: 100%;
 }
 
 .path-overlay {
@@ -581,7 +582,7 @@ h1 {
 .floating-word {
     position: absolute;
     font-family: 'Bauhaus', 'Futura', 'Century Gothic', sans-serif;
-    font-size: 3em;
+    font-size: 7.3vh;
     font-weight: bold;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -589,6 +590,7 @@ h1 {
     z-index: 20;
     transform: translate(-50%, -50%);
     opacity: 1;
+
 }
 
 .floating-word.animate {
