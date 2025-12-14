@@ -245,7 +245,6 @@ h1 {
 .die-letter {
     transform: translate(1px, 4px); /* adjust freely */
 }
-
 .buttons-container {
     display: flex;
     gap: 15px;
@@ -271,8 +270,8 @@ h1 {
     cursor: pointer;
     padding: 0;
     font-family: 'Bauhaus', sans-serif;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation; /* allows immediate press without blocking scroll */
+    -webkit-tap-highlight-color: transparent; /* removes gray flash on mobile */
 }
 
 .btn-face {
@@ -286,6 +285,7 @@ h1 {
     position: relative;
     z-index: 2;
     transition: transform 0.15s ease;
+    box-sizing: border-box; /* ensures padding does not affect width/height unexpectedly */
 }
 
 .btn-shadow {
@@ -297,6 +297,7 @@ h1 {
     background: var(--bauhaus-dark);
     z-index: 1;
     transition: transform 0.15s ease;
+    box-sizing: border-box; /* keeps shadow aligned exactly with button face */
 }
 
 /* Optional: Use a media query to disable :hover on devices that support touch */
@@ -308,11 +309,10 @@ h1 {
 }
 
 .btn, .words-header, .word-item .die-face, .preview-die {
-    /* Prevent text selection on click/hold, especially on mobile */
-    -webkit-user-select: none; /* Safari/Chrome */
-    -moz-user-select: none;    /* Firefox */
-    -ms-user-select: none;     /* IE/Edge */
-    user-select: none;         /* Standard */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .btn.intent .btn-face {
@@ -336,7 +336,6 @@ h1 {
 .btn.activated .btn-shadow {
     transform: translate(calc(var(--btn-shadow-offset) / -2), calc(var(--btn-shadow-offset) / -2));
 }
-
 
 .btn-generate .btn-face {
     background: var(--bauhaus-red);
