@@ -266,7 +266,7 @@ h1 {
 }
 
 .die-face.visible {
-    animation: die-pop 70ms ease-in both;
+    animation: die-pop 120ms ease-in both;
     opacity: 1;
 }
 
