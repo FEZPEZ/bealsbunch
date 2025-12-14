@@ -287,14 +287,17 @@ h1 {
 }
 
 .die-face .letter-q {
-    font-size: var(--dice-letter-size);
+    display: inline-block;
+    transform: translateX(5px);
 }
 
 .die-face .letter-u {
-    font-size: calc(var(--dice-letter-size) * 0.65);
-    margin-left: -2px;
+    display: inline-block;
+    transform: scale(0.65) translateX(5px);
+    transform-origin: left bottom;
     text-transform: lowercase;
 }
+
 
 /* Highlight for word path */
 .die-face.highlighted {
