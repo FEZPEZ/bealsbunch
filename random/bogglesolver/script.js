@@ -22,6 +22,15 @@ const DICE = [
     ['P', 'A', 'C', 'E', 'M', 'D']
 ];
 
+// Bauhaus color palette for word popup
+const BAUHAUS_COLORS = [
+    '#d94527', // red
+    '#f5a845', // yellow
+    '#24a482', // green
+    '#756c8c', // purple
+    '#464167'  // dark
+];
+
 // Game state
 let board = Array(16).fill(null);
 let dictionary = null;
@@ -30,6 +39,16 @@ let foundWordsData = [];
 let currentSortMode = 'alpha'; // 'alpha' or 'points'
 let selectedWord = null;
 let wordsExpanded = false;
+
+// User interaction state
+let userFoundWords = new Map(); // Store user-found words and their paths
+let currentPath = []; // Current path being built by clicking
+let currentWord = ''; // Current word being built
+let isUserMode = false; // Track if user has found any words
+let idleTimeout = null; // Timeout for clearing idle selection
+let totalPossibleWords = 0; // Total possible words on board
+let totalPossiblePoints = 0; // Total possible points on board
+let hasSolved = false; // Track if solve has been used
 
 // DOM Elements
 const boardEl = document.getElementById('board');
@@ -51,9 +70,30 @@ const wordsContainer = document.getElementById('wordsContainer');
 const wordsHeader = document.getElementById('wordsHeader');
 const sortBtn = document.getElementById('sortBtn');
 const pathOverlay = document.getElementById('pathOverlay');
+const boardContainer = document.querySelector('.board-container');
+
+// Create solve confirmation popup
+const solvePopupOverlay = document.createElement('div');
+solvePopupOverlay.className = 'popup-overlay';
+solvePopupOverlay.id = 'solvePopupOverlay';
+solvePopupOverlay.innerHTML = `
+    <div class="popup">
+        <h2>REVEAL WORDS?</h2>
+        <p class="enter-instruction">THIS WILL SHOW ALL REMAINING WORDS</p>
+        <button class="btn btn-solve-confirm" id="solveConfirmBtn">
+            <span class="btn-face">REVEAL</span>
+            <span class="btn-shadow"></span>
+        </button>
+        <button class="btn btn-cancel" id="solveCancelBtn">
+            <span class="btn-face">CANCEL</span>
+            <span class="btn-shadow"></span>
+        </button>
+    </div>
+`;
 
 // Initialize the app
 async function init() {
+    document.body.appendChild(solvePopupOverlay);
     createBoard();
     await loadDictionary();
     setupEventListeners();
@@ -83,11 +123,286 @@ function createBoard() {
         face.appendChild(faceInner);
         die.appendChild(face);
 
+        // Add click listener for word building
+        face.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleDieClick(i);
+        });
+
         dieContainer.appendChild(die);
         boardEl.appendChild(dieContainer);
     }
 
     updateDieSize();
+}
+
+// Handle die clicks for word building
+function handleDieClick(index) {
+    // Don't allow clicking if board isn't ready, animating, or already solved
+    if (board[index] === null || isAnimating || hasSolved) return;
+
+    // Reset idle timeout
+    resetIdleTimeout();
+
+    const row = Math.floor(index / 4);
+    const col = index % 4;
+
+    // Check if this die is already in the current path
+    const existingIndex = currentPath.findIndex(pos => pos.row === row && pos.col === col);
+
+    if (existingIndex !== -1) {
+        // Die is already selected - clear everything
+        clearCurrentPath();
+        return;
+    }
+
+    // Check if this die is adjacent to the last selected die (or if it's the first)
+    if (currentPath.length > 0) {
+        const lastPos = currentPath[currentPath.length - 1];
+        const rowDiff = Math.abs(row - lastPos.row);
+        const colDiff = Math.abs(col - lastPos.col);
+
+        // Not adjacent (including diagonals)
+        if (rowDiff > 1 || colDiff > 1) {
+            // Invalid move - clear everything
+            clearCurrentPath();
+            return;
+        }
+    }
+
+    // Add to path
+    currentPath.push({ row, col });
+    currentWord += board[index];
+
+    // Highlight the die and trigger pop animation
+    const face = document.getElementById(`face-${index}`);
+    face.classList.add('highlighted');
+    triggerPopAnimation(face);
+
+    // Check the word immediately
+    checkCurrentWord();
+}
+
+// Trigger pop animation on a die face
+function triggerPopAnimation(face) {
+    face.classList.remove('pop-animation');
+    void face.offsetWidth; // Force reflow
+    face.classList.add('pop-animation');
+}
+
+// Reset the idle timeout
+function resetIdleTimeout() {
+    if (idleTimeout) {
+        clearTimeout(idleTimeout);
+    }
+    idleTimeout = setTimeout(() => {
+        clearCurrentPath();
+    }, 1000);
+}
+
+// Clear idle timeout
+function clearIdleTimeout() {
+    if (idleTimeout) {
+        clearTimeout(idleTimeout);
+        idleTimeout = null;
+    }
+}
+
+// Check if current word/path is valid
+function checkCurrentWord() {
+    if (!dictionary || currentWord.length === 0) return;
+
+    // Convert Qu to QU for dictionary lookup
+    const lookupWord = currentWord.replace(/Qu/g, 'QU');
+
+    // Navigate through trie to check if path is valid PREFIX in the dictionary
+    let node = dictionary;
+    for (const letter of lookupWord) {
+        if (!node[letter]) {
+            // Not a valid prefix in the entire dictionary - clear immediately
+            clearCurrentPath();
+            return;
+        }
+        node = node[letter];
+    }
+
+    // Check if it's a complete word (minimum 3 letters)
+    if (node['$'] && lookupWord.length >= 3) {
+        // Check if word was already found by user
+        if (!userFoundWords.has(lookupWord)) {
+            // New word found!
+            addUserWord(lookupWord, [...currentPath]);
+        }
+        // If word already found, do NOT clear - allow building longer words
+    }
+    // If we get here with a valid prefix, keep the path active
+}
+
+// Add a user-found word
+function addUserWord(word, path) {
+    userFoundWords.set(word, path);
+    isUserMode = true;
+
+    // Calculate totals if not done yet
+    if (totalPossibleWords === 0) {
+        calculateTotals();
+    }
+
+    // Show floating word animation
+    showFloatingWord(word, path);
+
+    // Trigger pop animation on all dice in path
+    path.forEach((pos) => {
+        const dieIndex = pos.row * 4 + pos.col;
+        const face = document.getElementById(`face-${dieIndex}`);
+        triggerPopAnimation(face);
+    });
+
+    // Clear path immediately (removes highlights)
+    clearCurrentPath();
+
+    // Update display
+    displayUserWords();
+}
+
+// Show floating word animation at centroid of path
+function showFloatingWord(word, path) {
+    // Calculate centroid of the path
+    const boardRect = boardContainer.getBoundingClientRect();
+
+    let totalX = 0;
+    let totalY = 0;
+
+    path.forEach((pos) => {
+        const dieIndex = pos.row * 4 + pos.col;
+        const face = document.getElementById(`face-${dieIndex}`);
+        const faceRect = face.getBoundingClientRect();
+
+        totalX += faceRect.left + faceRect.width / 2 - boardRect.left;
+        totalY += faceRect.top + faceRect.height / 2 - boardRect.top;
+    });
+
+    const centroidX = totalX / path.length;
+    const centroidY = totalY / path.length;
+
+    // Create floating word element
+    const floatingWord = document.createElement('div');
+    floatingWord.className = 'floating-word';
+    floatingWord.textContent = word;
+    floatingWord.style.left = `${centroidX}px`;
+    floatingWord.style.top = `${centroidY}px`;
+
+    // Set initial color
+    let colorIndex = 0;
+    floatingWord.style.color = BAUHAUS_COLORS[colorIndex];
+
+    boardContainer.appendChild(floatingWord);
+
+    // Color cycling interval
+    const colorInterval = setInterval(() => {
+        colorIndex = (colorIndex + 1) % BAUHAUS_COLORS.length;
+        floatingWord.style.color = BAUHAUS_COLORS[colorIndex];
+    }, 300);
+
+    // Trigger animation
+    requestAnimationFrame(() => {
+        floatingWord.classList.add('animate');
+    });
+
+    // Clean up after animation
+    setTimeout(() => {
+        clearInterval(colorInterval);
+        floatingWord.remove();
+    }, 1500);
+}
+
+// Calculate total possible words and points for the board
+function calculateTotals() {
+    if (!dictionary || board.some(cell => cell === null)) return;
+
+    const foundWords = new Map();
+    const directions = [
+        [-1, -1], [-1, 0], [-1, 1],
+        [0, -1],           [0, 1],
+        [1, -1],  [1, 0],  [1, 1]
+    ];
+
+    const grid = [];
+    for (let i = 0; i < 4; i++) {
+        grid.push(board.slice(i * 4, (i + 1) * 4));
+    }
+
+    function dfs(row, col, node, path, visited, positions) {
+        if (row < 0 || row >= 4 || col < 0 || col >= 4) return;
+        if (visited.has(`${row},${col}`)) return;
+
+        let letter = grid[row][col];
+        const lookupLetters = letter === 'Qu' ? ['Q', 'U'] : [letter];
+
+        let currentNode = node;
+        for (const l of lookupLetters) {
+            if (!currentNode[l]) return;
+            currentNode = currentNode[l];
+        }
+
+        const newPath = path + letter;
+        const newPositions = [...positions, { row, col }];
+
+        if (currentNode['$'] && newPath.length >= 3) {
+            const wordKey = newPath.replace(/Qu/g, 'QU');
+            if (!foundWords.has(wordKey)) {
+                foundWords.set(wordKey, newPositions);
+            }
+        }
+
+        visited.add(`${row},${col}`);
+
+        for (const [dr, dc] of directions) {
+            dfs(row + dr, col + dc, currentNode, newPath, visited, newPositions);
+        }
+
+        visited.delete(`${row},${col}`);
+    }
+
+    for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 4; col++) {
+            dfs(row, col, dictionary, '', new Set(), []);
+        }
+    }
+
+    totalPossibleWords = foundWords.size;
+    totalPossiblePoints = 0;
+    for (const [word] of foundWords) {
+        totalPossiblePoints += calculatePoints(word);
+    }
+}
+
+// Clear current path and highlights
+function clearCurrentPath() {
+    clearIdleTimeout();
+
+    // Clear all highlights
+    for (const pos of currentPath) {
+        const index = pos.row * 4 + pos.col;
+        const face = document.getElementById(`face-${index}`);
+        face.classList.remove('highlighted');
+    }
+
+    currentPath = [];
+    currentWord = '';
+}
+
+// Display user words
+function displayUserWords() {
+    const userWordsData = Array.from(userFoundWords.entries()).map(([word, path]) => ({
+        word,
+        path,
+        points: calculatePoints(word),
+        isUserWord: true
+    }));
+
+    foundWordsData = userWordsData;
+    displayWords(foundWordsData, false);
 }
 
 // Update die size CSS variable
@@ -120,6 +435,22 @@ function setupEventListeners() {
     cancelBtn.addEventListener('click', hidePopups);
     enterCancelBtn.addEventListener('click', hidePopups);
 
+    // Solve popup listeners
+    document.getElementById('solveConfirmBtn').addEventListener('click', () => {
+        solvePopupOverlay.classList.remove('active');
+        performSolve();
+    });
+
+    document.getElementById('solveCancelBtn').addEventListener('click', () => {
+        solvePopupOverlay.classList.remove('active');
+    });
+
+    solvePopupOverlay.addEventListener('click', (e) => {
+        if (e.target === solvePopupOverlay) {
+            solvePopupOverlay.classList.remove('active');
+        }
+    });
+
     letterInput.addEventListener('input', handleLetterInput);
 
     window.addEventListener('resize', updateDieSize);
@@ -145,10 +476,11 @@ function setupEventListeners() {
         if (e.target === enterPopupOverlay) hidePopups();
     });
 
-    // Click outside to deselect word
+    // Click outside to deselect word and clear current path
     boardEl.addEventListener('click', (e) => {
         if (e.target === boardEl) {
             clearWordHighlight();
+            clearCurrentPath();
         }
     });
 }
@@ -164,7 +496,7 @@ function toggleSortMode() {
     }
 
     if (foundWordsData.length > 0) {
-        displayWords(foundWordsData);
+        displayWords(foundWordsData, hasSolved);
     }
 }
 
@@ -188,6 +520,7 @@ function showGeneratePopup() {
 function hidePopups() {
     popupOverlay.classList.remove('active');
     enterPopupOverlay.classList.remove('active');
+    solvePopupOverlay.classList.remove('active');
     letterInput.value = '';
 }
 
@@ -199,6 +532,7 @@ async function generateRandomBoard() {
     isAnimating = true;
     clearWords();
     clearWordHighlight();
+    clearCurrentPath();
 
     // Shuffle dice positions
     const diceIndices = shuffleArray([...Array(16).keys()]);
@@ -226,49 +560,38 @@ async function generateRandomBoard() {
     updateSolveButton();
 }
 
-// script.js (around line 160)
-
 /**
  * Creates and runs the 3D die animation, then transitions to the static face.
- * @param {number} index The index of the die (0-15).
- * @param {string} letter The letter to display on the final face.
- * @returns {Promise<void>} A promise that resolves when the animation and cleanup are complete.
  */
 function animateDie(index, letter) {
     return new Promise((resolve) => {
         const die = document.getElementById(`die-${index}`);
         const face = document.getElementById(`face-${index}`);
 
-        // 1. Prepare static face: ensure it's hidden before the animation starts
         face.classList.remove('visible');
+        face.classList.remove('pop-animation');
         face.innerHTML = '';
 
         const duration = 1000 + Math.random() * 1000;
 
-        // 2. Create and append the 3D die
         const die3d = create3DDie();
         die.appendChild(die3d);
 
-        // Calculate a random, long, spinning rotation
-        const x = Math.random() * 2 - 1; // -1 to 1
+        const x = Math.random() * 2 - 1;
         const y = Math.random() * 2 - 1;
         const z = Math.random() * 2 - 1;
-        const spinDeg = 720 + Math.random() * 360; // Spin between 2 and 3 full rotations
+        const spinDeg = 720 + Math.random() * 360;
 
-        // FINAL orientation that puts WHITE face on top (always 0, 0, 0 for the front face)
         const finalTransform = `
             rotateX(0deg)
             rotateY(0deg)
             rotateZ(0deg)
         `;
 
-        // 3. Run the animation
         const animation = die3d.animate(
             [
                 {
-                    transform: `
-                        rotate3d(${x}, ${y}, ${z}, ${spinDeg}deg)
-                    `
+                    transform: `rotate3d(${x}, ${y}, ${z}, ${spinDeg}deg)`
                 },
                 {
                     transform: finalTransform
@@ -276,29 +599,16 @@ function animateDie(index, letter) {
             ],
             {
                 duration,
-                easing: 'cubic-bezier(0.0, 0.0, 0.2, 1)', // pure deceleration
+                easing: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
                 fill: 'forwards'
             }
         );
 
-        // 4. Cleanup and transition when the animation is FINISHED
         animation.onfinish = () => {
-            console.log(`[DEBUG] Animation Finished for Die ${index}`);
-
-            // A. Remove the 3D element
             die3d.remove();
-
-            // B. Set the letter on the static face
             setDieLetter(face, letter, true);
-
-            // C. FORCE REFLOW/REPAINT (CRITICAL FIX FOR DISAPPEARING ELEMENTS)
-            // Reading offsetHeight forces the browser to recalculate element layout,
-            // reliably clearing the rendering buffer from the heavy 3D transform.
             face.offsetHeight;
-
-            // D. Show the static face (triggers the CSS pop animation)
             face.classList.add('visible');
-
             resolve();
         };
     });
@@ -317,40 +627,6 @@ function create3DDie() {
     });
 
     return die3d;
-}
-
-// Generate rotation animation keyframes - all axes rotate simultaneously
-function generateRotationAnimation(index, duration) {
-    // Each axis gets random k between 2-4 and random direction
-    const axes = ['X', 'Y', 'Z'];
-    const rotations = {};
-
-    axes.forEach(axis => {
-        const k = 2 + Math.floor(Math.random() * 3); // 2, 3, or 4
-        const direction = Math.random() < 0.5 ? 1 : -1;
-        rotations[axis] = k * 360 * direction;
-    });
-
-    // Generate keyframes with all rotations happening simultaneously
-    const steps = 60;
-    let keyframeStr = `@keyframes roll-${index} {\n`;
-
-    for (let i = 0; i <= steps; i++) {
-        const progress = i / steps;
-        const percent = (progress * 100).toFixed(2);
-
-        // Ease out cubic for deceleration
-        const eased = 1 - Math.pow(1 - progress, 3);
-
-        const rotX = eased * rotations.X;
-        const rotY = eased * rotations.Y;
-        const rotZ = eased * rotations.Z;
-
-        keyframeStr += `  ${percent}% { transform: rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) rotateZ(${rotZ.toFixed(2)}deg); }\n`;
-    }
-
-    keyframeStr += '}';
-    return { keyframes: keyframeStr };
 }
 
 function setDieLetter(face, letter, isDice = true) {
@@ -373,7 +649,6 @@ function setDieLetter(face, letter, isDice = true) {
     return letter;
 }
 
-
 // Show enter letters popup
 let currentEnterIndex = 0;
 
@@ -382,12 +657,14 @@ function showEnterPopup() {
     currentEnterIndex = 0;
     board = Array(16).fill(null);
     clearWordHighlight();
+    clearWords();
 
     // Clear all die faces
     for (let i = 0; i < 16; i++) {
         const face = document.getElementById(`face-${i}`);
         face.innerHTML = '';
         face.classList.remove('visible');
+        face.classList.remove('pop-animation');
     }
 
     // Create preview grid
@@ -399,22 +676,17 @@ function showEnterPopup() {
         if (i === 0) previewDie.classList.add('current');
         enterPreview.appendChild(previewDie);
 
-        // NEW: Add click listener to select the die and focus the input
         previewDie.addEventListener('click', () => handlePreviewDieClick(i));
     }
 
     updateEnterDisplay();
     enterPopupOverlay.classList.add('active');
-
-    // NOTE: Removed the unreliable auto-focus with setTimeout.
-    // The user must now click a preview die to begin typing and trigger the keyboard.
 }
 
-// Handle click on a preview die to select it and focus the input
+// Handle click on a preview die
 function handlePreviewDieClick(index) {
     currentEnterIndex = index;
     updateEnterDisplay();
-    // Force focus on the hidden input to bring up the keyboard
     letterInput.focus();
 }
 
@@ -422,7 +694,6 @@ function handlePreviewDieClick(index) {
 function updateEnterDisplay() {
     currentDieNum.textContent = currentEnterIndex + 1;
 
-    // Update preview grid
     for (let i = 0; i < 16; i++) {
         const previewDie = document.getElementById(`preview-${i}`);
         previewDie.className = 'preview-die';
@@ -449,7 +720,6 @@ function handleLetterInput(e) {
 
     if (value.length === 0) return;
 
-    // Auto-convert Q to Qu
     let letter;
     if (value[0] === 'Q') {
         letter = 'Qu';
@@ -460,26 +730,20 @@ function handleLetterInput(e) {
         return;
     }
 
-    // Set the letter on the board
     board[currentEnterIndex] = letter;
 
-    // Update main board display
     const face = document.getElementById(`face-${currentEnterIndex}`);
     setDieLetter(face, letter, true);
     face.classList.add('visible');
 
-    // Move to next die
     currentEnterIndex++;
     letterInput.value = '';
 
     if (currentEnterIndex >= 16) {
-        // Board complete
         hidePopups();
         updateSolveButton();
-        clearWords();
     } else {
         updateEnterDisplay();
-        // Keep focus on hidden input for smooth progress
         letterInput.focus();
     }
 }
@@ -497,27 +761,45 @@ function clearWords() {
     totalPoints.textContent = '0';
     foundWordsData = [];
     selectedWord = null;
+    userFoundWords.clear();
+    isUserMode = false;
+    hasSolved = false;
+    totalPossibleWords = 0;
+    totalPossiblePoints = 0;
+    clearCurrentPath();
 }
 
-// Solve the board using DFS + backtracking
+// Solve the board
 function solveBoard() {
     if (!dictionary || board.some(cell => cell === null)) return;
 
+    // If user has found words, show confirmation popup
+    if (isUserMode && !hasSolved) {
+        solvePopupOverlay.classList.add('active');
+        return;
+    }
+
+    performSolve();
+}
+
+// Perform the actual solve
+function performSolve() {
     clearWordHighlight();
-    const foundWords = new Map(); // word -> path
+    clearCurrentPath();
+    hasSolved = true;
+
+    const foundWords = new Map();
     const directions = [
         [-1, -1], [-1, 0], [-1, 1],
         [0, -1],           [0, 1],
         [1, -1],  [1, 0],  [1, 1]
     ];
 
-    // Convert board to 2D grid
     const grid = [];
     for (let i = 0; i < 4; i++) {
         grid.push(board.slice(i * 4, (i + 1) * 4));
     }
 
-    // DFS from each cell
     function dfs(row, col, node, path, visited, positions) {
         if (row < 0 || row >= 4 || col < 0 || col >= 4) return;
         if (visited.has(`${row},${col}`)) return;
@@ -525,7 +807,6 @@ function solveBoard() {
         let letter = grid[row][col];
         const lookupLetters = letter === 'Qu' ? ['Q', 'U'] : [letter];
 
-        // Traverse the trie
         let currentNode = node;
         for (const l of lookupLetters) {
             if (!currentNode[l]) return;
@@ -535,16 +816,13 @@ function solveBoard() {
         const newPath = path + letter;
         const newPositions = [...positions, { row, col }];
 
-        // Check if we found a word (minimum 3 letters)
         if (currentNode['$'] && newPath.length >= 3) {
-            // Convert Qu to QU for storage
             const wordKey = newPath.replace(/Qu/g, 'QU');
             if (!foundWords.has(wordKey)) {
                 foundWords.set(wordKey, newPositions);
             }
         }
 
-        // Continue searching
         visited.add(`${row},${col}`);
 
         for (const [dr, dc] of directions) {
@@ -554,22 +832,58 @@ function solveBoard() {
         visited.delete(`${row},${col}`);
     }
 
-    // Start DFS from each cell
     for (let row = 0; row < 4; row++) {
         for (let col = 0; col < 4; col++) {
             dfs(row, col, dictionary, '', new Set(), []);
         }
     }
 
-    // Convert to array with paths
-    foundWordsData = Array.from(foundWords.entries()).map(([word, path]) => ({
-        word,
-        path,
-        points: calculatePoints(word)
-    }));
+    // Update totals
+    totalPossibleWords = foundWords.size;
+    totalPossiblePoints = 0;
+    for (const [word] of foundWords) {
+        totalPossiblePoints += calculatePoints(word);
+    }
 
-    // Display results
-    displayWords(foundWordsData);
+    // Build the display data
+    const allWordsData = [];
+
+    if (isUserMode) {
+        // User played - show their words normally, missed words inverted
+        for (const [word, path] of userFoundWords.entries()) {
+            allWordsData.push({
+                word,
+                path,
+                points: calculatePoints(word),
+                isUserWord: true
+            });
+        }
+
+        // Add missed words as inverted
+        for (const [word, path] of foundWords.entries()) {
+            if (!userFoundWords.has(word)) {
+                allWordsData.push({
+                    word,
+                    path,
+                    points: calculatePoints(word),
+                    isUserWord: false
+                });
+            }
+        }
+    } else {
+        // Direct solve - show all words in inverted/gray style
+        for (const [word, path] of foundWords.entries()) {
+            allWordsData.push({
+                word,
+                path,
+                points: calculatePoints(word),
+                isUserWord: false
+            });
+        }
+    }
+
+    foundWordsData = allWordsData;
+    displayWords(foundWordsData, true);
 }
 
 // Calculate points for a word
@@ -580,11 +894,11 @@ function calculatePoints(word) {
 }
 
 // Display found words
-function displayWords(wordsData) {
+function displayWords(wordsData, isSolveDisplay = false) {
     wordsList.innerHTML = '';
 
     // Check if no words found
-    if (wordsData.length === 0) {
+    if (wordsData.length === 0 && !isUserMode) {
         const noWordsMsg = document.createElement('div');
         noWordsMsg.className = 'no-words-message';
         noWordsMsg.textContent = 'NO WORDS FOUND';
@@ -605,13 +919,23 @@ function displayWords(wordsData) {
         sortedWords = [...wordsData].sort((a, b) => a.word.localeCompare(b.word));
     }
 
-    let total = 0;
+    let userTotal = 0;
+    let userCount = 0;
 
-    sortedWords.forEach(({ word, points, path }) => {
-        total += points;
+    sortedWords.forEach(({ word, points, path, isUserWord }) => {
+        if (isUserWord === true) {
+            userTotal += points;
+            userCount++;
+        }
 
         const wordItem = document.createElement('div');
         wordItem.className = 'word-item';
+
+        // Add inverted class for missed words or all words in direct solve
+        if (isUserWord === false) {
+            wordItem.classList.add('inverted');
+        }
+
         if (selectedWord === word) {
             wordItem.classList.add('selected');
         }
@@ -629,18 +953,28 @@ function displayWords(wordsData) {
         wordsList.appendChild(wordItem);
     });
 
-    wordCount.textContent = sortedWords.length;
-    totalPoints.textContent = total;
+    // Update counts
+    if (isSolveDisplay && !isUserMode) {
+        // Direct solve - just show totals without fraction
+        wordCount.textContent = totalPossibleWords;
+        totalPoints.textContent = totalPossiblePoints;
+    } else if (isUserMode && totalPossibleWords > 0) {
+        // User mode - show fraction
+        wordCount.textContent = `${userCount}/${totalPossibleWords}`;
+        totalPoints.textContent = `${userTotal}/${totalPossiblePoints}`;
+    } else {
+        // User mode but totals not calculated yet
+        wordCount.textContent = userCount;
+        totalPoints.textContent = userTotal;
+    }
 }
 
 // Select a word and show its path
 function selectWord(word, path) {
-    // Collapse words container if expanded
     if (wordsExpanded) {
         toggleWordsExpanded();
     }
 
-    // Toggle selection
     if (selectedWord === word) {
         clearWordHighlight();
         return;
@@ -648,7 +982,6 @@ function selectWord(word, path) {
 
     selectedWord = word;
 
-    // Update word item styling
     document.querySelectorAll('.word-item').forEach(item => {
         item.classList.remove('selected');
         if (item.querySelector('.word').textContent === word) {
@@ -656,17 +989,14 @@ function selectWord(word, path) {
         }
     });
 
-    // Clear previous highlights
     clearDiceHighlights();
 
-    // Highlight dice (no numbers)
     path.forEach((pos) => {
         const dieIndex = pos.row * 4 + pos.col;
         const face = document.getElementById(`face-${dieIndex}`);
         face.classList.add('highlighted');
     });
 
-    // Draw path arrows (no starting dot)
     drawPath(path);
 }
 
@@ -691,12 +1021,11 @@ function clearDiceHighlights() {
 
 // Clear path overlay
 function clearPathOverlay() {
-    // Remove all lines and circles except the marker definition
     const elements = pathOverlay.querySelectorAll('line, circle, path');
     elements.forEach(el => el.remove());
 }
 
-// Draw path on the board (arrows only, no starting dot)
+// Draw path on the board
 function drawPath(positions) {
     clearPathOverlay();
 
@@ -704,7 +1033,6 @@ function drawPath(positions) {
 
     const overlayRect = pathOverlay.getBoundingClientRect();
 
-    // Calculate die centers
     const dieCenters = positions.map(pos => {
         const dieIndex = pos.row * 4 + pos.col;
         const face = document.getElementById(`face-${dieIndex}`);
@@ -716,19 +1044,16 @@ function drawPath(positions) {
         };
     });
 
-    // Draw lines between consecutive dice
     for (let i = 0; i < dieCenters.length - 1; i++) {
         const start = dieCenters[i];
         const end = dieCenters[i + 1];
 
-        // Calculate direction for offset
         const dx = end.x - start.x;
         const dy = end.y - start.y;
         const length = Math.sqrt(dx * dx + dy * dy);
         const unitX = dx / length;
         const unitY = dy / length;
 
-        // Offset from center to edge of die
         const offset = 18;
 
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -737,7 +1062,6 @@ function drawPath(positions) {
         line.setAttribute('x2', end.x - unitX * offset);
         line.setAttribute('y2', end.y - unitY * offset);
 
-        // Add arrowhead to last segment only
         if (i === dieCenters.length - 2) {
             line.setAttribute('marker-end', 'url(#arrowhead)');
         }

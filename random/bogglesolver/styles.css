@@ -242,6 +242,12 @@ h1 {
 
     isolation: isolate;      /* REQUIRED */
     z-index: 1;
+    cursor: pointer;
+    transition: background 0.1s ease;
+}
+
+.die-face:hover {
+    background: #ebe6de;
 }
 
 .die-face-inner {
@@ -264,11 +270,15 @@ h1 {
     opacity: 1;
 }
 
-/* @keyframes die-pop (around line 186) */
-@keyframes die-pop {
-    0% { transform: scale(1.12); }
+/* Pop animation for clicking dice */
+@keyframes die-click-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.12); }
     100% { transform: scale(1); }
-    /* REMOVE the opacity: 1 rules here. We handle opacity separately. */
+}
+
+.die-face.pop-animation {
+    animation: die-click-pop 150ms ease-out both;
 }
 
 .die-face .letter-q {
@@ -285,9 +295,8 @@ h1 {
 .die-face.highlighted {
     background: var(--bauhaus-yellow);
     box-shadow:
-            var(--dice-edge-size) var(--dice-edge-size) 0 0 #c49035,
-            var(--dice-edge-size) 0 0 0 #c49035,
-            0 var(--dice-edge-size) 0 0 #d4a045;
+            6px -6px 0 0 var(--dice-front),          /* Red top-right */
+            6px 6px 0 0 rgba(0, 0, 0, 0.25);
 }
 
 .die-letter {
@@ -406,6 +415,12 @@ h1 {
     border: 2px solid var(--bauhaus-dark);
 }
 
+/* Solve confirmation popup button */
+.btn-solve-confirm .btn-face {
+    background: var(--bauhaus-red);
+    color: var(--bauhaus-cream);
+}
+
 .words-container {
     flex: 1;
     display: flex;
@@ -515,6 +530,31 @@ h1 {
     font-weight: bold;
 }
 
+/* Inverted word item styles (for missed words after solve) */
+.word-item.inverted {
+    background: var(--bauhaus-dark);
+    border-color: var(--dice-front);
+    box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 0.3);
+}
+
+.word-item.inverted .word {
+    color: var(--dice-front);
+}
+
+.word-item.inverted .points {
+    background: var(--dice-front);
+    color: var(--bauhaus-dark);
+}
+
+.word-item.inverted:hover {
+    background: var(--bauhaus-purple);
+}
+
+.word-item.inverted.selected {
+    background: var(--bauhaus-purple);
+    border-color: var(--bauhaus-yellow);
+}
+
 /* No words found message */
 .no-words-message {
     width: 100%;
@@ -524,6 +564,42 @@ h1 {
     font-size: 1.1rem;
     letter-spacing: 2px;
     font-weight: bold;
+}
+
+/* Floating word animation */
+.floating-word {
+    position: absolute;
+    font-family: 'Bauhaus', 'Futura', 'Century Gothic', sans-serif;
+    font-size: 1.7rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 20;
+    transform: translate(-50%, -50%);
+    opacity: 1;
+}
+
+.floating-word.animate {
+    animation: float-up 1s ease-out forwards, fade-out 0.5s ease-out 1s forwards;
+}
+
+@keyframes float-up {
+    0% {
+        transform: translate(-50%, -50%);
+    }
+    100% {
+        transform: translate(-50%, calc(-50% - 1.2em));
+    }
+}
+
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
 /* Popup Styles */
@@ -571,6 +647,10 @@ h1 {
     margin-bottom: 0;
 }
 
+.popup .enter-instruction {
+    margin-bottom: 20px;
+}
+
 /* Enter Letters Popup */
 .enter-popup {
     max-width: 350px;
@@ -604,6 +684,11 @@ h1 {
     color: var(--bauhaus-dark);
     transition: all 0.2s;
     border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.preview-die:hover {
+    background: #ebe6de;
 }
 
 .preview-die.filled {
@@ -674,5 +759,9 @@ h1 {
     .btn-face {
         padding: 12px 15px;
         font-size: 0.9rem;
+    }
+
+    .floating-word {
+        font-size: 1rem;
     }
 }
