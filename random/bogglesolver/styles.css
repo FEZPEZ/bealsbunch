@@ -28,6 +28,8 @@
     --dice-scale: 0.85;           /* Scale factor for dice size (0.5 - 1.0) */
     --dice-letter-size: 1.8rem;   /* Font size for letters on dice */
     --dice-edge-size: 3px;        /* Size of the 3D edge effect */
+    --z-fix: -0.5px;
+
 
     /* Bauhaus Color Palette */
     --bauhaus-red: #d94527;
@@ -38,13 +40,21 @@
     --bauhaus-dark: #464167;
 
     /* Muted versions for dice edges */
-    --dice-top: #c8c0b4;
-    --dice-side: #b8b0a4;
+    --dice-top: #f5f0e8;
+    --dice-side: var(--bauhaus-red);
     --dice-front: #f5f0e8;
 
     /* Button animation */
     --btn-hover-offset: 2px;
     --btn-shadow-offset: 4px;
+
+    --shadow1-x: 6px;
+    --shadow1-y: -6px;
+    --shadow1-color: var(--bauhaus-red);
+
+    --shadow2-x: 6px;
+    --shadow2-y: 6px;
+    --shadow2-color: rgba(0, 0, 0, 0.25);
 }
 
 body {
@@ -163,6 +173,8 @@ h1 {
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
+    transform: translateZ(0);        /* Promote cube to its own GPU layer */
+    will-change: transform;          /* Helps compositing stay solid */
 }
 
 .die-3d .face {
@@ -176,38 +188,38 @@ h1 {
     font-size: var(--dice-letter-size);
     font-weight: bold;
     color: var(--bauhaus-dark);
-    backface-visibility: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    backface-visibility: visible;    /* Prevent culling artifacts */
+    border: none;                    /* Remove physical borders to prevent seams */
 }
 
 .die-3d .face-front {
     background: var(--dice-front);
-    transform: translateZ(calc(var(--die-size) * var(--dice-scale) / 2));
+    transform: translateZ(calc(var(--die-size) * var(--dice-scale) / 2 + var(--z-fix)));
 }
 
 .die-3d .face-back {
     background: var(--dice-side);
-    transform: rotateY(180deg) translateZ(calc(var(--die-size) * var(--dice-scale) / 2));
+    transform: rotateY(180deg) translateZ(calc(var(--die-size) * var(--dice-scale) / 2 + var(--z-fix)));
 }
 
 .die-3d .face-right {
     background: var(--dice-side);
-    transform: rotateY(90deg) translateZ(calc(var(--die-size) * var(--dice-scale) / 2));
+    transform: rotateY(90deg) translateZ(calc(var(--die-size) * var(--dice-scale) / 2 + var(--z-fix)));
 }
 
 .die-3d .face-left {
     background: var(--dice-side);
-    transform: rotateY(-90deg) translateZ(calc(var(--die-size) * var(--dice-scale) / 2));
+    transform: rotateY(-90deg) translateZ(calc(var(--die-size) * var(--dice-scale) / 2 + var(--z-fix)));
 }
 
 .die-3d .face-top {
     background: var(--dice-top);
-    transform: rotateX(90deg) translateZ(calc(var(--die-size) * var(--dice-scale) / 2));
+    transform: rotateX(90deg) translateZ(calc(var(--die-size) * var(--dice-scale) / 2 + var(--z-fix)));
 }
 
 .die-3d .face-bottom {
     background: var(--dice-top);
-    transform: rotateX(-90deg) translateZ(calc(var(--die-size) * var(--dice-scale) / 2));
+    transform: rotateX(-90deg) translateZ(calc(var(--die-size) * var(--dice-scale) / 2 + var(--z-fix)));
 }
 
 /* Static die face (shown after animation) */
@@ -224,16 +236,39 @@ h1 {
     font-weight: bold;
     color: var(--bauhaus-dark);
     opacity: 0;
-    transition: opacity 0.4s ease-in-out;
-    /* 3D cube edge effect - proportional to edge size variable */
     box-shadow:
-            var(--dice-edge-size) var(--dice-edge-size) 0 0 var(--dice-side),
-            var(--dice-edge-size) 0 0 0 var(--dice-side),
-            0 var(--dice-edge-size) 0 0 var(--dice-top);
+            6px -6px 0 0 var(--bauhaus-red),          /* Red top-right */
+            6px 6px 0 0 rgba(0, 0, 0, 0.25);
+
+    isolation: isolate;      /* REQUIRED */
+    z-index: 1;
+}
+
+.die-face-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center;
+    z-index: 2;
+}
+
+@keyframes die-pop {
+    0% { transform: scale(1.12); }
+    100% { transform: scale(1); }
 }
 
 .die-face.visible {
+    animation: die-pop 70ms ease-in both;
     opacity: 1;
+}
+
+/* @keyframes die-pop (around line 186) */
+@keyframes die-pop {
+    0% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+    /* REMOVE the opacity: 1 rules here. We handle opacity separately. */
 }
 
 .die-face .letter-q {

@@ -77,7 +77,12 @@ function createBoard() {
         face.className = 'die-face';
         face.id = `face-${i}`;
 
+        const faceInner = document.createElement('div');
+        faceInner.className = 'die-face-inner';
+
+        face.appendChild(faceInner);
         die.appendChild(face);
+
         dieContainer.appendChild(die);
         boardEl.appendChild(dieContainer);
     }
@@ -221,46 +226,81 @@ async function generateRandomBoard() {
     updateSolveButton();
 }
 
-// Animate a single die rolling
+// script.js (around line 160)
+
+/**
+ * Creates and runs the 3D die animation, then transitions to the static face.
+ * @param {number} index The index of the die (0-15).
+ * @param {string} letter The letter to display on the final face.
+ * @returns {Promise<void>} A promise that resolves when the animation and cleanup are complete.
+ */
 function animateDie(index, letter) {
     return new Promise((resolve) => {
         const die = document.getElementById(`die-${index}`);
         const face = document.getElementById(`face-${index}`);
 
-        // Hide the letter face during animation
+        // 1. Prepare static face: ensure it's hidden before the animation starts
         face.classList.remove('visible');
         face.innerHTML = '';
 
-        // Random animation duration between 1-2 seconds
         const duration = 1000 + Math.random() * 1000;
 
-        // Create 3D die for animation
+        // 2. Create and append the 3D die
         const die3d = create3DDie();
         die.appendChild(die3d);
 
-        // Generate rotation animation - all axes start and end together
-        const rotationCSS = generateRotationAnimation(index, duration);
+        // Calculate a random, long, spinning rotation
+        const x = Math.random() * 2 - 1; // -1 to 1
+        const y = Math.random() * 2 - 1;
+        const z = Math.random() * 2 - 1;
+        const spinDeg = 720 + Math.random() * 360; // Spin between 2 and 3 full rotations
 
-        // Add keyframes to document
-        const styleSheet = document.createElement('style');
-        styleSheet.textContent = rotationCSS.keyframes;
-        document.head.appendChild(styleSheet);
+        // FINAL orientation that puts WHITE face on top (always 0, 0, 0 for the front face)
+        const finalTransform = `
+            rotateX(0deg)
+            rotateY(0deg)
+            rotateZ(0deg)
+        `;
 
-        // Apply animation
-        die3d.style.animation = `roll-${index} ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
+        // 3. Run the animation
+        const animation = die3d.animate(
+            [
+                {
+                    transform: `
+                        rotate3d(${x}, ${y}, ${z}, ${spinDeg}deg)
+                    `
+                },
+                {
+                    transform: finalTransform
+                }
+            ],
+            {
+                duration,
+                easing: 'cubic-bezier(0.0, 0.0, 0.2, 1)', // pure deceleration
+                fill: 'forwards'
+            }
+        );
 
-        // After animation completes, show the letter
-        setTimeout(() => {
-            // Remove 3D die
+        // 4. Cleanup and transition when the animation is FINISHED
+        animation.onfinish = () => {
+            console.log(`[DEBUG] Animation Finished for Die ${index}`);
+
+            // A. Remove the 3D element
             die3d.remove();
-            styleSheet.remove();
 
-            // Show the letter
+            // B. Set the letter on the static face
             setDieLetter(face, letter, true);
+
+            // C. FORCE REFLOW/REPAINT (CRITICAL FIX FOR DISAPPEARING ELEMENTS)
+            // Reading offsetHeight forces the browser to recalculate element layout,
+            // reliably clearing the rendering buffer from the heavy 3D transform.
+            face.offsetHeight;
+
+            // D. Show the static face (triggers the CSS pop animation)
             face.classList.add('visible');
 
             resolve();
-        }, duration);
+        };
     });
 }
 
