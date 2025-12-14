@@ -18,11 +18,15 @@
     box-sizing: border-box;
 }
 
+html, body {
+    touch-action: manipulation; /* disables double-tap zoom on mobile */
+}
+
 :root {
     --app-width: 400px;
     --board-padding: 20px;
     --die-gap: 12px;
-    --die-size: 1;
+    --die-size: 10;
 
     /* ===== ADJUSTABLE DICE VARIABLES ===== */
     --dice-scale: 0.85;           /* Scale factor for dice size (0.5 - 1.0) */
@@ -165,6 +169,7 @@ h1 {
     position: relative;
     transform-style: preserve-3d;
     transform: translateZ(-30px);
+    font-size: 100%;
 }
 
 /* 3D Cube Die for animation */
@@ -232,7 +237,7 @@ h1 {
     align-items: center;
     justify-content: center;
     font-family: 'BauhausLetters', 'Bauhaus', sans-serif;
-    font-size: var(--dice-letter-size);
+    font-size: 220%;
     font-weight: bold;
     color: var(--bauhaus-dark);
     opacity: 0;
@@ -570,7 +575,7 @@ h1 {
 .floating-word {
     position: absolute;
     font-family: 'Bauhaus', 'Futura', 'Century Gothic', sans-serif;
-    font-size: 5.8dvh;
+    font-size: 3em;
     font-weight: bold;
     letter-spacing: 2px;
     text-transform: uppercase;
