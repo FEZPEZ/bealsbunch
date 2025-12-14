@@ -132,7 +132,11 @@ function setupIntentButton(btn) {
     btn.addEventListener('mousedown', activate);
 
     // Mobile press
-    btn.addEventListener('touchstart', activate, { passive: true });
+    btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();      // critical
+        activate();
+    });
+
 }
 
 
