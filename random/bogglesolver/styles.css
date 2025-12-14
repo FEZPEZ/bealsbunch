@@ -286,18 +286,8 @@ h1 {
     z-index: 2;
     transition: transform 0.15s ease;
     box-sizing: border-box; /* ensures padding does not affect width/height unexpectedly */
-}
 
-.btn-shadow {
-    position: absolute;
-    top: var(--btn-shadow-offset);
-    left: var(--btn-shadow-offset);
-    width: 100%;
-    height: 100%;
-    background: var(--bauhaus-dark);
-    z-index: 1;
-    transition: transform 0.15s ease;
-    box-sizing: border-box; /* keeps shadow aligned exactly with button face */
+    box-shadow: var(--btn-shadow-offset) var(--btn-shadow-offset) 0 0 var(--bauhaus-dark);
 }
 
 /* Optional: Use a media query to disable :hover on devices that support touch */
@@ -314,19 +304,14 @@ h1 {
     -ms-user-select: none;
     user-select: none;
 }
-
+/* Original (Problematic) */
+/*
 .btn.intent .btn-face {
-    transform: translate(
-            calc(var(--btn-shadow-offset) / -2),
-            calc(var(--btn-shadow-offset) / -2)
-    );
+    transform: translate(calc(var(--btn-shadow-offset) / -2), calc(var(--btn-shadow-offset) / -2));
 }
 
 .btn.intent .btn-shadow {
-    transform: translate(
-            calc(var(--btn-shadow-offset) / 2),
-            calc(var(--btn-shadow-offset) / 2)
-    );
+    transform: translate(calc(var(--btn-shadow-offset) / 2), calc(var(--btn-shadow-offset) / 2));
 }
 
 .btn.activated .btn-face {
@@ -336,6 +321,41 @@ h1 {
 .btn.activated .btn-shadow {
     transform: translate(calc(var(--btn-shadow-offset) / -2), calc(var(--btn-shadow-offset) / -2));
 }
+*/
+
+/* --- NEW BOX-SHADOW APPROACH --- */
+/* Hover/Intent: Face moves up-left slightly, shadow stays the same size */
+.btn.intent .btn-face {
+    transform: translate(calc(var(--btn-shadow-offset) / -2), calc(var(--btn-shadow-offset) / -2));
+}
+
+/* Activate: Face moves down-right to cover the original shadow entirely */
+.btn.activated .btn-face {
+    transform: translate(var(--btn-shadow-offset), var(--btn-shadow-offset));
+    /* Also remove the shadow on activation */
+    box-shadow: 0 0 0 0 var(--bauhaus-dark);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Ensure the normal state has the necessary transition for box-shadow */
+.btn-face {
+    /* ... existing properties ... */
+    box-shadow: var(--btn-shadow-offset) var(--btn-shadow-offset) 0 0 var(--bauhaus-dark);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Re-apply the shadow transition to the default state */
+.btn:not(.activated) .btn-face {
+    box-shadow: var(--btn-shadow-offset) var(--btn-shadow-offset) 0 0 var(--bauhaus-dark);
+}
+
+/* Fix for disabled button in new model (if needed, but likely fine) */
+.btn-solve:disabled .btn-face {
+    background: var(--bauhaus-purple);
+    box-shadow: var(--btn-shadow-offset) var(--btn-shadow-offset) 0 0 var(--bauhaus-dark);
+}
+
+/* Remove or simplify all CSS rules targeting `.btn-shadow` */
 
 .btn-generate .btn-face {
     background: var(--bauhaus-red);
