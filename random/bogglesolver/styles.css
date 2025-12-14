@@ -63,30 +63,7 @@ body {
             saturate(0.9);
 }
 
-/* Add the .touch-active class to mimic the :active state for touch devices */
-.btn.touch-active .btn-face {
-    transform: translate(calc(var(--btn-shadow-offset) / 2), calc(var(--btn-shadow-offset) / 2));
-}
 
-.btn.touch-active .btn-shadow {
-    transform: translate(calc(var(--btn-shadow-offset) / -2), calc(var(--btn-shadow-offset) / -2));
-}
-
-/* Optional: Use a media query to disable :hover on devices that support touch */
-@media (hover: none) and (pointer: coarse) {
-    .btn:hover .btn-face,
-    .btn:hover .btn-shadow {
-        transform: none !important;
-    }
-}
-
-.btn, .words-header, .word-item .die-face, .preview-die {
-    /* Prevent text selection on click/hold, especially on mobile */
-    -webkit-user-select: none; /* Safari/Chrome */
-    -moz-user-select: none;    /* Firefox */
-    -ms-user-select: none;     /* IE/Edge */
-    user-select: none;         /* Standard */
-}
 
 
 
@@ -275,6 +252,16 @@ h1 {
     padding: 15px 0;
 }
 
+@media (hover: none) {
+    .btn:hover {
+        all: unset;
+    }
+}
+
+.btn-shadow {
+    pointer-events: none;
+}
+
 /* Button with animated shadow */
 .btn {
     flex: 1;
@@ -284,6 +271,7 @@ h1 {
     cursor: pointer;
     padding: 0;
     font-family: 'Bauhaus', sans-serif;
+    touch-action: manipulation;
 }
 
 .btn-face {
@@ -310,23 +298,44 @@ h1 {
     transition: transform 0.15s ease;
 }
 
-/* Hover: button and shadow move apart */
-.btn:hover .btn-face {
-    transform: translate(calc(var(--btn-hover-offset) * -1), calc(var(--btn-hover-offset) * -1));
+/* Optional: Use a media query to disable :hover on devices that support touch */
+@media (hover: none) and (pointer: coarse) {
+    .btn:hover .btn-face,
+    .btn:hover .btn-shadow {
+        transform: none !important;
+    }
 }
 
-.btn:hover .btn-shadow {
-    transform: translate(var(--btn-hover-offset), var(--btn-hover-offset));
+.btn, .words-header, .word-item .die-face, .preview-die {
+    /* Prevent text selection on click/hold, especially on mobile */
+    -webkit-user-select: none; /* Safari/Chrome */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* IE/Edge */
+    user-select: none;         /* Standard */
 }
 
-/* Active/Click: button and shadow come together */
-.btn:active .btn-face {
+.btn.intent .btn-face {
+    transform: translate(
+            calc(var(--btn-shadow-offset) / -2),
+            calc(var(--btn-shadow-offset) / -2)
+    );
+}
+
+.btn.intent .btn-shadow {
+    transform: translate(
+            calc(var(--btn-shadow-offset) / 2),
+            calc(var(--btn-shadow-offset) / 2)
+    );
+}
+
+.btn.activated .btn-face {
     transform: translate(calc(var(--btn-shadow-offset) / 2), calc(var(--btn-shadow-offset) / 2));
 }
 
-.btn:active .btn-shadow {
+.btn.activated .btn-shadow {
     transform: translate(calc(var(--btn-shadow-offset) / -2), calc(var(--btn-shadow-offset) / -2));
 }
+
 
 .btn-generate .btn-face {
     background: var(--bauhaus-red);

@@ -106,23 +106,37 @@ async function loadDictionary() {
     }
 }
 
-function setupMobileButtonFix(buttonElement) {
-    // Prevent the default browser handling of a touch tap (which often involves a brief :hover)
-    buttonElement.addEventListener('touchstart', (e) => {
-        // Only prevent default if we're not inside a text input or link
-        if (e.target.closest('input, a') === null) {
-            // Add a class that replicates the :active effect
-            buttonElement.classList.add('touch-active');
-        }
-    }, { passive: true }); // Use passive: true for better scroll performance
+function setupIntentButton(btn) {
+    /* ---------- INTENT (desktop only) ---------- */
+    btn.addEventListener('mouseenter', () => {
+        btn.classList.add('intent');
+    });
 
-    const handleTouchEnd = () => {
-        buttonElement.classList.remove('touch-active');
+    btn.addEventListener('mouseleave', () => {
+        btn.classList.remove('intent');
+    });
+
+    /* ---------- ACTIVATE (press, not release) ---------- */
+    const activate = () => {
+        btn.classList.remove('intent'); // intent never survives activation
+        btn.classList.add('activated');
+
+        btn.classList.add('activated');
+
+        setTimeout(() => {
+            btn.classList.remove('activated');
+        }, 220); // match your CSS transition time
     };
 
-    buttonElement.addEventListener('touchend', handleTouchEnd);
-    buttonElement.addEventListener('touchcancel', handleTouchEnd);
+    // Desktop press
+    btn.addEventListener('mousedown', activate);
+
+    // Mobile press
+    btn.addEventListener('touchstart', activate, { passive: true });
 }
+
+
+
 
 // Setup event listeners
 function setupEventListeners() {
@@ -166,7 +180,7 @@ function setupEventListeners() {
     });
 
     document.querySelectorAll('.btn').forEach(btn => {
-        setupMobileButtonFix(btn);
+        setupIntentButton(btn);
     });
 }
 
