@@ -50,6 +50,13 @@ let totalPossibleWords = 0; // Total possible words on board
 let totalPossiblePoints = 0; // Total possible points on board
 let hasSolved = false; // Track if solve has been used
 
+// Drag state
+let isDragMode = false;
+let pressStart = null;
+let preventNextClick = false;
+const DRAG_THRESHOLD = 10; // pixels to move before entering drag mode
+const DRAG_HITBOX_EDGE_SHRINK_PERCENT = 0.15;
+
 // DOM Elements
 const boardEl = document.getElementById('board');
 const generateBtn = document.getElementById('generateBtn');
@@ -122,7 +129,11 @@ function createBoard() {
         face.appendChild(faceInner);
         die.appendChild(face);
 
-        // Add click listener for word building
+        // Add pointer down handlers for drag detection
+        face.addEventListener('mousedown', (e) => handlePointerDown(e, i));
+        face.addEventListener('touchstart', (e) => handlePointerDown(e, i), { passive: false });
+
+        // Add click listener for word building (tap mode)
         face.addEventListener('click', (e) => {
             e.stopPropagation();
             handleDieClick(i);
@@ -135,8 +146,213 @@ function createBoard() {
     updateDieSize();
 }
 
+// Get die index from screen coordinates
+function getDieIndexFromPoint(x, y, useSmallerHitbox = false) {
+    for (let i = 0; i < 16; i++) {
+        const face = document.getElementById(`face-${i}`);
+        if (!face) continue;
+
+        const rect = face.getBoundingClientRect();
+
+        let left = rect.left;
+        let right = rect.right;
+        let top = rect.top;
+        let bottom = rect.bottom;
+
+        if (useSmallerHitbox) {
+            // Shrink hitbox by 25% on each side for easier diagonal navigation
+            const shrinkX = rect.width * DRAG_HITBOX_EDGE_SHRINK_PERCENT;
+            const shrinkY = rect.height * DRAG_HITBOX_EDGE_SHRINK_PERCENT;
+            left += shrinkX;
+            right -= shrinkX;
+            top += shrinkY;
+            bottom -= shrinkY;
+        }
+
+        if (x >= left && x <= right && y >= top && y <= bottom) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// Handle pointer down (mousedown or touchstart)
+function handlePointerDown(e, index) {
+    if (board[index] === null || isAnimating || hasSolved) return;
+
+    e.preventDefault();
+
+    const point = e.touches ? e.touches[0] : e;
+    pressStart = {
+        index: index,
+        x: point.clientX,
+        y: point.clientY
+    };
+    isDragMode = false;
+}
+
+// Handle pointer move (mousemove or touchmove)
+function handlePointerMove(e) {
+    if (!pressStart) return;
+
+    const point = e.touches ? e.touches[0] : e;
+
+    if (!isDragMode) {
+        // Check if moved enough to enter drag mode
+        const dx = point.clientX - pressStart.x;
+        const dy = point.clientY - pressStart.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance > DRAG_THRESHOLD) {
+            // Enter drag mode
+            isDragMode = true;
+            preventNextClick = true;
+            clearIdleTimeout(); // No idle timeout in drag mode
+
+            // Clear any existing path from tap mode
+            clearCurrentPath();
+
+            // Activate the starting die
+            activateDieForDrag(pressStart.index);
+        }
+    }
+
+    if (isDragMode) {
+        e.preventDefault(); // Prevent scrolling while dragging
+        handleDragOver(point.clientX, point.clientY);
+    }
+}
+
+// Handle dragging over dice
+function handleDragOver(x, y) {
+    // Use smaller hitbox for easier diagonal navigation
+    const dieIndex = getDieIndexFromPoint(x, y, true);
+
+    if (dieIndex === -1) return;
+    if (board[dieIndex] === null) return;
+
+    const row = Math.floor(dieIndex / 4);
+    const col = dieIndex % 4;
+
+    // Check for backtracking (moving to previous die)
+    if (currentPath.length >= 2) {
+        const prevPos = currentPath[currentPath.length - 2];
+        if (prevPos.row === row && prevPos.col === col) {
+            undoLastDieSelection();
+            return;
+        }
+    }
+
+    // Check if this die is already in the current path
+    const existingIndex = currentPath.findIndex(pos => pos.row === row && pos.col === col);
+    if (existingIndex !== -1) return; // Already selected
+
+    // Check adjacency if path is not empty
+    if (currentPath.length > 0) {
+        const lastPos = currentPath[currentPath.length - 1];
+        const rowDiff = Math.abs(row - lastPos.row);
+        const colDiff = Math.abs(col - lastPos.col);
+
+        if (rowDiff > 1 || colDiff > 1) {
+            // Not adjacent - invalid move, clear path
+            clearCurrentPath();
+            return;
+        }
+    }
+
+    // Activate this die
+    activateDieForDrag(dieIndex);
+}
+
+// Activate a die in drag mode
+function activateDieForDrag(index) {
+    const row = Math.floor(index / 4);
+    const col = index % 4;
+
+    // Safety check - don't add if already in path
+    if (currentPath.some(pos => pos.row === row && pos.col === col)) return;
+
+    currentPath.push({ row, col });
+    currentWord += board[index];
+
+    const face = document.getElementById(`face-${index}`);
+    face.classList.add('highlighted');
+    triggerPopAnimation(face);
+
+    // Check word validity
+    checkCurrentWordDrag();
+}
+
+// Check current word in drag mode
+function checkCurrentWordDrag() {
+    if (!dictionary || currentWord.length === 0) return;
+
+    const lookupWord = currentWord.replace(/Qu/g, 'QU');
+
+    // Navigate through trie to check if path is valid PREFIX
+    let node = dictionary;
+    for (const letter of lookupWord) {
+        if (!node[letter]) {
+            // Not a valid prefix - clear immediately
+            clearCurrentPath();
+            return;
+        }
+        node = node[letter];
+    }
+
+    // Check if it's a complete word (minimum 3 letters)
+    if (node['$'] && lookupWord.length >= 3) {
+        if (!userFoundWords.has(lookupWord)) {
+            addUserWord(lookupWord, [...currentPath]);
+            // addUserWord clears the path, allowing new word to start
+        }
+    }
+}
+
+// Undo the last die selection (for backtracking in drag mode)
+function undoLastDieSelection() {
+    if (currentPath.length === 0) return;
+
+    const lastPos = currentPath.pop();
+    const lastIndex = lastPos.row * 4 + lastPos.col;
+    const lastLetter = board[lastIndex];
+
+    // Remove letter(s) from currentWord
+    if (lastLetter === 'Qu') {
+        currentWord = currentWord.slice(0, -2);
+    } else {
+        currentWord = currentWord.slice(0, -1);
+    }
+
+    // Remove highlight from the die
+    const face = document.getElementById(`face-${lastIndex}`);
+    face.classList.remove('highlighted');
+}
+
+// Handle pointer up (mouseup or touchend)
+function handlePointerUp(e) {
+    if (!pressStart) return;
+
+    if (isDragMode) {
+        // Was dragging - auto cancel on release
+        clearCurrentPath();
+    }
+    // If not dragging, the click event will fire and handle it via handleDieClick
+
+    pressStart = null;
+    isDragMode = false;
+
+    // Reset preventNextClick after a delay to allow click event to check it
+    setTimeout(() => {
+        preventNextClick = false;
+    }, 50);
+}
+
 // Handle die clicks for word building
 function handleDieClick(index) {
+    // Don't handle if this click came from a drag release
+    if (preventNextClick) return;
+
     // Don't allow clicking if board isn't ready, animating, or already solved
     if (board[index] === null || isAnimating || hasSolved) return;
 
@@ -488,6 +704,12 @@ function setupEventListeners() {
             clearCurrentPath();
         }
     });
+
+    // Document-level move and up handlers for drag functionality
+    document.addEventListener('mousemove', handlePointerMove);
+    document.addEventListener('touchmove', handlePointerMove, { passive: false });
+    document.addEventListener('mouseup', handlePointerUp);
+    document.addEventListener('touchend', handlePointerUp);
 }
 
 // Toggle sort mode
