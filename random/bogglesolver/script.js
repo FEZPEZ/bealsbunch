@@ -44,7 +44,7 @@ const GAME_THEMES = {
         surface: "#fff5e6",
         highlight: "#ff6b6b",
         accent: "#ffd93d",
-        success: "#6bcb77",
+        success: "#f44a2a",
         muted: "#95709b",
         warning: "#ff6b6b",
         diceTop: "#fff5e6",
@@ -62,7 +62,7 @@ const GAME_THEMES = {
         surface: "#e6f3f8",
         highlight: "#006994",
         accent: "#40e0d0",
-        success: "#20b2aa",
+        success: "#1b9c94",
         muted: "#5f9ea0",
         warning: "#ff6347",
         diceTop: "#e6f3f8",
@@ -80,7 +80,7 @@ const GAME_THEMES = {
         surface: "#fff5fa",
         highlight: "#ff69b4",
         accent: "#87ceeb",
-        success: "#98d8c8",
+        success: "#52cbf3",
         muted: "#b19cd9",
         warning: "#ff69b4",
         diceTop: "#fff5fa",
@@ -159,7 +159,7 @@ let isDragMode = false;
 let pressStart = null;
 let preventNextClick = false;
 const DRAG_THRESHOLD = 10;
-const DRAG_HITBOX_EDGE_SHRINK_PERCENT = 0.15;
+const DRAG_HITBOX_EDGE_SHRINK_PERCENT = 0.08;
 
 // Drag path state (only validate on release)
 let dragPath = [];
