@@ -6,10 +6,17 @@
     <title>Bogelhaus</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="favicon.png" type="image/png">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 <div class="app-container">
-    <h1>BOGELHAUS</h1>
+    <div class="header-row">
+        <h1 id="gameTitle">BOGELHAUS</h1>
+        <div id="timerDisplay" class="timer-display hidden"></div>
+        <button class="settings-btn" id="settingsBtn">
+            <i data-lucide="settings"></i>
+        </button>
+    </div>
 
     <div class="board-container">
         <div class="board" id="board">
@@ -19,7 +26,7 @@
         <svg class="path-overlay" id="pathOverlay">
             <defs>
                 <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                    <polygon points="0 0, 10 3.5, 0 7" fill="#d94527"/>
+                    <polygon points="0 0, 10 3.5, 0 7" fill="var(--color-highlight)"/>
                 </marker>
             </defs>
         </svg>
@@ -53,11 +60,15 @@
     <div class="popup">
         <h2>GENERATE BOARD</h2>
         <button class="btn btn-random" id="randomBtn">
-            <span class="btn-face">RANDOM</span>
+            <span class="btn-face">FREE PLAY</span>
+            <span class="btn-shadow"></span>
+        </button>
+        <button class="btn btn-timed" id="timedBtn">
+            <span class="btn-face">TIMER MODE</span>
             <span class="btn-shadow"></span>
         </button>
         <button class="btn btn-enter" id="enterBtn">
-            <span class="btn-face">ENTER</span>
+            <span class="btn-face">CUSTOM BOARD</span>
             <span class="btn-shadow"></span>
         </button>
         <button class="btn btn-cancel" id="cancelBtn">
@@ -80,6 +91,41 @@
         <input type="text" id="letterInput" maxlength="2" autocomplete="off" autocapitalize="characters" class="hidden-input">
         <button class="btn btn-cancel" id="enterCancelBtn">
             <span class="btn-face">CANCEL</span>
+            <span class="btn-shadow"></span>
+        </button>
+    </div>
+</div>
+
+<!-- Settings Popup -->
+<div class="popup-overlay" id="settingsPopupOverlay">
+    <div class="popup settings-popup">
+        <h2>SETTINGS</h2>
+        <button class="btn btn-setting" id="helpfulModeBtn">
+            <span class="btn-face">HELPFUL MODE: OFF</span>
+            <span class="btn-shadow"></span>
+        </button>
+        <button class="btn btn-setting" id="timerSettingBtn">
+            <span class="btn-face">TIMER: 2:00</span>
+            <span class="btn-shadow"></span>
+        </button>
+        <button class="btn btn-setting" id="themeBtn">
+            <span class="btn-face">THEME: BOGELHAUS</span>
+            <span class="btn-shadow"></span>
+        </button>
+        <button class="btn btn-cancel" id="settingsCancelBtn">
+            <span class="btn-face">CLOSE</span>
+            <span class="btn-shadow"></span>
+        </button>
+    </div>
+</div>
+
+<!-- Times Up Popup -->
+<div class="popup-overlay" id="timesUpPopupOverlay">
+    <div class="popup times-up-popup">
+        <h2>TIME'S UP!</h2>
+        <p class="times-up-stats" id="timesUpStats">0% FOUND</p>
+        <button class="btn btn-ok" id="timesUpOkBtn">
+            <span class="btn-face">OK</span>
             <span class="btn-shadow"></span>
         </button>
     </div>
