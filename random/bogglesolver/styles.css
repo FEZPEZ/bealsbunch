@@ -384,14 +384,6 @@ h1.hidden {
     align-items: baseline;
 }
 
-@media (hover: none) and (pointer: coarse) {
-    .die-face:hover {
-        background: var(--color-dice-front) !important;
-        box-shadow: none !important;
-        opacity: 1 !important;
-    }
-}
-
 .btn, .words-header, .word-item, .die-face, .preview-die {
     -webkit-user-select: none;
     -moz-user-select: none;
