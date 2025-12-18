@@ -388,13 +388,11 @@ h1.hidden {
     .die-face:hover,
     .die-face.visible:hover,
     .die-face.highlighted:hover {
-        background: inherit !important;
-        box-shadow: inherit !important;
-        opacity: inherit !important;
-        transition: none !important;
+        background: var(--color-dice-front) !important;
+        box-shadow: none !important;
+        opacity: 1 !important;
     }
 }
-
 
 .btn, .words-header, .word-item, .die-face, .preview-die {
     -webkit-user-select: none;
