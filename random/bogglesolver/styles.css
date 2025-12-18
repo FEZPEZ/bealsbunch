@@ -385,9 +385,7 @@ h1.hidden {
 }
 
 @media (hover: none) and (pointer: coarse) {
-    .die-face:hover,
-    .die-face.visible:hover,
-    .die-face.highlighted:hover {
+    .die-face:hover {
         background: var(--color-dice-front) !important;
         box-shadow: none !important;
         opacity: 1 !important;
