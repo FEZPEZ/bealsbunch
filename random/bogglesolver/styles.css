@@ -315,15 +315,6 @@ h1.hidden {
     transition: background 0.1s ease, opacity 0.3s ease;
 }
 
-.die-face:hover {
-    background: #ebe6de;
-}
-
-/* Dark theme hover adjustment */
-[data-theme="dark"] .die-face:hover {
-    background: #3a3a3a;
-}
-
 .die-face.grayed-out {
     opacity: 0.35;
 }
