@@ -81,7 +81,6 @@
 <!-- Enter Letters Popup -->
 <div class="popup-overlay" id="enterPopupOverlay">
     <div class="popup enter-popup">
-        <h2>ENTER LETTERS</h2>
         <p class="enter-instruction">DIE: <span id="currentDieNum">1</span>/16</p>
         <div class="enter-preview" id="enterPreview">
             <!-- Mini board preview -->
@@ -89,6 +88,10 @@
         <p class="enter-hint">TYPE A LETTER (Q → Qu)</p>
         <!-- Hidden input for capturing keystrokes -->
         <input type="text" id="letterInput" maxlength="2" autocomplete="off" autocapitalize="characters" class="hidden-input">
+        <button class="btn btn-random" id="optimizeBtn">
+            <span class="btn-face">MAXIMIZE WORDS</span>
+            <span class="btn-shadow"></span>
+        </button>
         <button class="btn btn-cancel" id="enterCancelBtn">
             <span class="btn-face">CANCEL</span>
             <span class="btn-shadow"></span>

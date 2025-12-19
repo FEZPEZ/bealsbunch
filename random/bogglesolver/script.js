@@ -144,6 +144,11 @@ let currentSortMode = 'alpha'; // 'alpha' or 'length'
 let selectedWord = null;
 let wordsExpanded = false;
 
+let lastGeneratedBoard = null;       // 16 letters array
+let bestFoundBoard = null;           // 16 letters array
+let bestBoardPoints = 0;
+
+
 // User interaction state
 let userFoundWords = new Map();
 let currentPath = [];
@@ -186,6 +191,7 @@ const popupOverlay = document.getElementById('popupOverlay');
 const enterPopupOverlay = document.getElementById('enterPopupOverlay');
 const randomBtn = document.getElementById('randomBtn');
 const timedBtn = document.getElementById('timedBtn');
+const optimizeBtn = document.getElementById('optimizeBtn');
 const enterBtn = document.getElementById('enterBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 const enterCancelBtn = document.getElementById('enterCancelBtn');
@@ -920,6 +926,7 @@ function setupEventListeners() {
     solveBtn.addEventListener('click', solveBoard);
     randomBtn.addEventListener('click', generateRandomBoard);
     timedBtn.addEventListener('click', generateTimedBoard);
+    optimizeBtn.addEventListener('click', generateOptimizedBoard);
     enterBtn.addEventListener('click', showEnterPopup);
     cancelBtn.addEventListener('click', hidePopups);
     enterCancelBtn.addEventListener('click', hidePopups);
@@ -1183,6 +1190,149 @@ async function generateRandomBoard() {
         updateHelpfulModeDisplay();
     }
 }
+
+// Generate optimized board using real Boggle dice
+async function generateOptimizedBoard() {
+    if (isAnimating) return;
+
+    const face = document.querySelector("#optimizeBtn .btn-face");
+    let dots = 0;
+    let lastUiYield = Date.now();
+
+    // 1. Unified UI Animation Logic: Updates every 500ms
+    const uiInterval = setInterval(() => {
+        // Step the "working..." animation
+        dots = (dots + 1) % 4;
+        face.textContent = "SOLVING" + ".".repeat(dots);
+
+        // Capture current state and print to the custom board preview
+        if (enterPopupOverlay.classList.contains('active')) {
+            for (let i = 0; i < 16; i++) {
+                const previewDie = document.getElementById(`preview-${i}`);
+                if (previewDie && board[i]) {
+                    previewDie.textContent = board[i];
+                    previewDie.classList.add('filled');
+                }
+            }
+            updateEnterDisplay();
+        }
+    }, 500);
+
+    const OUTER_RESTARTS = 20;
+    const INNER_ITERS    = 200;
+    const START_TEMP     = 0.6;
+    const END_TEMP       = 0.02;
+
+    let bestLetters = null;
+    let bestScore = -1;
+
+    function randomBoard() {
+        const order = shuffleArray([...Array(16).keys()]);
+        const arr = new Array(16);
+        for (let i = 0; i < 16; i++) {
+            const d = order[i];
+            const f = (Math.random() * 6) | 0;
+            arr[i] = { die: d, face: f };
+        }
+        return arr;
+    }
+
+    function toLetters(b) {
+        return b.map(obj => DICE[obj.die][obj.face]);
+    }
+
+    async function score(boardObjects) {
+        const letters = toLetters(boardObjects);
+        // Sync to global board so the UI Interval can capture the state
+        board = letters;
+        allPossibleWords.clear();
+        calculateTotals();
+        return allPossibleWords.size;
+    }
+
+    function mutate(b) {
+        const clone = b.map(o => ({ die: o.die, face: o.face }));
+        const r = Math.random();
+
+        if (r < 0.5) {
+            const a = (Math.random() * 16) | 0;
+            let  b2 = (Math.random() * 16) | 0;
+            if (a === b2) b2 = (b2 + 1) & 15;
+            [clone[a], clone[b2]] = [clone[b2], clone[a]];
+            return clone;
+        }
+
+        const pos = (Math.random() * 16) | 0;
+        let nf = (Math.random() * 6) | 0;
+        if (clone[pos].face === nf) nf = (nf + 1) % 6;
+        clone[pos].face = nf;
+        return clone;
+    }
+
+    // MAIN OPTIMIZATION LOOP
+    for (let r = 0; r < OUTER_RESTARTS; r++) {
+        let current = randomBoard();
+        let currentScore = await score(current);
+
+        for (let i = 0; i < INNER_ITERS; i++) {
+            const mutated = mutate(current);
+            const mutatedScore = await score(mutated);
+
+            if (mutatedScore > currentScore) {
+                current = mutated;
+                currentScore = mutatedScore;
+            } else {
+                const t = START_TEMP + (i / INNER_ITERS) * (END_TEMP - START_TEMP);
+                const ap = Math.exp((mutatedScore - currentScore) / Math.max(t, 0.0001));
+                if (Math.random() < ap) {
+                    current = mutated;
+                    currentScore = mutatedScore;
+                }
+            }
+
+            if (currentScore > bestScore) {
+                bestScore = currentScore;
+                bestLetters = toLetters(current);
+            }
+
+            // 2. The Yield: Force the engine to pause so the UI interval can run
+            // Check if 50ms has passed to allow high performance, but ensuring the
+            // 500ms interval logic never gets blocked for more than a few frames.
+            if (Date.now() - lastUiYield > 50) {
+                await new Promise(resolve => setTimeout(resolve, 0));
+                lastUiYield = Date.now();
+            }
+        }
+    }
+
+    // Cleanup UI logic
+    clearInterval(uiInterval);
+    face.textContent = "MAXIMIZE WORDS";
+
+    // Show bestLetters in UI
+    hidePopups();
+    isAnimating = true;
+    resetTimerDisplay();
+    clearWords();
+    clearWordHighlight();
+    clearCurrentPath();
+    clearGrayedOutState();
+
+    const animations = [];
+    for (let i = 0; i < 16; i++) {
+        animations.push(animateDie(i, bestLetters[i]));
+    }
+    await Promise.all(animations);
+
+    board = bestLetters;
+    isAnimating = false;
+    updateSolveButton();
+    calculateTotals();
+    initializeScoreDisplay();
+    if (helpfulMode) updateHelpfulModeDisplay();
+}
+
+
 
 // Generate timed board
 async function generateTimedBoard() {
