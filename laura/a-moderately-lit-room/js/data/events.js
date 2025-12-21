@@ -16,7 +16,7 @@ const EVENT_TEMPLATES = {
     bananaMan: {
         id: 'bananaMan',
         title: 'A Peculiar Visitor',
-        message: 'A man in a banana suit appears at your door. "I hear you\'ve got paper," he says. "Mind if I come in and build stuff?."',
+        message: 'A man in a banana suit appears at your door. "I hear you\'ve got paper," he says. "I can build stuff."',
         triggerTime: 40,
         unlocks: ['craftsman'],
         type: 'story'

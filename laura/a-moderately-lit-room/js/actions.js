@@ -15,8 +15,8 @@ const Actions = {
             setTimeout(() => {
                 EventSystem.showEventPopup({
                     title: 'Making Tea',
-                    message: 'I wish I had some milk...probably in the fridge',
-                    options: [{ text: 'ok', handler: () => {} }]
+                    message: 'I wish I had some milk...probably in the fridge.',
+                    options: [{ text: 'no milk', handler: () => {} }]
                 });
             }, 500); // 1 second
             return;
@@ -47,7 +47,7 @@ const Actions = {
 
             EventSystem.showEventPopup({
                 title: 'Victory!',
-                message: `That's it! Time: ${minutes}m ${seconds}s. You make some delicious tea.`,
+                message: `That's it! Time: ${minutes}m ${seconds}s. Time to dunk crumpers for real.`,
                 options: [{ text: 'hooray!', handler: () => {} }]
             });
             return;
