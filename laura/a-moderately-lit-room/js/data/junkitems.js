@@ -3,20 +3,20 @@ const JUNK_ITEMS = {
     cellarKey: {
         name: 'cellarKey',
         display: 'cellar key',
-        multiplier: 25,
+        multiplier: 100,
         maxOwned: 1,
         hidden: true
     },
     mysteryLumps: {
         name: 'mysteryLumps',
         display: 'mystery lumps',
-        multiplier: 3,
+        multiplier: 30,
         maxOwned: Infinity
     },
     shrimps: {
         name: 'shrimps',
         display: 'shrimps',
-        multiplier: 2,
+        multiplier: 3,
         maxOwned: Infinity
     },
     dragonDragon: {

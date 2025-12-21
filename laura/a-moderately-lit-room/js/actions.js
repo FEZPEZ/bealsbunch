@@ -47,7 +47,7 @@ const Actions = {
 
             EventSystem.showEventPopup({
                 title: 'Victory!',
-                message: `That's it! Time: ${minutes}m ${seconds}s. You can put milk in your tea at long last.`,
+                message: `That's it! Time: ${minutes}m ${seconds}s. You make some delicious tea.`,
                 options: [{ text: 'hooray!', handler: () => {} }]
             });
             return;
