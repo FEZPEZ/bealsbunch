@@ -1,0 +1,76 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>A Moderately-Lit Room</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+<body>
+<div id="game-container">
+    <div id="main-section"></div>
+    <div id="bottom-section">
+        <div id="supplies-section"></div>
+        <div id="updates-section">
+            <div id="updates-list"></div>
+        </div>
+    </div>
+</div>
+
+<div id="map-container">
+    <div class="map-display" id="map-display"></div>
+    <div class="sanity-container" id="sanity-container"></div>
+    <div class="map-controls">
+        <div class="arrow-pad" id="arrow-pad">
+            <div class="arrow-btn empty"></div>
+            <button class="arrow-btn" data-dir="up">▲</button>
+            <div class="arrow-btn empty"></div>
+            <button class="arrow-btn" data-dir="left">◄</button>
+            <div class="arrow-btn empty"></div>
+            <button class="arrow-btn" data-dir="right">►</button>
+            <div class="arrow-btn empty"></div>
+            <button class="arrow-btn" data-dir="down">▼</button>
+            <div class="arrow-btn empty"></div>
+        </div>
+    </div>
+</div>
+
+<div id="battle-overlay">
+    <div id="battle-content">
+        <div class="battle-arena" id="battle-arena">
+            <div class="enemy-container" id="enemy-container">
+                <div class="enemy-name" id="enemy-name"></div>
+                <div class="enemy-health" id="enemy-health"></div>
+            </div>
+        </div>
+        <div class="battle-controls" id="battle-controls"></div>
+    </div>
+</div>
+
+<div id="popup-overlay" class="hidden">
+    <div id="popup-content">
+        <h2 id="popup-title"></h2>
+        <p id="popup-message"></p>
+        <div id="popup-extra"></div>
+        <div id="popup-buttons"></div>
+    </div>
+</div>
+
+<script src="js/data/config.js"></script>
+<script src="js/data/items.js"></script>
+<script src="js/data/locations.js"></script>
+<script src="js/data/events.js"></script>
+<script src="js/data/junkitems.js"></script>
+<script src="js/data/enemies.js"></script>
+<script src="js/state.js"></script>
+<script src="js/actions.js"></script>
+<script src="js/battle.js"></script>
+<script src="js/map.js"></script>
+<script src="js/events.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/tick.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
