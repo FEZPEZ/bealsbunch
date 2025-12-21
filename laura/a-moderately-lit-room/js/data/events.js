@@ -1,5 +1,5 @@
 // js/data/events.js
-const VAULT_PASSWORDS = ['sneery', 'jounce', 'banana', 'kimkam', 'numnum', 'nybble', 'swedge'];
+const VAULT_PASSWORDS = ['numnum'];
 
 const VAULT_DIAL_OPTIONS = [
     ['s', 'j', 'b', 'k', 'n'],
@@ -264,7 +264,7 @@ const MAP_EVENTS = {
             const op = '+';
             const answer = op === '+' ? a + b : a * b;
             MapSystem.currentMathAnswer = answer;
-            return `A rat appears! Solve this to recruit it: ${a} ${op} ${b} = ?`;
+            return `A rat appears! Solve this to recruit it:<br> ${a} ${op} ${b} = ?`;
         },
         getOptions: () => {
             const correct = MapSystem.currentMathAnswer;

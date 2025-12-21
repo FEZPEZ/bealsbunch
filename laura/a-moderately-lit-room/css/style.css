@@ -629,7 +629,7 @@ html, body {
     background-color: rgba(0, 0, 0, 0.9);
     display: none;
     justify-content: center;
-    align-items: flex-end;
+    align-items: flex-start;
     z-index: 1100;
     padding: 20px;
 }

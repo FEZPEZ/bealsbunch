@@ -88,7 +88,7 @@ const EventSystem = {
         const buttonsContainer = document.getElementById('popup-buttons');
 
         titleElem.textContent = event.title;
-        messageElem.textContent = event.message;
+        messageElem.innerHTML = event.message;
         extraElem.innerHTML = '';
 
         buttonsContainer.innerHTML = '';

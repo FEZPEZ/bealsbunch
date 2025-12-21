@@ -131,7 +131,8 @@ const Actions = {
             GameState.removeResource(resource, costs[resource]);
         }
 
-        GameState.craftables[itemName] = (GameState.craftables[itemName] || 0) + 1;
+        GameState.craftables[itemName] =
+            (GameState.craftables[itemName] || 0) + 1;
 
         const displayNames = {
             bicycle: 'bicycle',
@@ -140,8 +141,28 @@ const Actions = {
         };
         GameState.addUpdate(`Crafted a ${displayNames[itemName]}!`);
 
+        // bicycle popup
+        if (itemName === 'bicycle') {
+            setTimeout(() => {
+                EventSystem.showEventPopup({
+                    title: 'Speedy Paper',
+                    message: 'This should let me get paper a lot faster.',
+                    options: [{ text: 'continue', handler: () => {} }]
+                });
+            }, 500);
+        }
+
+        // junk drawer popup + unlock
         if (itemName === 'junkDrawer') {
             GameState.unlockScreen('junkDrawer');
+
+            setTimeout(() => {
+                EventSystem.showEventPopup({
+                    title: 'A Place for Everything',
+                    message: 'Who knows what you\'ll find...',
+                    options: [{ text: 'continue', handler: () => {} }]
+                });
+            }, 500);
         }
 
         UI.render();
