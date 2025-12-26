@@ -14,7 +14,7 @@
 
 @font-face {
     font-family: 'BauhausNumbers';
-    src: url('farray.regular.otf') format('opentype');
+    src: url('farray.regular.woff2') format('opentype');
     font-weight: bold;
     font-style: normal;
 }
