@@ -140,14 +140,9 @@ let board = Array(16).fill(null);
 let dictionary = null;
 let isAnimating = false;
 let foundWordsData = [];
-let currentSortMode = 'alpha'; // 'alpha' or 'length'
+let currentSortMode = 'length'; // 'alpha' or 'length'
 let selectedWord = null;
 let wordsExpanded = false;
-
-let lastGeneratedBoard = null;       // 16 letters array
-let bestFoundBoard = null;           // 16 letters array
-let bestBoardPoints = 0;
-
 
 // User interaction state
 let userFoundWords = new Map();
@@ -175,6 +170,18 @@ let isTimedMode = false;
 let timerSeconds = 120; // Default 2:00
 let timerSettingSeconds = 120;
 let timerInterval = null;
+let timerStartTimeout = null;
+
+// # of words to generate setting state
+let numWordsToGenerateState = 0;
+const numWordsState = Object.freeze({
+    RANDOM: 0,
+    ZERO25: 1,
+    TWENTYFIVE50: 2,
+    FIFTY100: 3,
+    HUNDREDPLUS: 4,
+    NUM_STATES: 5
+});
 
 // Settings state
 let helpfulMode = false;
@@ -212,6 +219,7 @@ const settingsBtn = document.getElementById('settingsBtn');
 const settingsPopupOverlay = document.getElementById('settingsPopupOverlay');
 const helpfulModeBtn = document.getElementById('helpfulModeBtn');
 const timerSettingBtn = document.getElementById('timerSettingBtn');
+const wordCountSettingBtn = document.getElementById('wordCountSettingBtn');
 const themeBtn = document.getElementById('themeBtn');
 const settingsCancelBtn = document.getElementById('settingsCancelBtn');
 const timesUpPopupOverlay = document.getElementById('timesUpPopupOverlay');
@@ -333,7 +341,6 @@ function getBauhausColors() {
 // Reset timer display to show title
 function resetTimerDisplay() {
     stopTimer();
-    isTimedMode = false;
     timerDisplay.classList.add('hidden');
     gameTitle.classList.remove('hidden');
 }
@@ -936,6 +943,7 @@ function setupEventListeners() {
     settingsCancelBtn.addEventListener('click', hidePopups);
     helpfulModeBtn.addEventListener('click', toggleHelpfulMode);
     timerSettingBtn.addEventListener('click', cycleTimerSetting);
+    wordCountSettingBtn.addEventListener('click', cycleWordCountSetting);
     themeBtn.addEventListener('click', cycleTheme);
 
     settingsPopupOverlay.addEventListener('click', (e) => {
@@ -1086,6 +1094,31 @@ function updateSettingsDisplay() {
     const seconds = timerSettingSeconds % 60;
     timerSettingBtn.querySelector('.btn-face').textContent = `TIMER: ${minutes}:${seconds.toString().padStart(2, '0')}`;
 
+    let label;
+    switch (numWordsToGenerateState) {
+        case numWordsState.RANDOM:
+            label = 'RANDOM';
+            break;
+        case numWordsState.ZERO25:
+            label = '0–25';
+            break;
+        case numWordsState.TWENTYFIVE50:
+            label = '25–50';
+            break;
+        case numWordsState.FIFTY100:
+            label = '50–100';
+            break;
+        case numWordsState.HUNDREDPLUS:
+            label = '100+';
+            break;
+        default:
+            label = 'UNKNOWN';
+            break;
+    }
+    wordCountSettingBtn
+        .querySelector('.btn-face')
+        .textContent = `# WORDS: ${label}`;
+
     const theme = GAME_THEMES[currentThemeKey];
     themeBtn.querySelector('.btn-face').textContent = `THEME: ${theme.name}`;
 }
@@ -1130,6 +1163,15 @@ function cycleTimerSetting() {
     updateSettingsDisplay();
 }
 
+// Cycle timer setting
+function cycleWordCountSetting() {
+    numWordsToGenerateState++;
+    if (numWordsToGenerateState >= numWordsState.NUM_STATES) {
+        numWordsToGenerateState = 0;
+    }
+    updateSettingsDisplay();
+}
+
 // Cycle theme
 function cycleTheme() {
     const themeKeys = Object.keys(GAME_THEMES);
@@ -1148,29 +1190,21 @@ function hidePopups() {
     letterInput.value = '';
 }
 
-// Generate random board with dice rolling animation
-async function generateRandomBoard() {
+async function generateRandomBoard(isTimed = false) {
     if (isAnimating) return;
 
     hidePopups();
     isAnimating = true;
-    resetTimerDisplay(); // Reset timer display when generating new board
+    resetTimerDisplay();
+    isTimedMode = isTimed;
     clearWords();
     clearWordHighlight();
     clearCurrentPath();
     clearGrayedOutState();
 
-    const diceIndices = shuffleArray([...Array(16).keys()]);
-
-    const newBoard = [];
-    for (let i = 0; i < 16; i++) {
-        const dieIndex = diceIndices[i];
-        const letterIndex = Math.floor(Math.random() * 6);
-        newBoard[i] = DICE[dieIndex][letterIndex];
-    }
+    const newBoard = generateConstrainedBoard();
 
     const animations = [];
-
     for (let i = 0; i < 16; i++) {
         animations.push(animateDie(i, newBoard[i]));
     }
@@ -1180,15 +1214,18 @@ async function generateRandomBoard() {
     board = newBoard;
     isAnimating = false;
     updateSolveButton();
-
-    // Calculate totals and initialize display
-    calculateTotals();
     initializeScoreDisplay();
 
-    // Apply helpful mode if active
     if (helpfulMode) {
         updateHelpfulModeDisplay();
     }
+}
+
+async function generateTimedBoard() {
+    if (isAnimating) return;
+
+    await generateRandomBoard(true);
+    startTimer();
 }
 
 // Generate optimized board using real Boggle dice
@@ -1332,55 +1369,52 @@ async function generateOptimizedBoard() {
     if (helpfulMode) updateHelpfulModeDisplay();
 }
 
+function wordCountMatchesSetting(count) {
+    switch (numWordsToGenerateState) {
+        case numWordsState.RANDOM:
+            return true;
 
+        case numWordsState.ZERO25:
+            return count >= 0 && count <= 25;
 
-// Generate timed board
-async function generateTimedBoard() {
-    if (isAnimating) return;
+        case numWordsState.TWENTYFIVE50:
+            return count > 25 && count <= 50;
 
-    hidePopups();
-    isAnimating = true;
-    resetTimerDisplay(); // Reset first in case there was a previous timer
-    isTimedMode = true;
-    clearWords();
-    clearWordHighlight();
-    clearCurrentPath();
-    clearGrayedOutState();
+        case numWordsState.FIFTY100:
+            return count > 50 && count <= 100;
 
-    const diceIndices = shuffleArray([...Array(16).keys()]);
+        case numWordsState.HUNDREDPLUS:
+            return count > 100;
 
-    const newBoard = [];
-    for (let i = 0; i < 16; i++) {
-        const dieIndex = diceIndices[i];
-        const letterIndex = Math.floor(Math.random() * 6);
-        newBoard[i] = DICE[dieIndex][letterIndex];
+        default:
+            return true;
+    }
+}
+
+function generateConstrainedBoard() {
+    let attempts = 0;
+    const MAX_ATTEMPTS = 200;
+
+    while (attempts++ < MAX_ATTEMPTS) {
+        const diceIndices = shuffleArray([...Array(16).keys()]);
+        const newBoard = [];
+
+        for (let i = 0; i < 16; i++) {
+            const dieIndex = diceIndices[i];
+            const letterIndex = Math.floor(Math.random() * 6);
+            newBoard[i] = DICE[dieIndex][letterIndex];
+        }
+
+        board = newBoard;
+        calculateTotals(); // sets totalPossibleWords
+
+        if (wordCountMatchesSetting(totalPossibleWords)) {
+            return newBoard;
+        }
     }
 
-    const animations = [];
-
-    for (let i = 0; i < 16; i++) {
-        animations.push(animateDie(i, newBoard[i]));
-    }
-
-    await Promise.all(animations);
-
-    board = newBoard;
-    isAnimating = false;
-    updateSolveButton();
-
-    // Calculate totals
-    calculateTotals();
-
-    // Initialize score display (without showing totals in timed mode)
-    initializeScoreDisplay();
-
-    // Apply helpful mode if active
-    if (helpfulMode) {
-        updateHelpfulModeDisplay();
-    }
-
-    // Start timer after animation completes
-    startTimer();
+    // Fallback: accept last board
+    return board;
 }
 
 // Initialize score display
@@ -1398,17 +1432,16 @@ function initializeScoreDisplay() {
 
 // Start timer
 function startTimer() {
+    stopTimer(); // hard reset first
+
     timerSeconds = timerSettingSeconds;
 
-    // Fade out title, fade in timer
     gameTitle.classList.add('hidden');
-    timerDisplay.classList.remove('hidden');
-    timerDisplay.classList.remove('warning');
+    timerDisplay.classList.remove('hidden', 'warning');
 
     updateTimerDisplay();
 
-    // Wait 1 second before starting countdown
-    setTimeout(() => {
+    timerStartTimeout = setTimeout(() => {
         timerInterval = setInterval(() => {
             timerSeconds--;
             updateTimerDisplay();
@@ -1427,11 +1460,16 @@ function startTimer() {
 
 // Stop timer
 function stopTimer() {
+    if (timerStartTimeout) {
+        clearTimeout(timerStartTimeout);
+        timerStartTimeout = null;
+    }
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
     }
 }
+
 
 // Update timer display
 function updateTimerDisplay() {

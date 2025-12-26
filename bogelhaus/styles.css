@@ -7,7 +7,14 @@
 
 @font-face {
     font-family: 'BauhausLetters';
-    src: url('bauhaus-bold-letters.ttf') format('opentype');
+    src: url('bauhaus-bold-letters.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BauhausNumbers';
+    src: url('farray.regular.otf') format('opentype');
     font-weight: bold;
     font-style: normal;
 }
@@ -68,13 +75,12 @@ html, body {
 }
 
 body {
-    font-family: 'Bauhaus', 'Futura', 'Century Gothic', sans-serif;
+    font-family: 'Bauhaus', 'Futura', sans-serif;
     background: var(--color-background);
     min-height: 100dvh;
     display: flex;
     justify-content: center;
     overflow: hidden;
-
     filter:
             sepia(0.08)
             contrast(1.05)
@@ -144,13 +150,15 @@ h1.hidden {
 }
 
 .timer-display {
-    font-family: 'Bauhaus', 'Futura', 'Century Gothic', sans-serif;
+    font-family: 'BauhausNumbers', 'Futura', 'Century Gothic', sans-serif;
     font-size: var(--header-height);
     line-height: var(--header-height);
     letter-spacing: 4px;
     color: var(--color-secondary);
     text-align: center;
     transition: opacity 0.3s ease, color 0.3s ease;
+    transform: scale(0.85) translateY(-2px);
+    transform-origin: top;
 }
 
 .timer-display.hidden {
@@ -751,7 +759,7 @@ h1.hidden {
 }
 
 .popup h2 {
-    font-family: 'Bauhaus', 'Futura', 'Century Gothic', sans-serif;
+    font-family: 'Bauhaus', 'BauhausNumbers', 'Futura', sans-serif;
     color: var(--color-secondary);
     margin-bottom: 25px;
     font-size: 1.3rem;
@@ -773,7 +781,7 @@ h1.hidden {
 }
 
 .times-up-stats {
-    font-family: 'Bauhaus', 'Futura', 'Century Gothic', sans-serif;
+    font-family: 'Bauhaus', 'BauhausNumbers', 'Futura', sans-serif;
     font-size: 1.5rem;
     color: var(--color-secondary);
     margin-bottom: 25px;
@@ -781,7 +789,7 @@ h1.hidden {
 }
 
 .congrats-message {
-    font-family: 'Bauhaus', 'Futura', 'Century Gothic', sans-serif;
+    font-family: 'Bauhaus', 'BauhausNumbers', 'Futura', sans-serif;
     font-size: 1.1rem;
     color: var(--color-secondary);
     margin-bottom: 25px;
@@ -793,7 +801,7 @@ h1.hidden {
 }
 
 .enter-instruction {
-    font-family: 'Bauhaus', 'Futura', 'Century Gothic', sans-serif;
+    font-family: 'Bauhaus', 'BauhausNumbers', 'Futura', sans-serif;
     color: var(--color-secondary);
     margin-bottom: 15px;
     font-size: 1rem;
@@ -853,7 +861,7 @@ h1.hidden {
 }
 
 .enter-hint {
-    font-family: 'Bauhaus', 'Futura', 'Century Gothic', sans-serif;
+    font-family: 'Bauhaus', 'BauhausNumbers', 'Futura', sans-serif;
     font-size: 0.8rem;
     color: var(--color-muted);
     margin-bottom: 20px;
