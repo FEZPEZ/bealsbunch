@@ -251,9 +251,9 @@ congratsPopupOverlay.id = 'congratsPopupOverlay';
 congratsPopupOverlay.innerHTML = `
     <div class="popup">
         <h2>CONGRATULATIONS!</h2>
-        <p class="congrats-message">YOU FOUND ALL THE WORDS!</p>
+        <p class="congrats-message">YOU'RE A REAL BUCHWURMCHEN!</p>
         <button class="btn btn-ok" id="congratsOkBtn">
-            <span class="btn-face">OK</span>
+            <span class="btn-face">JA!</span>
             <span class="btn-shadow"></span>
         </button>
     </div>
