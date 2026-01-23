@@ -538,7 +538,7 @@ function checkDragPrefix() {
     let node = dictionary;
     for (const letter of lookupWord) {
         if (!node[letter]) {
-            clearDragPath();
+            // clearDragPath();
             return;
         }
         node = node[letter];
