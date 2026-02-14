@@ -1,0 +1,96 @@
+{
+  "id": "CHAPTER_3_3",
+  "chapter": "CHAPTER_3",
+  "music": "3-3",
+  "background": "Underground Tunnel",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke runs through the winding tunnel."
+        },
+        {
+          "speaker": "luke",
+          "text": "This is insane. This is completely insane."
+        },
+        {
+          "speaker": "luke",
+          "text": "Am I dreaming? Did I hit my head when I fell off the truck?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "The tunnel seems to go on forever."
+        },
+        {
+          "speaker": "luke",
+          "text": "Wait... I see light ahead!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke emerges from the tunnel and finds himself in a parking lot."
+        },
+        {
+          "speaker": "luke",
+          "text": "A parking lot! A normal parking lot!"
+        },
+        {
+          "speaker": "luke",
+          "text": "And that sign... GROCERY OUTLET!"
+        },
+        {
+          "speaker": "luke",
+          "text": "I made it! I actually made it!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "But Luke's relief is short-lived."
+        },
+        {
+          "speaker": "luke",
+          "text": "Wait... I still don't have Professor Layton. And I don't even know what I'm supposed to buy."
+        },
+        {
+          "speaker": "luke",
+          "text": "But at least I'm back in... well, something resembling reality."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke enters the store cautiously."
+        },
+        {
+          "speaker": "luke",
+          "text": "Okay, there are actual employees here. That's a good sign."
+        },
+        {
+          "speaker": "luke",
+          "text": "Wait! That phone! It's the same kind Professor bought!"
+        },
+        {
+          "speaker": "luke",
+          "text": "If I can get that, maybe I can figure out where he is!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "But as Luke reaches for it, someone else grabs it first."
+        },
+        {
+          "speaker": "tubeDude",
+          "text": "TUBE DUDE CLAIMS THIS ARTIFACT!"
+        },
+        {
+          "speaker": "luke",
+          "text": "Tube... Dude? Where did you come from?!"
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "BOSS BATTLE",
+      "delay": 2000,
+      "nextScene": "CHAPTER_3_X"
+    }
+  ],
+  "nextScene": "CHAPTER_3_X"
+}

@@ -1,0 +1,113 @@
+{
+  "id": "CHAPTER_2_1",
+  "chapter": "CHAPTER_2",
+  "music": "2-1-intro",
+  "background": "Big City Streets",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke runs until he can't run anymore. When he finally stops, he realizes he's completely lost."
+        },
+        {
+          "speaker": "luke",
+          "text": "Where... where am I? How did I get here?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "The city around him is massive, unfamiliar, and overwhelming."
+        },
+        {
+          "speaker": "luke",
+          "text": "I need to find help. I need to find Professor Layton."
+        },
+        {
+          "speaker": "luke",
+          "text": "But who can I ask? Everyone is in such a hurry..."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke watches the crowd, feeling more alone than ever."
+        },
+        {
+          "speaker": "luke",
+          "text": "Maybe... maybe I should just give up. I can't do this alone."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Just then, Luke notices something odd."
+        },
+        {
+          "speaker": "luke",
+          "text": "Is that... a boy climbing through a window?"
+        },
+        {
+          "speaker": "boy",
+          "text": "Hey! You! Yeah, you! Come here!"
+        },
+        {
+          "speaker": "luke",
+          "text": "Me?"
+        },
+        {
+          "speaker": "boy",
+          "text": "Yeah! I need your help! Quick!"
+        },
+        {
+          "speaker": "luke",
+          "text": "Finally, someone who needs me!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke rushes over, not realizing what he's getting himself into."
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "heist"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "luke",
+          "text": "Wait... did we just... steal that?"
+        },
+        {
+          "speaker": "boy",
+          "text": "Steal? We LIBERATED it! Buying stuff is for wimps!"
+        },
+        {
+          "speaker": "luke",
+          "text": "No, that's wrong! We should pay for things!"
+        },
+        {
+          "speaker": "boy",
+          "text": "Whatever, man. I'm outta here!"
+        },
+        {
+          "speaker": "luke",
+          "text": "Wait! I don't even know your name!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "The boy disappears into the crowd."
+        },
+        {
+          "speaker": "luke",
+          "text": "Great. Now I'm alone again. And possibly a criminal."
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "Luke wanders through the city...",
+      "delay": 2000,
+      "nextScene": "CHAPTER_2_2"
+    }
+  ],
+  "nextScene": "CHAPTER_2_2"
+}

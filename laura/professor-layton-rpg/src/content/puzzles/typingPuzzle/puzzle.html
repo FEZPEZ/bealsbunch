@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #1a1a1a;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .puzzle-content {
+            text-align: center;
+            max-width: 600px;
+        }
+        h2 {
+            color: #a08968;
+            margin-bottom: 20px;
+        }
+        .instruction {
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        .target-word {
+            font-size: 48px;
+            color: #a08968;
+            margin: 30px 0;
+            letter-spacing: 5px;
+            font-weight: bold;
+        }
+        input {
+            font-size: 24px;
+            padding: 15px;
+            width: 300px;
+            text-align: center;
+            background: #2a2a2a;
+            border: 2px solid #4a4a4a;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+        }
+        input:focus {
+            outline: none;
+            border-color: #a08968;
+        }
+        .status {
+            font-size: 20px;
+            margin-top: 20px;
+            min-height: 30px;
+        }
+        .correct {
+            color: #4ade80;
+        }
+        .incorrect {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+<div class="puzzle-content">
+    <h2>Type the Word</h2>
+    <div class="instruction">
+        Type the word shown below to complete the puzzle.
+    </div>
+    <div class="target-word" id="targetWord"></div>
+    <input type="text" id="userInput" placeholder="Type here..." autocomplete="off">
+    <div class="status" id="status"></div>
+</div>
+
+<script>
+    const words = [
+        'PUZZLE',
+        'LAYTON',
+        'GROCERY',
+        'COURAGE',
+        'SHOPPING',
+        'ADVENTURE',
+        'MYSTERY'
+    ];
+
+    const targetWord = words[Math.floor(Math.random() * words.length)];
+    const targetWordEl = document.getElementById('targetWord');
+    const userInput = document.getElementById('userInput');
+    const status = document.getElementById('status');
+
+    targetWordEl.textContent = targetWord;
+    userInput.focus();
+
+    userInput.addEventListener('input', (e) => {
+        const value = e.target.value.toUpperCase();
+
+        if (value === targetWord) {
+            status.textContent = "Correct!";
+            status.className = "status correct";
+            userInput.disabled = true;
+
+            setTimeout(() => {
+                window.parent.postMessage({ type: 'puzzle:complete' }, '*');
+            }, 1500);
+        } else if (targetWord.startsWith(value)) {
+            status.textContent = "Keep going...";
+            status.className = "status";
+        } else {
+            status.textContent = "Check your spelling!";
+            status.className = "status incorrect";
+        }
+    });
+</script>
+</body>
+</html>

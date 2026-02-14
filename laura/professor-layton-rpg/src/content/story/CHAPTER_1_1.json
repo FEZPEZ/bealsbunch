@@ -1,0 +1,89 @@
+{
+  "id": "CHAPTER_1_1",
+  "chapter": "CHAPTER_1",
+  "music": "1-3-intro",
+  "background": "Crater Elementary",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke and Layton walk past Crater Elementary."
+        },
+        {
+          "speaker": "layton",
+          "text": "Ah, look at that, Luke! A field trip!"
+        },
+        {
+          "speaker": "luke",
+          "text": "Where are they going?"
+        },
+        {
+          "speaker": "layton",
+          "text": "According to that sign, they're going to the store to learn how to use a cash register."
+        },
+        {
+          "speaker": "luke",
+          "text": "Even the children are braver than me..."
+        },
+        {
+          "speaker": "layton",
+          "text": "Nonsense! They're simply learning, just as you are."
+        },
+        {
+          "speaker": "stranger",
+          "text": "Excuse me, are you two volunteering for the field trip?"
+        },
+        {
+          "speaker": "luke",
+          "text": "What? No, we're just—"
+        },
+        {
+          "speaker": "stranger",
+          "text": "Wonderful! We need chaperones. Here, take this permission slip."
+        },
+        {
+          "speaker": "layton",
+          "text": "I'm afraid we must decline. We have our own shopping to do."
+        },
+        {
+          "speaker": "stranger",
+          "text": "Oh, how delightful! Teaching by example!"
+        },
+        {
+          "speaker": "luke",
+          "text": "That's not what he— never mind. Let's just go, Professor."
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "fieldTrip"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "layton",
+          "text": "Well handled, Luke. See? You're already helping others."
+        },
+        {
+          "speaker": "luke",
+          "text": "I just want to get to the car..."
+        },
+        {
+          "speaker": "narrator",
+          "text": "They continue on their way."
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "A little further down the road...",
+      "delay": 2000,
+      "nextScene": "CHAPTER_1_2"
+    }
+  ],
+  "nextScene": "CHAPTER_1_2"
+}

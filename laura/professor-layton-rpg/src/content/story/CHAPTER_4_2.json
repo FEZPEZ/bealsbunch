@@ -1,0 +1,65 @@
+{
+  "id": "CHAPTER_4_2",
+  "chapter": "CHAPTER_4",
+  "music": "4-2-intro",
+  "background": "Space",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke flies through space, which looks suspiciously like a video game."
+        },
+        {
+          "speaker": "luke",
+          "text": "This is... actually kind of fun!"
+        },
+        {
+          "speaker": "luke",
+          "text": "It reminds me of those games I used to play to avoid thinking about shopping."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke dodges asteroids and shoots space debris."
+        },
+        {
+          "speaker": "luke",
+          "text": "I'm being heroic! I'm saving the Professor!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "In the distance, Luke sees a structure."
+        },
+        {
+          "speaker": "luke",
+          "text": "That must be it! The enemy base where they're holding Professor Layton!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke approaches the structure and lands."
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "spaceFlight"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "luke",
+          "text": "Alright, time to rescue the Professor!"
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "Entering the enemy base...",
+      "delay": 2000,
+      "nextScene": "CHAPTER_4_3"
+    }
+  ],
+  "nextScene": "CHAPTER_4_3"
+}

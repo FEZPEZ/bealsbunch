@@ -1,0 +1,113 @@
+{
+  "id": "CHAPTER_2_3",
+  "chapter": "CHAPTER_2",
+  "music": "2-3",
+  "background": "Hotel Interior",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke enters the hotel. The lobby is empty."
+        },
+        {
+          "speaker": "luke",
+          "text": "Hello? Is anyone here?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "No response. Luke ventures further into the hotel."
+        },
+        {
+          "speaker": "luke",
+          "text": "This is weird. Why would that person send me here?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke hears music coming from one of the rooms."
+        },
+        {
+          "speaker": "luke",
+          "text": "Maybe someone in there can help."
+        },
+        {
+          "speaker": "guest",
+          "text": "Oh! A visitor! Come in, come in!"
+        },
+        {
+          "speaker": "luke",
+          "text": "Hi, I'm looking for—"
+        },
+        {
+          "speaker": "guest",
+          "text": "The receptionist? Yeah, they're never around. But check this out!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "The guest shows Luke an elaborate online shopping setup."
+        },
+        {
+          "speaker": "guest",
+          "text": "I never have to go to stores anymore! Everything comes right to me!"
+        },
+        {
+          "speaker": "luke",
+          "text": "You... you can do that?"
+        },
+        {
+          "speaker": "guest",
+          "text": "Of course! It's way easier than dealing with crowds, checkout lines, all that nonsense."
+        },
+        {
+          "speaker": "luke",
+          "text": "This could solve everything! I could order what I need and never go to Grocery Outlet!"
+        },
+        {
+          "speaker": "guest",
+          "text": "Exactly! Hey, you look tired. Want to crash here tonight? I've got an extra futon."
+        },
+        {
+          "speaker": "luke",
+          "text": "Really? That would be amazing!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "That night, Luke dreams of a life without shopping, without fear."
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "ordering"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke wakes up feeling strange, like something isn't right."
+        },
+        {
+          "speaker": "luke",
+          "text": "Thanks again for letting me stay. I should go."
+        },
+        {
+          "speaker": "guest",
+          "text": "No problem! Good luck with... whatever it is you're doing."
+        },
+        {
+          "speaker": "luke",
+          "text": "I'm... I'm not even sure anymore."
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "Luke heads downstairs...",
+      "delay": 2000,
+      "nextScene": "CHAPTER_2_X"
+    }
+  ],
+  "nextScene": "CHAPTER_2_X"
+}

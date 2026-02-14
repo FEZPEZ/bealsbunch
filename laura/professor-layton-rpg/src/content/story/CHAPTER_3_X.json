@@ -1,0 +1,81 @@
+{
+  "id": "CHAPTER_3_X",
+  "chapter": "CHAPTER_3_BOSS",
+  "music": "3-X",
+  "background": "Grocery Outlet Interior",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "tubeDude",
+          "text": "YOU CANNOT DEFEAT TUBE DUDE! TUBE DUDE IS ETERNAL!"
+        },
+        {
+          "speaker": "luke",
+          "text": "I don't want to fight you! I just need that phone!"
+        },
+        {
+          "speaker": "tubeDude",
+          "text": "TUBE DUDE HEARS NO REASON! ONLY TUBES!"
+        },
+        {
+          "speaker": "luke",
+          "text": "This doesn't make any sense!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke realizes what's happening."
+        },
+        {
+          "speaker": "luke",
+          "text": "You're not real. You're part of that weird denial place I was in."
+        },
+        {
+          "speaker": "tubeDude",
+          "text": "TUBE DUDE IS VERY REAL!"
+        },
+        {
+          "speaker": "luke",
+          "text": "No. You're just my fear, my confusion, my desire to avoid reality."
+        },
+        {
+          "speaker": "luke",
+          "text": "And I'm done running from reality!"
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "tubeDude"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "tubeDude",
+          "text": "NOOO! TUBE DUDE... FADING..."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tube Dude dissolves into nothing."
+        },
+        {
+          "speaker": "luke",
+          "text": "I did it. I actually did it."
+        },
+        {
+          "speaker": "luke",
+          "text": "Now to get that phone."
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "CHAPTER 4: THE FINAL SHOPPING",
+      "delay": 3000,
+      "nextScene": "CHAPTER_4_1"
+    }
+  ],
+  "nextScene": "CHAPTER_4_1"
+}

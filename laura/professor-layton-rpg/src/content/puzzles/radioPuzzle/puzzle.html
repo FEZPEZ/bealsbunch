@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #0a0a0a;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .puzzle-content {
+            text-align: center;
+            max-width: 600px;
+        }
+        h2 {
+            color: #a08968;
+            margin-bottom: 20px;
+        }
+        .instruction {
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        .radio-dial {
+            width: 200px;
+            height: 200px;
+            border: 5px solid #a08968;
+            border-radius: 50%;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .radio-dial:hover {
+            background: rgba(160, 137, 104, 0.2);
+            transform: scale(1.05);
+        }
+        .status {
+            font-size: 20px;
+            margin-top: 20px;
+            min-height: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="puzzle-content">
+    <h2>Turn on the Radio</h2>
+    <div class="instruction">
+        Click the radio dial to turn it on.
+    </div>
+    <div class="radio-dial" id="radio">
+        [RADIO_OFF]
+    </div>
+    <div class="status" id="status"></div>
+</div>
+
+<script>
+    const radio = document.getElementById('radio');
+    const status = document.getElementById('status');
+    let clicked = false;
+
+    radio.addEventListener('click', () => {
+        if (clicked) return;
+        clicked = true;
+
+        // Instantly notify parent to play music
+        window.parent.postMessage({ type: 'radio:clicked' }, '*');
+
+        radio.textContent = '[RADIO_ON]';
+        radio.style.background = "rgba(160, 137, 104, 0.3)";
+        status.textContent = "♪ Bubsy theme playing ♪";
+
+        setTimeout(() => {
+            status.textContent = "Puzzle complete!";
+            setTimeout(() => {
+                window.parent.postMessage({ type: 'puzzle:complete' }, '*');
+            }, 1000);
+        }, 2000);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+{
+  "id": "CHAPTER_4_1",
+  "chapter": "CHAPTER_4",
+  "music": "4-1",
+  "background": "Grocery Outlet - Checkout Line",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke picks up the phone and gets in line to purchase it."
+        },
+        {
+          "speaker": "luke",
+          "text": "I'm actually doing this. I'm actually shopping."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The line moves slowly, but Luke doesn't mind."
+        },
+        {
+          "speaker": "luke",
+          "text": "This isn't so bad. Just wait your turn, pay for your item, and leave."
+        },
+        {
+          "speaker": "narrator",
+          "text": "After buying the phone, Luke checks the contacts and finds Professor Layton's location."
+        },
+        {
+          "speaker": "luke",
+          "text": "He's... he's somewhere in the back of the store? In space?"
+        },
+        {
+          "speaker": "luke",
+          "text": "That doesn't make any sense, but then again, nothing has made sense today."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke walks through the store and sees something impossible."
+        },
+        {
+          "speaker": "luke",
+          "text": "Is that... a spaceship?"
+        },
+        {
+          "speaker": "luke",
+          "text": "Of course there's a spaceship at Grocery Outlet. Why wouldn't there be?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke approaches the spaceship."
+        },
+        {
+          "speaker": "luke",
+          "text": "Professor Layton's coordinates point to somewhere in space. I have to go."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke climbs into the spaceship and is about to launch when he stops."
+        },
+        {
+          "speaker": "luke",
+          "text": "Wait. I can't just... take this."
+        },
+        {
+          "speaker": "luke",
+          "text": "Professor Layton always taught me to do things properly."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke sees someone nearby who needs help."
+        },
+        {
+          "speaker": "luke",
+          "text": "And he taught me that we ALWAYS have time for other people."
+        },
+        {
+          "speaker": "helper",
+          "text": "Excuse me, could you help me reach that item on the top shelf?"
+        },
+        {
+          "speaker": "luke",
+          "text": "Of course!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke helps the person, who smiles and walks away."
+        },
+        {
+          "speaker": "luke",
+          "text": "Now, about buying this spaceship..."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke goes back to the checkout line."
+        },
+        {
+          "speaker": "clerk",
+          "text": "You want to buy... the spaceship?"
+        },
+        {
+          "speaker": "luke",
+          "text": "Yes, please."
+        },
+        {
+          "speaker": "clerk",
+          "text": "Sir, you can't just buy the display spaceship."
+        },
+        {
+          "speaker": "luke",
+          "text": "But I already got inside it!"
+        },
+        {
+          "speaker": "clerk",
+          "text": "SECURITY!"
+        },
+        {
+          "speaker": "luke",
+          "text": "Wait,, I can explain!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke runs back to the spaceship."
+        },
+        {
+          "speaker": "luke",
+          "text": "I tried to do the right thing! I really did!"
+        },
+        {
+          "speaker": "helper",
+          "text": "Get in."
+        },
+        {
+          "speaker": "luke",
+          "text": "You! You're the person I helped!"
+        },
+        {
+          "speaker": "helper",
+          "text": "And now I'm helping you. Go!"
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "buyPhone"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke launches the spaceship into... space?"
+        },
+        {
+          "speaker": "luke",
+          "text": "This is happening. This is actually happening."
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "To space!",
+      "delay": 2000,
+      "nextScene": "CHAPTER_4_2"
+    }
+  ],
+  "nextScene": "CHAPTER_4_2"
+}

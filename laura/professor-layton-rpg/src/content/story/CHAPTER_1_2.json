@@ -1,0 +1,109 @@
+{
+  "id": "CHAPTER_1_2",
+  "chapter": "CHAPTER_1",
+  "music": "1-2",
+  "background": "Mysterious Cul De Sac",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "layton",
+          "text": "Hmm... this cul-de-sac seems rather peculiar."
+        },
+        {
+          "speaker": "luke",
+          "text": "Professor, please. We don't have time for mysteries right now."
+        },
+        {
+          "speaker": "layton",
+          "text": "A true gentleman always has time to help those in need, Luke."
+        },
+        {
+          "speaker": "luke",
+          "text": "*sigh* Fine. What's so peculiar about it?"
+        },
+        {
+          "speaker": "layton",
+          "text": "Notice how all the houses are identical, yet one has its door wide open."
+        },
+        {
+          "speaker": "luke",
+          "text": "Maybe they're just... airing it out?"
+        },
+        {
+          "speaker": "stranger",
+          "text": "HELP! Someone! Anyone!"
+        },
+        {
+          "speaker": "luke",
+          "text": "Or maybe not."
+        },
+        {
+          "speaker": "layton",
+          "text": "Come, Luke! Someone needs our assistance!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "They rush to the open door."
+        },
+        {
+          "speaker": "stranger",
+          "text": "Oh, thank goodness! I've locked myself out and my groceries are melting!"
+        },
+        {
+          "speaker": "luke",
+          "text": "Your... groceries are inside?"
+        },
+        {
+          "speaker": "stranger",
+          "text": "Yes! I set them down to find my keys, went back to the car, and the door locked behind me!"
+        },
+        {
+          "speaker": "layton",
+          "text": "Fear not, good citizen. We shall solve this predicament."
+        },
+        {
+          "speaker": "luke",
+          "text": "We will?"
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "investigation"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "stranger",
+          "text": "You did it! My ice cream is saved!"
+        },
+        {
+          "speaker": "layton",
+          "text": "All in a day's work. Remember, Luke: we ALWAYS have time for other people."
+        },
+        {
+          "speaker": "luke",
+          "text": "Even when we're on our way to face our greatest fear?"
+        },
+        {
+          "speaker": "layton",
+          "text": "Especially then."
+        },
+        {
+          "speaker": "luke",
+          "text": "I... think I understand."
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "The journey continues...",
+      "delay": 2000,
+      "nextScene": "CHAPTER_1_3"
+    }
+  ],
+  "nextScene": "CHAPTER_1_3"
+}

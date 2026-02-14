@@ -1,0 +1,161 @@
+{
+  "id": "CHAPTER_2_2",
+  "chapter": "CHAPTER_2",
+  "music": "2-2",
+  "background": "Shopping Mall",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke finds himself at a large shopping mall."
+        },
+        {
+          "speaker": "luke",
+          "text": "Maybe someone here can help me find Professor Layton."
+        },
+        {
+          "speaker": "luke",
+          "text": "Wait... is that... Professor?!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke rushes toward a man in a top hat."
+        },
+        {
+          "speaker": "luke",
+          "text": "Professor Layton!"
+        },
+        {
+          "speaker": "man",
+          "text": "Hmm? I'm afraid you have me confused with someone else, young man."
+        },
+        {
+          "speaker": "luke",
+          "text": "Oh... I'm sorry. You look just like someone I know."
+        },
+        {
+          "speaker": "man",
+          "text": "No harm done. You look rather distressed. Have you eaten?"
+        },
+        {
+          "speaker": "luke",
+          "text": "I... actually, no. Not since this morning."
+        },
+        {
+          "speaker": "man",
+          "text": "Then allow me to buy you lunch. I insist."
+        },
+        {
+          "speaker": "luke",
+          "text": "Really? Thank you so much!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "They sit together at a food court table."
+        },
+        {
+          "speaker": "man",
+          "text": "You know, there's something wonderful about buying things. The exchange, the transaction, the satisfaction."
+        },
+        {
+          "speaker": "luke",
+          "text": "I guess... I've always been scared of shopping, honestly."
+        },
+        {
+          "speaker": "man",
+          "text": "Scared? Why on earth would you be scared?"
+        },
+        {
+          "speaker": "luke",
+          "text": "I don't know. The pressure, the choices, the... everything."
+        },
+        {
+          "speaker": "man",
+          "text": "Ah, I see. Well, perhaps this will change your mind."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The man pulls out a vintage radio from his bag."
+        },
+        {
+          "speaker": "luke",
+          "text": "That radio... I've seen it before!"
+        },
+        {
+          "speaker": "man",
+          "text": "You have?"
+        },
+        {
+          "speaker": "luke",
+          "text": "Yes! Professor Layton bought one just like it at a rummage sale!"
+        },
+        {
+          "speaker": "man",
+          "text": "Is that so? What a coincidence."
+        },
+        {
+          "speaker": "luke",
+          "text": "Wait... how did you get that? Did you steal it from him?!"
+        },
+        {
+          "speaker": "man",
+          "text": "Steal? My dear boy, I purchased this fair and square."
+        },
+        {
+          "speaker": "luke",
+          "text": "I need to find out what happened. Thank you for the meal!"
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "findLayton"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "luke",
+          "text": "Excuse me, are you an official? I need help finding someone."
+        },
+        {
+          "speaker": "official",
+          "text": "An official? Why yes, yes I am. How can I assist you?"
+        },
+        {
+          "speaker": "luke",
+          "text": "I'm looking for Professor Layton. And I think that man might have stolen something from him."
+        },
+        {
+          "speaker": "official",
+          "text": "I see, I see. Very serious indeed. Tell you what, there's a hotel nearby that might be able to help."
+        },
+        {
+          "speaker": "luke",
+          "text": "A hotel?"
+        },
+        {
+          "speaker": "official",
+          "text": "Yes, they have... connections. For finding people. They might even let you stay for free."
+        },
+        {
+          "speaker": "luke",
+          "text": "That's very kind. Thank you!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "The 'official' smirks as Luke walks away."
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "Luke heads to the hotel...",
+      "delay": 2000,
+      "nextScene": "CHAPTER_2_3"
+    }
+  ],
+  "nextScene": "CHAPTER_2_3"
+}

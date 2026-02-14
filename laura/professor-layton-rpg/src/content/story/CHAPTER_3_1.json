@@ -1,0 +1,93 @@
+{
+  "id": "CHAPTER_3_1",
+  "chapter": "CHAPTER_3",
+  "music": "3-1",
+  "background": "Misty Void",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke wanders through an endless mist."
+        },
+        {
+          "speaker": "luke",
+          "text": "Where am I? How long have I been walking?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Time seems meaningless here."
+        },
+        {
+          "speaker": "luke",
+          "text": "I was... I was looking for something. Someone?"
+        },
+        {
+          "speaker": "luke",
+          "text": "Professor... Professor Layton! That's right!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "But the memory feels distant, like a dream."
+        },
+        {
+          "speaker": "luke",
+          "text": "No, I can't forget. I have to find him."
+        },
+        {
+          "speaker": "luke",
+          "text": "But which way? Everything looks the same."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke walks in what he hopes is a straight line."
+        },
+        {
+          "speaker": "luke",
+          "text": "Wait... is that... buildings?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Through the mist, Luke sees the outline of a town."
+        },
+        {
+          "speaker": "luke",
+          "text": "Finally! Civilization!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "But as he gets closer, something feels wrong."
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "mist"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "luke",
+          "text": "This town... it's completely abandoned."
+        },
+        {
+          "speaker": "luke",
+          "text": "No people, no sounds, nothing."
+        },
+        {
+          "speaker": "luke",
+          "text": "But there! That building! It's... it's a store!"
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "Luke approaches the store...",
+      "delay": 2000,
+      "nextScene": "CHAPTER_3_2"
+    }
+  ],
+  "nextScene": "CHAPTER_3_2"
+}

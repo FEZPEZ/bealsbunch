@@ -1,0 +1,112 @@
+{
+  "id": "INTRO",
+  "chapter": "INTRO",
+  "background": "scene:hotelRoom",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke wakes up in a cold sweat. He's had the nightmare again."
+        },
+        {
+          "speaker": "luke",
+          "text": "Professor... I had that dream again. The one about... shopping.",
+          "mode": "scared"
+        },
+        {
+          "speaker": "layton",
+          "text": "Ah, Luke. Shopping is nothing to fear, my boy."
+        },
+        {
+          "speaker": "luke",
+          "text": "But Professor, I've never done it by myself before!",
+          "mode": "surprised"
+        },
+        {
+          "speaker": "layton",
+          "text": "Well, today is the day. I'm afraid you must go to Grocery Outlet alone."
+        },
+        {
+          "speaker": "luke",
+          "text": "What?! No! Why can't you come with me?",
+          "mode": "surprised"
+        },
+        {
+          "speaker": "layton",
+          "text": "I have... important business. Besides, this will be a valuable learning experience."
+        },
+        {
+          "speaker": "luke",
+          "text": "I... I don't know if I can do this.",
+          "mode": "scared"
+        },
+        {
+          "speaker": "layton",
+          "text": "Luke, do you remember the first time I went shopping? I was terrified too."
+        },
+        {
+          "speaker": "luke",
+          "text": "Really?",
+          "mode": "surprised"
+        },
+        {
+          "speaker": "layton",
+          "text": "Indeed. But I learned something important that day. Sometimes, the things we fear most are the things we must face."
+        },
+        {
+          "speaker": "luke",
+          "text": "That's... surprisingly ominous, Professor."
+        },
+        {
+          "speaker": "layton",
+          "text": "Try turning on the radio, Luke. Music often helps with nervousness."
+        },
+        {
+          "speaker": "luke",
+          "text": "Okay... I'll try anything at this point.",
+          "mode": "scared"
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "radio"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke turns on the radio. Bubsy's theme starts playing."
+        },
+        {
+          "speaker": "luke",
+          "text": "I feel... better already? I think?",
+          "mode": "excited"
+        },
+        {
+          "speaker": "layton",
+          "text": "Excellent. Now, off you go!"
+        },
+        {
+          "speaker": "luke",
+          "text": "Wait, right now?!",
+          "mode": "surprised"
+        },
+        {
+          "speaker": "narrator",
+          "text": "The music fades as we cut to outside..."
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "Outside the hotel...",
+      "delay": 2000,
+      "nextScene": "TUTORIAL"
+    }
+  ],
+  "nextScene": "TUTORIAL"
+}

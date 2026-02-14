@@ -1,0 +1,85 @@
+{
+  "id": "CHAPTER_3_2",
+  "chapter": "CHAPTER_3",
+  "music": "3-2",
+  "background": "Empty Store",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke enters the abandoned store."
+        },
+        {
+          "speaker": "luke",
+          "text": "Hello? Is anyone here?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "His voice echoes through empty aisles."
+        },
+        {
+          "speaker": "luke",
+          "text": "This place is creepy. Where are all the employees?"
+        },
+        {
+          "speaker": "luke",
+          "text": "The shelves are still stocked, but everything's covered in dust."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke walks through the store, disturbed by the silence."
+        },
+        {
+          "speaker": "luke",
+          "text": "You know, I wished I didn't have to deal with shopping... but this is worse."
+        },
+        {
+          "speaker": "luke",
+          "text": "At least in a normal store, there are people. People who can help."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The floor begins to crack beneath his feet."
+        },
+        {
+          "speaker": "luke",
+          "text": "What the—?!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Strange creatures emerge from the cracks."
+        },
+        {
+          "speaker": "luke",
+          "text": "I need to get out of here!"
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "emptyStore"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "luke",
+          "text": "There! A tunnel in the back!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "With no other choice, Luke enters the dark tunnel."
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "Into the tunnel...",
+      "delay": 2000,
+      "nextScene": "CHAPTER_3_3"
+    }
+  ],
+  "nextScene": "CHAPTER_3_3"
+}

@@ -1,0 +1,85 @@
+{
+  "id": "CHAPTER_2_X",
+  "chapter": "CHAPTER_2_BOSS",
+  "music": "2-X-intro",
+  "background": "Hotel Lobby",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "As Luke enters the lobby, he finally sees the receptionist."
+        },
+        {
+          "speaker": "receptionist",
+          "text": "Well, well, well. Leaving so soon?"
+        },
+        {
+          "speaker": "luke",
+          "text": "Yes, thank you for your hospitality—"
+        },
+        {
+          "speaker": "receptionist",
+          "text": "Hospitality? You never checked in."
+        },
+        {
+          "speaker": "luke",
+          "text": "What? But the official said—"
+        },
+        {
+          "speaker": "receptionist",
+          "text": "Official? I AM the official! From the mall! You really are gullible, aren't you?"
+        },
+        {
+          "speaker": "luke",
+          "text": "You... you tricked me!"
+        },
+        {
+          "speaker": "receptionist",
+          "text": "And you fell for it! Now, about that unpaid room charge..."
+        },
+        {
+          "speaker": "luke",
+          "text": "I need to get out of here!"
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "escape"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke manages to escape, but in his panic, he climbs onto a delivery truck."
+        },
+        {
+          "speaker": "luke",
+          "text": "I'll just ride this until I'm safe..."
+        },
+        {
+          "speaker": "narrator",
+          "text": "But the truck hits a bump, and Luke falls off."
+        },
+        {
+          "speaker": "luke",
+          "text": "Ow... where... where am I now?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke looks around. Nothing but mist and emptiness."
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "CHAPTER 3: THE VOID",
+      "delay": 3000,
+      "nextScene": "CHAPTER_3_1"
+    }
+  ],
+  "nextScene": "CHAPTER_3_1"
+}

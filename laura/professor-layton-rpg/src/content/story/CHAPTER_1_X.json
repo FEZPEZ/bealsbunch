@@ -1,0 +1,101 @@
+{
+  "id": "CHAPTER_1_X",
+  "chapter": "CHAPTER_1_BOSS",
+  "music": "1-X",
+  "background": "New Homes Construction Site",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "At the intersection of Mountainview and Villa, a massive crater has appeared!"
+        },
+        {
+          "speaker": "luke",
+          "text": "What in the world?!"
+        },
+        {
+          "speaker": "layton",
+          "text": "Most curious. This wasn't here this morning."
+        },
+        {
+          "speaker": "luke",
+          "text": "Can we go around it?"
+        },
+        {
+          "speaker": "layton",
+          "text": "I'm afraid the detour would take hours. We must find a way across."
+        },
+        {
+          "speaker": "luke",
+          "text": "Across?! Professor, it's enormous!"
+        },
+        {
+          "speaker": "layton",
+          "text": "Indeed. Which is why we must approach this logically."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Layton examines the crater, looking for a solution."
+        },
+        {
+          "speaker": "layton",
+          "text": "Luke, I need you to stay back. This could be dangerous."
+        },
+        {
+          "speaker": "luke",
+          "text": "But Professor—"
+        },
+        {
+          "speaker": "layton",
+          "text": "No arguments. I'll find a way across and signal for you to follow."
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "obstacle"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Layton attempts to cross, but the ground gives way!"
+        },
+        {
+          "speaker": "luke",
+          "text": "PROFESSOR!"
+        },
+        {
+          "speaker": "layton",
+          "text": "Luke, run! Get help!"
+        },
+        {
+          "speaker": "luke",
+          "text": "I can't just leave you!"
+        },
+        {
+          "speaker": "layton",
+          "text": "Go! NOW!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke hesitates, then runs. Fear overtakes him, and he doesn't look back."
+        },
+        {
+          "speaker": "luke",
+          "text": "I'm sorry, Professor... I'm so sorry..."
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "CHAPTER 2: LOST AND ALONE",
+      "delay": 3000,
+      "nextScene": "CHAPTER_2_1"
+    }
+  ],
+  "nextScene": "CHAPTER_2_1"
+}

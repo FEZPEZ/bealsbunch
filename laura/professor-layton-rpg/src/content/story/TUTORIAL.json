@@ -1,0 +1,33 @@
+{
+  "id": "TUTORIAL",
+  "chapter": "TUTORIAL",
+  "music": "tutorial-intro",
+  "background": "Driveway",
+  "sequence": [
+    {
+      "type": "puzzle",
+      "id": "tutorial"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "layton",
+          "text": "Excellent work, Luke! You're ready for your journey."
+        },
+        {
+          "speaker": "luke",
+          "text": "I guess there's no backing out now...",
+          "mode": "scared"
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "CHAPTER 1: THE JOURNEY BEGINS",
+      "delay": 3000,
+      "nextScene": "CHAPTER_1_1"
+    }
+  ],
+  "nextScene": "CHAPTER_1_1"
+}

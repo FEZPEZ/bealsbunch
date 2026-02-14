@@ -1,0 +1,97 @@
+{
+  "id": "CHAPTER_4_3",
+  "chapter": "CHAPTER_4",
+  "music": "4-3",
+  "background": "Dark Grocery Outlet",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Luke enters the 'enemy base' and realizes it's just Grocery Outlet after hours."
+        },
+        {
+          "speaker": "luke",
+          "text": "Wait... this is just... the same store?"
+        },
+        {
+          "speaker": "luke",
+          "text": "Was the spaceship just... a simulator?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "The lights are off, and the store is eerily quiet."
+        },
+        {
+          "speaker": "luke",
+          "text": "But the phone still says Professor is here somewhere."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke navigates through the dark aisles."
+        },
+        {
+          "speaker": "luke",
+          "text": "Professor? Are you here?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Luke reaches the back of the store and sees a figure."
+        },
+        {
+          "speaker": "luke",
+          "text": "Professor Layton!"
+        },
+        {
+          "speaker": "narrator",
+          "text": "But as Luke approaches, the figure turns around."
+        },
+        {
+          "speaker": "stranger",
+          "text": "Hello, Luke."
+        },
+        {
+          "speaker": "luke",
+          "text": "You! You're the person from the cul-de-sac! And the man from the mall! And the helper!"
+        },
+        {
+          "speaker": "stranger",
+          "text": "Very observant."
+        },
+        {
+          "speaker": "luke",
+          "text": "Who are you? Where's Professor Layton?"
+        },
+        {
+          "speaker": "stranger",
+          "text": "All in good time, Luke. First, you must pass one final test."
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "enemyBase"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "luke",
+          "text": "Enough games! Tell me where the Professor is!"
+        },
+        {
+          "speaker": "stranger",
+          "text": "Very well. It's time for the truth."
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "text": "FINAL CONFRONTATION",
+      "delay": 2000,
+      "nextScene": "CHAPTER_4_X"
+    }
+  ],
+  "nextScene": "CHAPTER_4_X"
+}

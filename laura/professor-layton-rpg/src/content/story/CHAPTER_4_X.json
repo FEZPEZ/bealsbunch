@@ -1,0 +1,159 @@
+{
+  "id": "CHAPTER_4_X",
+  "chapter": "CHAPTER_4_FINAL",
+  "music": "4-3",
+  "background": "Grocery Outlet - Final Location",
+  "sequence": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "stranger",
+          "text": "Luke, I've been with you this entire journey."
+        },
+        {
+          "speaker": "luke",
+          "text": "What are you talking about?"
+        },
+        {
+          "speaker": "stranger",
+          "text": "In the neighborhood, you learned to help others. At the mall, you learned the value of connection."
+        },
+        {
+          "speaker": "luke",
+          "text": "And in the store... I learned that avoidance only leads to emptiness."
+        },
+        {
+          "speaker": "stranger",
+          "text": "Exactly. And when you helped me at Grocery Outlet, you proved you'd learned Professor Layton's lessons."
+        },
+        {
+          "speaker": "luke",
+          "text": "But why? Why go through all this?"
+        },
+        {
+          "speaker": "stranger",
+          "text": "Because you needed to face your fear. Not by avoiding it, but by understanding it."
+        },
+        {
+          "speaker": "luke",
+          "text": "Shopping isn't really what I was afraid of, was it?"
+        },
+        {
+          "speaker": "stranger",
+          "text": "No. You were afraid of responsibility, of making decisions, of being alone."
+        },
+        {
+          "speaker": "luke",
+          "text": "And Professor Layton... was he ever in danger?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "The lights turn on."
+        },
+        {
+          "speaker": "layton",
+          "text": "I'm afraid not, my boy. This was all a rather elaborate lesson."
+        },
+        {
+          "speaker": "luke",
+          "text": "Professor! You're okay!"
+        },
+        {
+          "speaker": "layton",
+          "text": "Of course. Though I must say, the crater was quite convincing."
+        },
+        {
+          "speaker": "luke",
+          "text": "The crater... was fake?"
+        },
+        {
+          "speaker": "layton",
+          "text": "Indeed. All part of the plan. You see, Luke, you were never meant to go shopping."
+        },
+        {
+          "speaker": "luke",
+          "text": "I wasn't?"
+        },
+        {
+          "speaker": "layton",
+          "text": "This entire day was about teaching you that life's challenges aren't about the task itself."
+        },
+        {
+          "speaker": "layton",
+          "text": "They're about who you become while facing them."
+        },
+        {
+          "speaker": "luke",
+          "text": "So... I don't have to do the shopping?"
+        },
+        {
+          "speaker": "layton",
+          "text": "Oh, you already did. You bought that phone, didn't you?"
+        },
+        {
+          "speaker": "luke",
+          "text": "I... I did! I actually did!"
+        },
+        {
+          "speaker": "stranger",
+          "text": "And you helped people along the way. You faced your fears. You grew."
+        },
+        {
+          "speaker": "luke",
+          "text": "Wait, who are you really?"
+        },
+        {
+          "speaker": "stranger",
+          "text": "Just someone who believes in you, Luke."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The stranger smiles and walks away into the aisles."
+        },
+        {
+          "speaker": "layton",
+          "text": "Now then, shall we go home?"
+        },
+        {
+          "speaker": "luke",
+          "text": "Yes. But Professor?"
+        },
+        {
+          "speaker": "layton",
+          "text": "Yes, Luke?"
+        },
+        {
+          "speaker": "luke",
+          "text": "Next time you want to teach me a lesson... maybe just talk to me?"
+        },
+        {
+          "speaker": "layton",
+          "text": "Where's the fun in that?"
+        }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "finalBoss"
+    },
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "And so, Luke learned that courage isn't the absence of fear..."
+        },
+        {
+          "speaker": "narrator",
+          "text": "It's doing what needs to be done despite it."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The End."
+        }
+      ]
+    }
+  ],
+  "nextScene": null
+}
