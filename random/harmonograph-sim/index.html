@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Bauhaus Harmonograph Pro</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <title></title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
@@ -185,14 +186,14 @@
 const CONFIG = {
     RES_MULTIPLIER: 1.5, // High resolution variable
     MAIN_LINE_WIDTH: 3.0,   // Main thickness
-    ZOOM: 5.0, MIN_ZOOM: 0.2, MAX_ZOOM: 20.0, ZOOM_STEP: 1,
+    ZOOM: 6.0, MIN_ZOOM: 1, MAX_ZOOM: 20.0, ZOOM_STEP: 1,
     
     SIM_RES_MULTIPLIER: 1.5, // Sim resolution
     SIM_LINE_WIDTH: 5.0,     // Sim thickness
-    SIM_ZOOM: 1.5,
+    SIM_ZOOM: 1.8,
     DECAY: 0.0001,
     DECAY_VALUES: [0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01],
-    TIME_STEP: 0.015, MAX_STEPS: 40000, MIN_AMP: 0.008, DRAW_SCALE: 0.5, SIM_SCALE: 0.3,
+    TIME_STEP: 0.015, MAX_STEPS: 40000, MIN_AMP: 0.002, DRAW_SCALE: 0.5, SIM_SCALE: 0.3,
     MIN_FREQ: 1, MAX_FREQ: 10.0, FREQ_STEP: 0.002, REPEAT_DELAY: 300, REPEAT_RATE: 40,
     FREQ_DECIMALS: 3,
     REVERSE_P2: false,
