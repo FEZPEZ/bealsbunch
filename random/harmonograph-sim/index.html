@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bauhaus Harmonograph</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Bauhaus Harmonograph Pro</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
@@ -15,14 +15,12 @@
             --shadow: 5px 5px 0px rgba(0,0,0,0.18);
         }
 
-        /* Prevent all selection and interaction shenanigans */
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
             user-select: none; 
             -webkit-user-select: none;
-            -webkit-touch-callout: none;
-            touch-action: pan-x pan-y; /* Allows scrolling but prevents native zoom */
+            touch-action: none; 
         }
 
         body {
@@ -33,25 +31,38 @@
             color: #111;
             display: flex;
             justify-content: center;
-            touch-action: none; /* Disable double-tap zoom/pinch at body level */
+            /* Use dvh for mobile address bar stability */
+            height: 100dvh; 
         }
 
         #app {
             width: 100vw;
             max-width: 500px;
-            height: 100vh;
+            height: 100%;
             background: var(--bg);
             display: flex;
             flex-direction: column;
             position: relative;
         }
 
-        #drawingWrap { height: 44vh; padding: 10px; }
-        #drawingBox { 
-            width: 100%; height: 100%; background: #f7f3ea; 
-            border: 2px solid var(--line); box-shadow: var(--shadow); 
-            position: relative; overflow: hidden;
+        /* PRIORITIZE BOTTOM: Settings and Previews fixed size, Drawing gets remainder */
+        #drawingWrap { 
+            flex: 1; /* Squish this first */
+            padding: 10px; 
+            min-height: 100px; 
+            display: flex;
         }
+        
+        #drawingBox { 
+            width: 100%; 
+            height: 100%; 
+            background: #f7f3ea; 
+            border: 2px solid var(--line); 
+            box-shadow: var(--shadow); 
+            position: relative; 
+            overflow: hidden;
+        }
+        
         #harmonograph { width: 100%; height: 100%; display: block; }
 
         .icon-box {
@@ -72,40 +83,48 @@
         #info-box { left: 10px; }
         #settings-box { right: 10px; }
 
-        #previews { height: 20vh; display: flex; gap: 10px; padding: 0 10px 10px 10px; }
+        /* FIXED HEIGHT SECTION AT BOTTOM */
+        #bottom-ui {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        #previews { height: 120px; display: flex; gap: 10px; padding: 0 10px 10px 10px; }
         .preview { flex: 1; background: var(--panel); border: 2px solid var(--line); box-shadow: var(--shadow); }
         .preview canvas { width: 100%; height: 100%; display: block; }
 
-        #controls { flex: 1; display: flex; gap: 10px; padding: 0 10px 10px 10px; }
+        #controls { height: 260px; display: flex; gap: 10px; padding: 0 10px 10px 10px; }
         .panel { flex: 1; background: var(--panel); border: 2px solid var(--line); box-shadow: var(--shadow); padding: 8px; overflow: hidden; }
         .title { font-size: 11px; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px; }
 
-        .sliderRow { margin-bottom: 7px; }
-        .slider { position: relative; height: 24px; border: 2px solid var(--line); background: #f1ece2; overflow: hidden; }
+        .sliderRow { margin-bottom: 7px; position: relative; }
+        .slider { position: relative; height: 24px; border: 2px solid var(--line); background: #f1ece2; overflow: hidden; pointer-events: none; }
         .sliderFill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--blue); width: 50%; }
         .sliderHandle { position: absolute; top: 0; bottom: 0; width: 12px; background: #111; transform: translateX(-50%); }
         .sliderLabel { position: absolute; inset: 0; display: flex; align-items: center; padding-left: 7px; font-size: 10px; font-weight: bold; z-index: 3; pointer-events: none; }
-        .slider input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 5; }
+        
+        /* Transparent interaction layer */
+        .slider-trigger {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            cursor: pointer;
+            touch-action: none;
+        }
 
         .freq { display: flex; gap: 4px; margin-bottom: 7px; }
         .freqBtn, .freqValue { height: 28px; border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; box-shadow: 2px 2px 0px rgba(0,0,0,0.14); }
         .freqBtn { width: 28px; background: var(--blue); cursor: pointer; }
         .freqValue { flex: 1; background: #f1ece2; display: flex; gap: 5px; }
         .freqLabel { color: var(--blue-dark); font-size: 9px; text-transform: uppercase; }
-        
         .freqValue .num { font-family: monospace; font-size: 10px; }
-        
         .freq-locked { background: #ccc !important; color: #777; border-color: #999; box-shadow: none; }
 
         .overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; padding: 20px; align-items: center; justify-content: center; }
         .popup { background: var(--panel); border: 3px solid var(--line); box-shadow: 10px 10px 0px rgba(0,0,0,0.3); width: 100%; max-height: 85%; overflow-y: auto; padding: 20px; display: flex; flex-direction: column;}
-        .bottom-close { width: 100%; margin-top: 20px; padding: 10px; background: var(--blue); border: 2px solid var(--line); font-weight: bold; cursor: pointer; box-shadow: 4px 4px 0px var(--line); }
-        .bottom-close:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--line); }
-        .popup h2 { margin-top: 0; font-size: 1.2em; border-bottom: 2px solid var(--line); padding-bottom: 5px; }
+        .bottom-close { width: 100%; margin-top: 20px; padding: 10px; background: var(--blue); border: 2px solid var(--line); font-weight: bold; cursor: pointer; }
         
         #zoom-controls { position: absolute; bottom: 10px; right: 10px; display: flex; gap: 8px; z-index: 100; }
-        .zoom-btn { width: 36px; height: 36px; background: var(--panel); border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 3px 3px 0px rgba(0,0,0,0.1); font-weight: bold; font-size: 18px; }
-        .zoom-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0px rgba(0,0,0,0.1); }
+        .zoom-btn { width: 36px; height: 36px; background: var(--panel); border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 3px 3px 0px rgba(0,0,0,0.1); font-weight: bold; }
 
         .toggle-row { 
             display: flex; align-items: center; justify-content: space-between; 
@@ -113,9 +132,9 @@
             padding: 8px; cursor: pointer; margin-top: 10px;
             font-size: 10px; font-weight: bold; text-transform: uppercase;
         }
-        .toggle-box { width: 18px; height: 18px; border: 2px solid var(--line); background: #fff; display: flex; align-items: center; justify-content: center; }
-        .toggle-row.active .toggle-box { background: var(--blue); }
-        .toggle-row.active .toggle-box::after { content: '✓'; color: white; font-size: 12px; }
+        .toggle-box { width: 18px; height: 18px; border: 2px solid var(--line); background: #fff; }
+        .toggle-row.active .toggle-box { background: var(--blue); position: relative; }
+        .toggle-row.active .toggle-box::after { content: '✓'; color: white; position: absolute; left: 2px; top: -2px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -126,23 +145,29 @@
             <div id="info-box" class="icon-box"><i data-lucide="info"></i></div>
             <div id="settings-box" class="icon-box"><i data-lucide="settings"></i></div>
             <canvas id="harmonograph"></canvas>
+            <div id="zoom-controls">
+                <div class="zoom-btn" id="zoom-out">−</div>
+                <div class="zoom-btn" id="zoom-in">+</div>
+            </div>
         </div>
     </div>
 
-    <div id="previews">
-        <div class="preview"><canvas id="preview1"></canvas></div>
-        <div class="preview"><canvas id="preview2"></canvas></div>
-    </div>
+    <div id="bottom-ui">
+        <div id="previews">
+            <div class="preview"><canvas id="preview1"></canvas></div>
+            <div class="preview"><canvas id="preview2"></canvas></div>
+        </div>
 
-    <div id="controls">
-        <div class="panel" id="panel1"></div>
-        <div class="panel" id="panel2"></div>
+        <div id="controls">
+            <div class="panel" id="panel1"></div>
+            <div class="panel" id="panel2"></div>
+        </div>
     </div>
 
     <div id="info-overlay" class="overlay">
         <div class="popup">
             <h2>Pendulum Physics</h2>
-            <p><strong>Mass vs. Frequency:</strong> In a simple pendulum, the mass of the bob does not affect frequency.</p>
+            <p><strong>Frequency & Phase:</strong> This simulator combines two independent pendulums into a single drawing point.</p>
             <button class="bottom-close" onclick="closeOverlay('info-overlay')">CLOSE</button>
         </div>
     </div>
@@ -157,22 +182,25 @@
 </div>
 
 <script>
-// Prevent zooming on wheel/trackpad
-document.addEventListener('wheel', (e) => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
-
 const CONFIG = {
-    ZOOM: 3.0, MIN_ZOOM: 0.2, MAX_ZOOM: 10.0, ZOOM_STEP: 0.5,
+    RES_MULTIPLIER: 1.5, // High resolution variable
+    MAIN_LINE_WIDTH: 3.0,   // Main thickness
+    ZOOM: 5.0, MIN_ZOOM: 0.2, MAX_ZOOM: 20.0, ZOOM_STEP: 1,
+    
+    SIM_RES_MULTIPLIER: 1.5, // Sim resolution
+    SIM_LINE_WIDTH: 5.0,     // Sim thickness
+    SIM_ZOOM: 1.5,
     DECAY: 0.0001,
     DECAY_VALUES: [0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01],
-    TIME_STEP: 0.015, MAX_STEPS: 40000, MIN_AMP: 0.003, DRAW_SCALE: 0.5, SIM_SCALE: 0.3,
+    TIME_STEP: 0.015, MAX_STEPS: 40000, MIN_AMP: 0.008, DRAW_SCALE: 0.5, SIM_SCALE: 0.3,
     MIN_FREQ: 1, MAX_FREQ: 10.0, FREQ_STEP: 0.002, REPEAT_DELAY: 300, REPEAT_RATE: 40,
-    FREQ_DECIMALS: 3, // User setting for visible frequency decimals
+    FREQ_DECIMALS: 3,
     REVERSE_P2: false,
     LIMITS: {
-        xmag: { min: 0, max: 220, steps: 200 },
-        ymag: { min: 0, max: 220, steps: 200 },
-        rotation: { min: -180, max: 180, steps: 360 },
-        phase: { min: 0, max: 360, steps: 360 }
+        xmag: { min: 0, max: 220 },
+        ymag: { min: 0, max: 220 },
+        rotation: { min: -180, max: 180 },
+        phase: { min: 0, max: 360 }
     }
 };
 
@@ -180,20 +208,6 @@ const state = {
     p1: { xmag: 60, ymag: 130, rotation: -70, phase: 0, freq: 1.00 },
     p2: { xmag: 150, ymag: 160, rotation: -40, phase: 90, freq: 1.01 }
 };
-
-const drawBox = document.getElementById('drawingBox');
-const zoomWrap = document.createElement('div');
-zoomWrap.id = 'zoom-controls';
-zoomWrap.innerHTML = `<div class="zoom-btn" id="zoom-out">−</div><div class="zoom-btn" id="zoom-in">+</div>`;
-drawBox.appendChild(zoomWrap);
-
-function adjustZoom(delta) {
-    CONFIG.ZOOM = Math.min(CONFIG.MAX_ZOOM, Math.max(CONFIG.MIN_ZOOM, CONFIG.ZOOM + delta));
-    redrawAll();
-}
-
-document.getElementById('zoom-in').onclick = () => adjustZoom(CONFIG.ZOOM_STEP);
-document.getElementById('zoom-out').onclick = () => adjustZoom(-CONFIG.ZOOM_STEP);
 
 const hctx = document.getElementById("harmonograph").getContext("2d");
 const pctx1 = document.getElementById("preview1").getContext("2d");
@@ -204,22 +218,54 @@ document.getElementById('info-box').onclick = () => document.getElementById('inf
 document.getElementById('settings-box').onclick = () => document.getElementById('settings-overlay').style.display = 'flex';
 function closeOverlay(id) { document.getElementById(id).style.display = 'none'; }
 
+// BETTER SLIDER: Tracks window-level movement
 function makeSlider(panel, obj, key, label) {
     const cfg = CONFIG.LIMITS[key];
     const row = document.createElement("div");
     row.className = "sliderRow";
-    row.innerHTML = `<div class="slider"><div class="sliderFill"></div><div class="sliderHandle"></div><div class="sliderLabel">${label}</div>
-        <input type="range" min="${cfg.min}" max="${cfg.max}" step="${(cfg.max-cfg.min)/cfg.steps}" value="${obj[key]}"></div>`;
-    const input = row.querySelector('input');
-    const update = () => {
-        const val = parseFloat(input.value);
-        const pct = ((val - cfg.min) / (cfg.max - cfg.min)) * 100;
-        row.querySelector('.sliderFill').style.width = pct + "%";
-        row.querySelector('.sliderHandle').style.left = pct + "%";
+    row.innerHTML = `
+        <div class="slider">
+            <div class="sliderFill"></div>
+            <div class="sliderHandle"></div>
+            <div class="sliderLabel">${label}</div>
+        </div>
+        <div class="slider-trigger"></div>`;
+    
+    const trigger = row.querySelector('.slider-trigger');
+    const fill = row.querySelector('.sliderFill');
+    const handle = row.querySelector('.sliderHandle');
+
+    const updateFromEvent = (e) => {
+        const rect = trigger.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        let pct = (clientX - rect.left) / rect.width;
+        pct = Math.max(0, Math.min(1, pct));
+        
+        const val = cfg.min + pct * (cfg.max - cfg.min);
         obj[key] = val;
+        
+        fill.style.width = (pct * 100) + "%";
+        handle.style.left = (pct * 100) + "%";
         redrawAll();
     };
-    input.oninput = update; update();
+
+    let isDragging = false;
+    const start = (e) => { isDragging = true; updateFromEvent(e); };
+    const move = (e) => { if(isDragging) { e.preventDefault(); updateFromEvent(e); } };
+    const stop = () => { isDragging = false; };
+
+    trigger.addEventListener('mousedown', start);
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', stop);
+    trigger.addEventListener('touchstart', start);
+    window.addEventListener('touchmove', move, { passive: false });
+    window.addEventListener('touchend', stop);
+
+    // Initial positioning
+    const initialPct = (obj[key] - cfg.min) / (cfg.max - cfg.min);
+    fill.style.width = (initialPct * 100) + "%";
+    handle.style.left = (initialPct * 100) + "%";
+
     panel.appendChild(row);
 }
 
@@ -238,7 +284,6 @@ function makeFreq(panel, obj, title, isLocked = false) {
         const setupHold = (btn, delta) => {
             let timer, repeat;
             const start = (e) => {
-                if(e.type === 'mousedown' && e.button !== 0) return;
                 obj.freq = Math.min(CONFIG.MAX_FREQ, Math.max(CONFIG.MIN_FREQ, obj.freq + delta));
                 update();
                 timer = setTimeout(() => { repeat = setInterval(() => {
@@ -267,33 +312,17 @@ function makeSteppedControl(panel, label) {
         <div class="freqBtn" id="p">+</div>
     </div>`;
     const num = row.querySelector('.num');
-    const update = () => { 
-        // Display as integer (val * 10000)
-        num.textContent = Math.round(CONFIG.DECAY * 100000); 
-        redrawAll(); 
-    };
-    const step = (direction) => {
-        let currentIndex = CONFIG.DECAY_VALUES.indexOf(CONFIG.DECAY);
-        if (currentIndex === -1) currentIndex = CONFIG.DECAY_VALUES.findIndex(v => v >= CONFIG.DECAY);
-        const nextIndex = Math.min(CONFIG.DECAY_VALUES.length - 1, Math.max(0, currentIndex + direction));
-        CONFIG.DECAY = CONFIG.DECAY_VALUES[nextIndex];
+    const update = () => { num.textContent = Math.round(CONFIG.DECAY * 100000); redrawAll(); };
+    row.querySelector('#m').onclick = () => {
+        let idx = CONFIG.DECAY_VALUES.indexOf(CONFIG.DECAY);
+        CONFIG.DECAY = CONFIG.DECAY_VALUES[Math.max(0, idx - 1)];
         update();
     };
-    row.querySelector('#m').onclick = () => step(-1);
-    row.querySelector('#p').onclick = () => step(1);
-    update();
-    panel.appendChild(row);
-}
-
-function makeToggle(panel, label) {
-    const row = document.createElement("div");
-    row.className = "toggle-row";
-    row.innerHTML = `<span>${label}</span><div class="toggle-box"></div>`;
-    const update = () => {
-        row.classList.toggle('active', CONFIG.REVERSE_P2);
-        redrawAll();
+    row.querySelector('#p').onclick = () => {
+        let idx = CONFIG.DECAY_VALUES.indexOf(CONFIG.DECAY);
+        CONFIG.DECAY = CONFIG.DECAY_VALUES[Math.min(CONFIG.DECAY_VALUES.length - 1, idx + 1)];
+        update();
     };
-    row.onclick = () => { CONFIG.REVERSE_P2 = !CONFIG.REVERSE_P2; update(); };
     update();
     panel.appendChild(row);
 }
@@ -306,22 +335,22 @@ function buildUI() {
         makeSlider(p, target, "ymag", "Y MAG");
         makeSlider(p, target, "rotation", "ROTATION");
         makeSlider(p, target, "phase", "PHASE");
-        if (i === 1) makeToggle(p, "Reverse Spin");
+        if (i === 1) {
+            const toggle = document.createElement('div');
+            toggle.className = "toggle-row";
+            toggle.innerHTML = `<span>Reverse Spin</span><div class="toggle-box"></div>`;
+            toggle.onclick = () => { CONFIG.REVERSE_P2 = !CONFIG.REVERSE_P2; toggle.classList.toggle('active', CONFIG.REVERSE_P2); redrawAll(); };
+            p.appendChild(toggle);
+        }
     });
-    const globalPanel = document.getElementById("global-sliders");
-    globalPanel.innerHTML = "";
-    makeSteppedControl(globalPanel, "GLOBAL DECAY");
+    makeSteppedControl(document.getElementById("global-sliders"), "GLOBAL DECAY");
 }
-
-buildUI();
 
 function rad(d) { return d * Math.PI / 180; }
 function rotate(x, y, a) { return { x: x * Math.cos(a) - y * Math.sin(a), y: x * Math.sin(a) + y * Math.cos(a) }; }
 
 function getPos(p, t, amp, mode, isP2 = false) {
     const s = mode === 'draw' ? CONFIG.DRAW_SCALE : CONFIG.SIM_SCALE;
-    // For the preview, we use the raw 't' as phase. 
-    // For drawing, freq is integrated over time.
     const f = (isP2 && CONFIG.REVERSE_P2) ? -p.freq : p.freq;
     const x = Math.cos(t * f + rad(p.phase)) * p.xmag * amp * s;
     const y = Math.sin(t * f + rad(p.phase)) * p.ymag * amp * s;
@@ -333,58 +362,73 @@ function redrawAll() {
     hctx.clearRect(0, 0, canvas.width, canvas.height);
     hctx.save();
     hctx.translate(canvas.width/2, canvas.height/2);
-    hctx.scale(CONFIG.ZOOM, CONFIG.ZOOM);
+    const finalScale = CONFIG.ZOOM * CONFIG.RES_MULTIPLIER;
+    hctx.scale(finalScale, finalScale);
+    
     hctx.strokeStyle = "#111"; 
-    hctx.lineWidth = 1 / CONFIG.ZOOM;
-    let amp = 1; 
+    hctx.lineWidth = CONFIG.MAIN_LINE_WIDTH / finalScale; // Thickness normalization
+    
     hctx.beginPath();
+    let amp = 1;
     for(let i=0; i<CONFIG.MAX_STEPS; i++){
         const t = i * CONFIG.TIME_STEP;
-        const p1 = getPos(state.p1, t, amp, 'draw', false), p2 = getPos(state.p2, t, amp, 'draw', true);
+        const p1 = getPos(state.p1, t, amp, 'draw', false);
+        const p2 = getPos(state.p2, t, amp, 'draw', true);
         if(i === 0) hctx.moveTo(p1.x + p2.x, p1.y + p2.y);
         else hctx.lineTo(p1.x + p2.x, p1.y + p2.y);
         amp *= (1 - CONFIG.DECAY * amp);
         if(amp < CONFIG.MIN_AMP) break;
     }
-    hctx.stroke(); hctx.restore();
+    hctx.stroke(); 
+    hctx.restore();
 }
 
+// Update to drawPreview() for the sim lines:
 function drawPreview(ctx, p, time, isP2) {
     const c = ctx.canvas;
     ctx.clearRect(0, 0, c.width, c.height);
-    ctx.save(); ctx.translate(c.width/2, c.height/2);
-    ctx.strokeStyle = "#111"; ctx.lineWidth = 2;
-    ctx.beginPath();
+    ctx.save(); 
+    ctx.translate(c.width/2, c.height/2);
     
-    // FIX: Draw a full cycle regardless of frequency by iterating through 0 to 2PI phase
-    // This prevents the path from being "cut short" when frequency < 1
-    const segments = 100;
-    for(let i=0; i<=segments; i++){
-        const phase = (i/segments) * Math.PI * 2;
-        // In this loop, we calculate path independently of frequency multiplier 
-        // to ensure a closed ellipse is always visible.
-        const s = CONFIG.SIM_SCALE;
-        const x_raw = Math.cos(phase + rad(p.phase)) * p.xmag * s;
-        const y_raw = Math.sin(phase + rad(p.phase)) * p.ymag * s;
+    const simScale = CONFIG.SIM_ZOOM * CONFIG.SIM_RES_MULTIPLIER;
+    ctx.scale(simScale, simScale);
+    
+    ctx.strokeStyle = "#111"; 
+    ctx.lineWidth = CONFIG.SIM_LINE_WIDTH / simScale; // Independent thickness
+    
+    ctx.beginPath();
+    for(let i=0; i<=100; i++){
+        const phase = (i/100) * Math.PI * 2;
+        const x_raw = Math.cos(phase + rad(p.phase)) * p.xmag * CONFIG.SIM_SCALE;
+        const y_raw = Math.sin(phase + rad(p.phase)) * p.ymag * CONFIG.SIM_SCALE;
         const r = rotate(x_raw, y_raw, rad(p.rotation));
         if(i===0) ctx.moveTo(r.x, r.y); else ctx.lineTo(r.x, r.y);
     }
     ctx.stroke();
     
-    // The bob still moves according to frequency
     const pos = getPos(p, time, 1, 'sim', isP2);
-    ctx.fillStyle = "#567587"; ctx.fillRect(pos.x-5, pos.y-5, 10, 10);
+    ctx.fillStyle = "#567587"; 
+    const b = (4 / simScale)*4.5; // Normalize bob size
+    ctx.fillRect(pos.x-b, pos.y-b, b*2, b*2);
     ctx.restore();
 }
 
 function resize() {
     [hctx, pctx1, pctx2].forEach(c => { 
-        c.canvas.width = c.canvas.clientWidth; 
-        c.canvas.height = c.canvas.clientHeight; 
+        const dpr = window.devicePixelRatio || 1;
+        const rect = c.canvas.getBoundingClientRect();
+        // Multiply by internal resolution config
+        c.canvas.width = rect.width * dpr * CONFIG.RES_MULTIPLIER;
+        c.canvas.height = rect.height * dpr * CONFIG.RES_MULTIPLIER;
     });
     redrawAll();
 }
+
+document.getElementById('zoom-in').onclick = () => { CONFIG.ZOOM += CONFIG.ZOOM_STEP; redrawAll(); };
+document.getElementById('zoom-out').onclick = () => { CONFIG.ZOOM = Math.max(CONFIG.MIN_ZOOM, CONFIG.ZOOM - CONFIG.ZOOM_STEP); redrawAll(); };
+
 window.onresize = resize;
+buildUI();
 
 let time = 0;
 function loop() {
