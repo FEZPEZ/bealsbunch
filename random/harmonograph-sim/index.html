@@ -236,7 +236,11 @@ const pctx1 = document.getElementById("preview1").getContext("2d");
 const pctx2 = document.getElementById("preview2").getContext("2d");
 
 lucide.createIcons();
-document.getElementById('info-box').onclick = () => document.getElementById('info-overlay').style.display = 'flex';
+document.getElementById('info-box').onclick = () => {
+    const overlay = document.getElementById('info-overlay');
+    overlay.querySelector('.popup').scrollTop = 0;
+    overlay.style.display = 'flex';
+};
 document.getElementById('settings-box').onclick = () => document.getElementById('settings-overlay').style.display = 'flex';
 function closeOverlay(id) { document.getElementById(id).style.display = 'none'; }
 
