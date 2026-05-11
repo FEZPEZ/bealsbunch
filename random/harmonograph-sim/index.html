@@ -167,7 +167,6 @@
 
     <div id="info-overlay" class="overlay">
         <div class="popup">
-            <h2>Pendulum Physics</h2>
             <p><strong>Frequency & Phase:</strong> This simulator combines two independent pendulums into a single drawing point.</p>
             <button class="bottom-close" onclick="closeOverlay('info-overlay')">CLOSE</button>
         </div>
@@ -175,7 +174,6 @@
 
     <div id="settings-overlay" class="overlay">
         <div class="popup">
-            <h2>Global Settings</h2>
             <div id="global-sliders"></div>
             <button class="bottom-close" onclick="closeOverlay('settings-overlay')">CLOSE</button>
         </div>
@@ -186,17 +184,18 @@
 const CONFIG = {
     RES_MULTIPLIER: 1.5, // High resolution variable
     MAIN_LINE_WIDTH: 3.0,   // Main thickness
-    ZOOM: 6.0, MIN_ZOOM: 1, MAX_ZOOM: 20.0, ZOOM_STEP: 1,
+    ZOOM: 3.0, MIN_ZOOM: 1, MAX_ZOOM: 10.0, ZOOM_STEP: 1,
     
     SIM_RES_MULTIPLIER: 1.5, // Sim resolution
     SIM_LINE_WIDTH: 5.0,     // Sim thickness
     SIM_ZOOM: 1.8,
-    DECAY: 0.0001,
-    DECAY_VALUES: [0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01],
+    DECAY: 0.0005,
+    DECAY_VALUES: [0.00001, 0.00005, 0.0001, 0.0002, 0.0003, 0.0005, 0.0007, 0.001, 0.002, 0.005, 0.01, 0.05, 0.1],
     TIME_STEP: 0.015, MAX_STEPS: 40000, MIN_AMP: 0.002, DRAW_SCALE: 0.5, SIM_SCALE: 0.3,
+    BASE_FREQ: 0.533,
     MIN_FREQ: 1, MAX_FREQ: 10.0, FREQ_STEP: 0.002, REPEAT_DELAY: 300, REPEAT_RATE: 40,
     FREQ_DECIMALS: 3,
-    REVERSE_P2: false,
+    REVERSE_P2: true,
     LIMITS: {
         xmag: { min: 0, max: 220 },
         ymag: { min: 0, max: 220 },
@@ -207,7 +206,7 @@ const CONFIG = {
 
 const state = {
     p1: { xmag: 60, ymag: 130, rotation: -70, phase: 0, freq: 1.00 },
-    p2: { xmag: 150, ymag: 160, rotation: -40, phase: 90, freq: 1.01 }
+    p2: { xmag: 150, ymag: 160, rotation: -40, phase: 150, freq: 1.01 }
 };
 
 const hctx = document.getElementById("harmonograph").getContext("2d");
@@ -331,14 +330,16 @@ function makeSteppedControl(panel, label) {
 function buildUI() {
     [document.getElementById("panel1"), document.getElementById("panel2")].forEach((p, i) => {
         const target = i === 0 ? state.p1 : state.p2;
-        makeFreq(p, target, `PENDULUM ${i + 1}`, i === 0);
+        makeFreq(p, target, i===0?"THE PEN-DULUM":"THE PAPER-DULUM", i === 0);
         makeSlider(p, target, "xmag", "X MAG");
         makeSlider(p, target, "ymag", "Y MAG");
         makeSlider(p, target, "rotation", "ROTATION");
-        makeSlider(p, target, "phase", "PHASE");
+        if (i !== 0) {
+            makeSlider(p, target, "phase", "PHASE SHIFT");
+        }
         if (i === 1) {
             const toggle = document.createElement('div');
-            toggle.className = "toggle-row";
+            toggle.className = "toggle-row" + (CONFIG.REVERSE_P2 ? " active" : "");
             toggle.innerHTML = `<span>Reverse Spin</span><div class="toggle-box"></div>`;
             toggle.onclick = () => { CONFIG.REVERSE_P2 = !CONFIG.REVERSE_P2; toggle.classList.toggle('active', CONFIG.REVERSE_P2); redrawAll(); };
             p.appendChild(toggle);
@@ -352,7 +353,13 @@ function rotate(x, y, a) { return { x: x * Math.cos(a) - y * Math.sin(a), y: x *
 
 function getPos(p, t, amp, mode, isP2 = false) {
     const s = mode === 'draw' ? CONFIG.DRAW_SCALE : CONFIG.SIM_SCALE;
-    const f = (isP2 && CONFIG.REVERSE_P2) ? -p.freq : p.freq;
+    
+    // 2 * PI * freq * base makes 1.0 = 53Hz
+    const cyclesPerSecond = p.freq * CONFIG.BASE_FREQ;
+    const angularVelocity = 2 * Math.PI * cyclesPerSecond;
+    
+    const f = (isP2 && CONFIG.REVERSE_P2) ? -angularVelocity : angularVelocity;
+    
     const x = Math.cos(t * f + rad(p.phase)) * p.xmag * amp * s;
     const y = Math.sin(t * f + rad(p.phase)) * p.ymag * amp * s;
     return rotate(x, y, rad(p.rotation));
@@ -375,8 +382,7 @@ function redrawAll() {
         const t = i * CONFIG.TIME_STEP;
         const p1 = getPos(state.p1, t, amp, 'draw', false);
         const p2 = getPos(state.p2, t, amp, 'draw', true);
-        if(i === 0) hctx.moveTo(p1.x + p2.x, p1.y + p2.y);
-        else hctx.lineTo(p1.x + p2.x, p1.y + p2.y);
+        hctx.lineTo(p1.x - p2.x, p1.y - p2.y);
         amp *= (1 - CONFIG.DECAY * amp);
         if(amp < CONFIG.MIN_AMP) break;
     }
@@ -432,13 +438,18 @@ window.onresize = resize;
 buildUI();
 
 let time = 0;
-function loop() {
-    time += 0.03;
+let last = performance.now();
+
+function loop(now) {
+    const dt = (now - last) / 1000;
+    last = now;
+
+    time += dt;
     drawPreview(pctx1, state.p1, time, false);
     drawPreview(pctx2, state.p2, time, true);
     requestAnimationFrame(loop);
 }
-resize(); loop();
+resize(); requestAnimationFrame(loop);
 </script>
 </body>
 </html>
