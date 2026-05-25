@@ -130,6 +130,16 @@ html, body {
         .freqLabel { color: var(--blue-dark); font-size: 9px; text-transform: uppercase; }
         .freqValue .num { font-family: monospace; font-size: 10px; }
         .freq-locked { background: #ccc !important; color: #777; border-color: #999; box-shadow: none; }
+        
+        /* Style for disabled length buttons */
+		.freqBtn.disabled {
+			background: #ccc !important;
+			color: #888 !important;
+			border-color: #999 !important;
+			cursor: not-allowed;
+			box-shadow: none !important;
+			transform: none !important;
+		}
 
         .overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; padding: 20px; align-items: center; justify-content: center; }
         .popup { background: var(--panel); border: 3px solid var(--line); box-shadow: 10px 10px 0px rgba(0,0,0,0.3); width: 100%; max-height: 85%; overflow-y: auto; padding: 20px; display: flex; flex-direction: column;}
@@ -214,7 +224,11 @@ const CONFIG = {
     DECAY_VALUES: [0.00001, 0.00005, 0.0001, 0.0002, 0.0003, 0.0005, 0.0007, 0.001, 0.002, 0.005, 0.01, 0.05, 0.1],
     TIME_STEP: 0.015, MAX_STEPS: 40000, MIN_AMP: 0.002, DRAW_SCALE: 0.5, SIM_SCALE: 0.3,
     BASE_FREQ: 0.533,
-    MIN_FREQ: 1, MAX_FREQ: 10.0, FREQ_STEP: 0.002, REPEAT_DELAY: 300, REPEAT_RATE: 40,
+    MIN_LENGTH: 0.1,       // Minimum pendulum length in inches
+    MAX_LENGTH: 34,      // Maximum pendulum length in inches
+    LENGTH_STEP: 0.1,      // Incremental change per step (tenths of an inch)
+    GRAVITY: 386.09,       // Acceleration due to gravity in inches/s^2
+    REPEAT_DELAY: 300, REPEAT_RATE: 40,
     FREQ_DECIMALS: 3,
     REVERSE_P2: true,
     LIMITS: {
@@ -226,8 +240,8 @@ const CONFIG = {
 };
 
 const state = {
-    p1: { xmag: 60, ymag: 130, rotation: -70, phase: 0, freq: 1.00 },
-    p2: { xmag: 170, ymag: 180, rotation: -40, phase: 150, freq: 1.014 }
+    p1: { xmag: 60, ymag: 130, rotation: -70, phase: 0, length: 34.0 },
+    p2: { xmag: 190, ymag: 160, rotation: 0, phase: 130, length: 33.0 }
 };
 
 const hctx = document.getElementById("harmonograph").getContext("2d");
@@ -294,34 +308,78 @@ function makeSlider(panel, obj, key, label) {
     panel.appendChild(row);
 }
 
-function makeFreq(panel, obj, title, isLocked = false) {
+function makeLength(panel, obj, title, isLocked = false) {
     const row = document.createElement("div");
+    
+    // Formula: f = 1 / (2 * PI) * sqrt(g / L)
+    const updateFrequency = () => {
+        obj.freq = (1 / (2 * Math.PI)) * Math.sqrt(CONFIG.GRAVITY / obj.length)*2;
+    };
+
     if(isLocked) {
+        updateFrequency();
         row.innerHTML = `<div class="title">${title}</div><div class="freq">
-            <div class="freqValue freq-locked"><span class="freqLabel">freq:</span><span class="num">${obj.freq.toFixed(CONFIG.FREQ_DECIMALS)}</span></div>
+            <div class="freqValue freq-locked"><span class="freqLabel">LENGTH:</span><span class="num">+0"</span></div>
         </div>`;
     } else {
         row.innerHTML = `<div class="title">${title}</div><div class="freq">
-            <div class="freqBtn" id="m">−</div><div class="freqValue"><span class="freqLabel">freq:</span><span class="num"></span></div><div class="freqBtn" id="p">+</div>
+            <div class="freqBtn" id="m">−</div><div class="freqValue"><span class="freqLabel">LENGTH:</span><span class="num"></span></div><div class="freqBtn" id="p">+</div>
         </div>`;
+        
         const num = row.querySelector('.num');
-        const update = () => { num.textContent = obj.freq.toFixed(CONFIG.FREQ_DECIMALS); redrawAll(); };
+        const btnM = row.querySelector('#m');
+        const btnP = row.querySelector('#p');
+        
+        const update = () => { 
+            // Calculate the difference between right (obj) and left (state.p1)
+            const diff = obj.length - state.p1.length;
+            // Add a "+" sign if the difference is 0 or greater
+            const sign = diff >= 0 ? "+" : "";
+            
+            num.textContent = `${sign}${diff.toFixed(1)}"`; 
+            
+            // Toggle the disabled class based on boundaries
+            btnM.classList.toggle('disabled', obj.length <= CONFIG.MIN_LENGTH);
+            btnP.classList.toggle('disabled', obj.length >= CONFIG.MAX_LENGTH);
+
+            updateFrequency();
+            redrawAll(); 
+        };
+        
         const setupHold = (btn, delta) => {
             let timer, repeat;
+            
             const start = (e) => {
-                obj.freq = Math.min(CONFIG.MAX_FREQ, Math.max(CONFIG.MIN_FREQ, obj.freq + delta));
+                // If the button is disabled, do absolutely nothing
+                if (btn.classList.contains('disabled')) return;
+
+                obj.length = Math.min(CONFIG.MAX_LENGTH, Math.max(CONFIG.MIN_LENGTH, obj.length + delta));
                 update();
-                timer = setTimeout(() => { repeat = setInterval(() => {
-                    obj.freq = Math.min(CONFIG.MAX_FREQ, Math.max(CONFIG.MIN_FREQ, obj.freq + delta));
-                    update();
-                }, CONFIG.REPEAT_RATE); }, CONFIG.REPEAT_DELAY);
+                
+                timer = setTimeout(() => { 
+                    repeat = setInterval(() => {
+                        // Extra check inside the loop so it halts immediately upon hitting a limit
+                        if (btn.classList.contains('disabled')) {
+                            clearInterval(repeat);
+                            return;
+                        }
+                        obj.length = Math.min(CONFIG.MAX_LENGTH, Math.max(CONFIG.MIN_LENGTH, obj.length + delta));
+                        update();
+                    }, CONFIG.REPEAT_RATE); 
+                }, CONFIG.REPEAT_DELAY);
             };
+            
             const end = () => { clearTimeout(timer); clearInterval(repeat); };
-            btn.addEventListener('mousedown', start); btn.addEventListener('touchstart', (e) => { e.preventDefault(); start(e); });
-            btn.addEventListener('mouseup', end); btn.addEventListener('mouseleave', end); btn.addEventListener('touchend', end);
+            
+            btn.addEventListener('mousedown', start); 
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); start(e); });
+            btn.addEventListener('mouseup', end); 
+            btn.addEventListener('mouseleave', end); 
+            btn.addEventListener('touchend', end);
         };
-        setupHold(row.querySelector('#m'), -CONFIG.FREQ_STEP);
-        setupHold(row.querySelector('#p'), CONFIG.FREQ_STEP);
+        
+        setupHold(btnM, -CONFIG.LENGTH_STEP);
+        setupHold(btnP, CONFIG.LENGTH_STEP);
         update();
     }
     panel.appendChild(row);
@@ -355,7 +413,8 @@ function makeSteppedControl(panel, label) {
 function buildUI() {
     [document.getElementById("panel1"), document.getElementById("panel2")].forEach((p, i) => {
         const target = i === 0 ? state.p1 : state.p2;
-        makeFreq(p, target, i===0?"THE PEN-DULUM":"THE PAPER-DULUM", i === 0);
+        // Call the new makeLength UI generator here instead of makeFreq
+        makeLength(p, target, i===0?"THE PEN-DULUM":"THE PAPER-DULUM", i === 0);
         makeSlider(p, target, "xmag", "X MAG");
         makeSlider(p, target, "ymag", "Y MAG");
         makeSlider(p, target, "rotation", "ROTATION");
