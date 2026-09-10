@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Bauhaus Timer</title>
+
+<style>
+    :root {
+        --paper: #f4efe3;
+        --red: #e99b91;
+        --yellow: #e8cf7a;
+        --blue: #91b4d3;
+        --green: #9fc5aa;
+        --black: #191919;
+        --white: #fffdf7;
+    }
+
+    * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    body {
+        background: var(--paper);
+        color: var(--black);
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 900;
+        transition: background-color 0.18s ease;
+    }
+
+    .app {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 18px;
+    }
+
+    /* =========================
+       TIMER
+       ========================= */
+
+    .timer-area {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #timer {
+        font-size: clamp(110px, 30vw, 280px);
+        line-height: 0.8;
+        letter-spacing: -8px;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+        user-select: none;
+        transition: color 0.18s ease;
+    }
+
+    /* =========================
+       BOTTOM CONTROLS BAR
+       ========================= */
+
+    .bottom {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        width: min(90vw, 360px);
+        margin: 0 auto 8px;
+    }
+
+    .adjust-button {
+        width: 64px;
+        height: 64px;
+        flex-shrink: 0;
+
+        border: 4px solid var(--black);
+        background: var(--white);
+        color: var(--black);
+
+        font-size: 38px;
+        font-weight: 900;
+        line-height: 1;
+
+        box-shadow: 7px 7px 0 var(--black);
+
+        cursor: pointer;
+        touch-action: manipulation;
+        user-select: none;
+    }
+
+    .adjust-button:active {
+        transform: translate(5px, 5px);
+        box-shadow: 2px 2px 0 var(--black);
+    }
+
+    #startStop {
+        flex: 1;
+        height: 64px;
+
+        border: 5px solid var(--black);
+        background: var(--white);
+        color: var(--black);
+
+        font-size: 25px;
+        font-weight: 900;
+        letter-spacing: 4px;
+
+        box-shadow: 9px 9px 0 var(--black);
+
+        cursor: pointer;
+        touch-action: manipulation;
+    }
+
+    #startStop:active {
+        transform: translate(7px, 7px);
+        box-shadow: 2px 2px 0 var(--black);
+    }
+
+    /* =========================
+       SUBTLE BACKGROUND PULSE
+       ========================= */
+
+    body.countdown-pulse {
+        animation: bgPulse 0.35s ease-out;
+    }
+
+    @keyframes bgPulse {
+        0% {
+            background-color: var(--bg-color);
+        }
+        30% {
+            background-color: var(--pulse-color);
+        }
+        100% {
+            background-color: var(--bg-color);
+        }
+    }
+
+    @media (max-width: 420px) {
+        .app { padding: 14px; }
+        
+        .bottom {
+            gap: 12px;
+        }
+
+        .adjust-button {
+            width: 56px;
+            height: 56px;
+            font-size: 32px;
+        }
+
+        #startStop {
+            height: 56px;
+            font-size: 22px;
+            letter-spacing: 2px;
+        }
+
+        #timer { letter-spacing: -5px; }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="timer-area">
+        <div id="timer">10</div>
+    </div>
+
+    <div class="bottom">
+        <button
+            class="adjust-button"
+            id="decrease"
+            aria-label="Decrease seconds">
+            −
+        </button>
+
+        <button id="startStop">
+            START
+        </button>
+
+        <button
+            class="adjust-button"
+            id="increase"
+            aria-label="Increase seconds">
+            +
+        </button>
+    </div>
+
+</div>
+
+<script>
+    /* =========================
+       TIMER STATE
+       ========================= */
+
+    let duration = 10;
+    let remaining = duration;
+    let running = false;
+    let timerInterval = null;
+
+    /* =========================
+       COLORS & SHADE HELPERS
+       ========================= */
+
+    const colors = [
+        "#f4efe3",  // warm white
+        "#e99b91",  // light red
+        "#e8cf7a",  // light yellow
+        "#91b4d3",  // light blue
+        "#9fc5aa"   // light green
+    ];
+
+    let colorIndex = 0;
+
+    function darkenColor(hex, percent) {
+        let num = parseInt(hex.replace("#", ""), 16);
+        let amt = Math.round(2.55 * percent);
+        let R = Math.max(0, (num >> 16) - amt);
+        let G = Math.max(0, (num >> 8 & 0x00FF) - amt);
+        let B = Math.max(0, (num & 0x0000FF) - amt);
+
+        return "#" + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+    }
+
+    function lightenColor(hex, percent) {
+        let num = parseInt(hex.replace("#", ""), 16);
+        let amt = Math.round(2.55 * percent);
+        let R = Math.min(255, (num >> 16) + amt);
+        let G = Math.min(255, (num >> 8 & 0x00FF) + amt);
+        let B = Math.min(255, (num & 0x0000FF) + amt);
+
+        return "#" + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+    }
+
+    /* =========================
+       DOM
+       ========================= */
+
+    const timerDisplay = document.getElementById("timer");
+    const startStop = document.getElementById("startStop");
+    const increaseButton = document.getElementById("increase");
+    const decreaseButton = document.getElementById("decrease");
+
+    /* =========================
+       DISPLAY & COLOR UPDATE
+       ========================= */
+
+    function updateTheme() {
+        const bgHex = colors[colorIndex];
+        const darkDigitHex = darkenColor(bgHex, 60);
+        const pulseHex = lightenColor(bgHex, 15);
+
+        document.documentElement.style.setProperty('--bg-color', bgHex);
+        document.documentElement.style.setProperty('--pulse-color', pulseHex);
+
+        document.body.style.backgroundColor = bgHex;
+        timerDisplay.style.color = darkDigitHex;
+    }
+
+    function updateDisplay() {
+        timerDisplay.textContent = remaining;
+    }
+
+    /* =========================
+       CHANGE DURATION
+       ========================= */
+
+    function changeDuration(amount) {
+        if (running) return;
+        duration = Math.max(1, duration + amount);
+        remaining = duration;
+        updateDisplay();
+    }
+
+    /* =========================
+       HOLD-TO-REPEAT
+       ========================= */
+
+    let holdTimeout = null;
+    let holdInterval = null;
+
+    function startHolding(amount) {
+        changeDuration(amount);
+        holdTimeout = setTimeout(() => {
+            holdInterval = setInterval(() => {
+                changeDuration(amount);
+            }, 80);
+        }, 350);
+    }
+
+    function stopHolding() {
+        clearTimeout(holdTimeout);
+        clearInterval(holdInterval);
+        holdTimeout = null;
+        holdInterval = null;
+    }
+
+    increaseButton.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        startHolding(1);
+    });
+
+    decreaseButton.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        startHolding(-1);
+    });
+
+    document.addEventListener("pointerup", stopHolding);
+    document.addEventListener("pointercancel", stopHolding);
+
+    increaseButton.addEventListener("contextmenu", event => event.preventDefault());
+    decreaseButton.addEventListener("contextmenu", event => event.preventDefault());
+
+    /* =========================
+       SUBTLE BG PULSE
+       ========================= */
+
+    function pulseBackground() {
+        document.body.classList.remove("countdown-pulse");
+        void document.body.offsetWidth;
+        document.body.classList.add("countdown-pulse");
+    }
+
+    document.body.addEventListener("animationend", (e) => {
+        if (e.animationName === "bgPulse") {
+            document.body.classList.remove("countdown-pulse");
+        }
+    });
+
+    /* =========================
+       COLOR CHANGE
+       ========================= */
+
+    function changeColor() {
+        colorIndex = (colorIndex + 1) % colors.length;
+        updateTheme();
+    }
+
+    /* =========================
+       TIMER TICK
+       ========================= */
+
+    function tick() {
+        if (!running) return;
+
+        remaining--;
+        updateDisplay();
+
+        if (remaining === 3 || remaining === 2 || remaining === 1) {
+            pulseBackground();
+        }
+
+        if (remaining === 0) {
+            changeColor();
+            remaining = duration;
+            updateDisplay();
+        }
+    }
+
+    /* =========================
+       START / STOP
+       ========================= */
+
+    function start() {
+        running = true;
+        startStop.textContent = "STOP";
+        timerInterval = setInterval(tick, 1000);
+    }
+
+    function stop() {
+        running = false;
+        startStop.textContent = "START";
+        clearInterval(timerInterval);
+        timerInterval = null;
+        remaining = duration;
+        updateDisplay();
+    }
+
+    startStop.addEventListener("click", () => {
+        if (running) {
+            stop();
+        } else {
+            start();
+        }
+    });
+
+    /* =========================
+       INITIAL SETUP
+       ========================= */
+
+    updateTheme();
+    updateDisplay();
+</script>
+
+</body>
+</html>
