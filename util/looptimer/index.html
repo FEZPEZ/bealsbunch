@@ -20,6 +20,10 @@
     * {
         box-sizing: border-box;
         -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none; /* Disables iOS hold-to-copy context menus */
+        -webkit-user-select: none;   /* Safari */
+        -ms-user-select: none;       /* IE/Edge */
+        user-select: none;           /* Standard */
     }
 
     html,
@@ -28,6 +32,8 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
+        overscroll-behavior: none;   /* Prevents pull-to-refresh & bounce scrolling */
+        touch-action: manipulation;  /* Disables double-tap to zoom */
     }
 
     body {
@@ -63,8 +69,8 @@
         letter-spacing: -8px;
         text-align: center;
         font-variant-numeric: tabular-nums;
-        user-select: none;
         transition: color 0.18s ease;
+        touch-action: none;
     }
 
     /* =========================
@@ -97,7 +103,6 @@
 
         cursor: pointer;
         touch-action: manipulation;
-        user-select: none;
     }
 
     .adjust-button:active {
@@ -110,7 +115,7 @@
         height: 64px;
 
         border: 5px solid var(--black);
-        background: var(--white);
+        background: var(--red);
         color: var(--black);
 
         font-size: 25px;
@@ -203,6 +208,30 @@
 </div>
 
 <script>
+    /* =========================
+       PREVENT MOBILE INTERACTION DEFAULTS
+       ========================= */
+
+    // Prevent pinch-to-zoom multi-touch gestures
+    document.addEventListener('touchmove', function (event) {
+        if (event.scale !== 1) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+
+    // Prevent double-tap zooming explicitly
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+
+    // Disable system context menu on long-press entirely
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
     /* =========================
        TIMER STATE
        ========================= */
@@ -321,9 +350,6 @@
 
     document.addEventListener("pointerup", stopHolding);
     document.addEventListener("pointercancel", stopHolding);
-
-    increaseButton.addEventListener("contextmenu", event => event.preventDefault());
-    decreaseButton.addEventListener("contextmenu", event => event.preventDefault());
 
     /* =========================
        SUBTLE BG PULSE
